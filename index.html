@@ -92,7 +92,7 @@
 <p>读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    </p>
 <p>写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</p>
 </blockquote>
-<p>​    关于原型链继承这个可以参考此处<a href="1">JavaScript Prototypal Inheritance</a>，或者<a href="2">[译文] 深入浅出 AngularJS 作用域</a></p>
+<p>​    关于原型链继承这个可以参考此处<a href="[1]">JavaScript Prototypal Inheritance</a>，或者<a href="[2]">[译文] 深入浅出 AngularJS 作用域</a></p>
 <p>​    使用上述的<code>ng-if</code>, <code>ng-repeat</code>, <code>ng-switch</code>, <code>ng-include</code>都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用<code>$parent</code>。</p>
 <p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外，<code>textarea</code>也会自己创建一级作用域。所以你可能会发现你在<code>textarea</code>写的内容获取不到，但是却发现<code>textarea</code>总能取到第一次分配的初值。比如</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -107,7 +107,7 @@
 <h2 id="Angular-track-by"><a href="#Angular-track-by" class="headerlink" title="Angular track by"></a>Angular track by</h2><p>​    在使用<code>Angular</code>的<code>ng-repeat</code>迭代数组时，有时候会出现<code>Duplicates in a repeater are not allowed</code>的提示。</p>
 <p>​    <code>track by</code>是用来建立<code>$watchCollection</code>和<code>DOM</code>之间的联系。建议自己加上<code>track by</code>后面带的值可以自己写，但要确保每个<code>ngRepeat</code>的值唯一，比如可以写<code>track by $index</code>。</p>
 <p>​    之所以要这么做，是因为，如果不使用<code>track by</code>，那么每个<code>ng-repeat</code>都会添加一个<code>$$hashkey</code>来对的<code>DOM</code>进行跟踪，这样会导致不能存在相同的<code>DOM</code>，使用<code>track by</code>的意义是避免不必要的渲染。</p>
-<p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="3">AngularJS: API: ngRepeat</a></p>
+<p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="[3]">AngularJS: API: ngRepeat</a></p>
 <blockquote>
 <p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later, <code>ngRepeat</code> will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier, <code>track by $index</code> can also provide a performance boost.</p>
 </blockquote>
@@ -134,7 +134,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="cipl8hqn600009os6z21he4fo" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="cipl9u8kd0000t4s6lz8gr4xi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
@@ -238,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipl8hqn600019os6hz8fdmfe" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipl9u8l80005t4s6q9noxp3j" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gulp/">gulp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
