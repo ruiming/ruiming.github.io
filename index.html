@@ -89,7 +89,8 @@
         <p>这学期基本都是在学习和使用<code>Angular</code>，这篇文章主要是想介绍几个<code>Angular</code>需要注意或者了解的地方。</p>
 <h2 id="Angular作用域"><a href="#Angular作用域" class="headerlink" title="Angular作用域"></a>Angular作用域</h2><p>​    也许你知道<code>ng-if</code>和<code>ng-show</code>的区别是一个只有条件满足的时候才会创建<code>DOM</code>，一个是只有在条件满足的时候才会显示<code>DOM</code>也就是一开始也会跟着创建。但是你可能不知道，<code>ng-if</code>会产生新的作用域，<code>ng-repeat</code>和<code>ng-switch</code>和<code>ng-include</code>也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为<code>Angular</code>的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性，<code>Angular</code>会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。</p>
 <blockquote>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="quote">&gt;	读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。</span></span><br><span class="line"><span class="quote">&gt;	写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p>读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    </p>
+<p>写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</p>
 </blockquote>
 <p>​    关于原型链继承这个可以参考此处<a href="1">JavaScript Prototypal Inheritance</a>，或者<a href="2">[译文] 深入浅出 AngularJS 作用域</a></p>
 <p>​    使用上述的<code>ng-if</code>, <code>ng-repeat</code>, <code>ng-switch</code>, <code>ng-include</code>都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用<code>$parent</code>。</p>
@@ -119,9 +120,9 @@
 </li>
 <li><p>timestampMarker</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'timestampMarker'</span>, [() =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> timestampMarker = &#123;</span><br><span class="line">    request: (config) = &gt; &#123;</span><br><span class="line">      config.requestTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> config;</span><br><span class="line">    &#125;,</span><br><span class="line">    response: (response) = &gt; &#123;</span><br><span class="line">      response.config.responseTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
+<p>​    这是给每个请求加上时间戳来防止浏览器缓存。</p>
 </li>
 </ul>
-<p>​        这是给每个请求加上时间戳来防止浏览器缓存。</p>
 <ul>
 <li><p>tokenInjector</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'tokenInjector'</span>, [<span class="string">'$injector'</span>, <span class="string">'$q'</span>, ($injector, $q) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> tokenInjector = &#123;</span><br><span class="line">      	request: (config) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> url = host + <span class="string">'/auth_verify'</span>;</span><br><span class="line">        <span class="keyword">let</span> deferred = $q.defer();</span><br><span class="line">        <span class="keyword">let</span> http = $injector.get(<span class="string">'$http'</span>);</span><br><span class="line">        <span class="keyword">if</span>(config.url === url) &#123;</span><br><span class="line">          <span class="keyword">return</span> config;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sessionStorage.verify === <span class="string">'true'</span>) &#123;</span><br><span class="line">          <span class="keyword">let</span> timestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() / <span class="number">1000</span>;</span><br><span class="line">           <span class="keyword">if</span>(timestamp - sessionStorage.createdtime &gt;= <span class="number">7000</span>) &#123;</span><br><span class="line">              sessionStorage.verify = <span class="literal">false</span>;  </span><br><span class="line">          &#125;</span><br><span class="line">           config.headers[<span class="string">'token'</span>] = sessionStorage.token;</span><br><span class="line">           config.headers[<span class="string">'userid'</span>] = sessionStorage.user_id;</span><br><span class="line">           deferred.resolve(config);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
@@ -133,7 +134,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="cipl8g2su0000nss66m49v48g" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="cipl8hqn600009os6z21he4fo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
@@ -237,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipl8g2t00001nss6jlykbsjt" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipl8hqn600019os6hz8fdmfe" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gulp/">gulp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
