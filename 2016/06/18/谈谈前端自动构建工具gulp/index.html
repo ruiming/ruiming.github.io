@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Ruiming&#39;s Blog</title>
+  <title>谈谈前端自动构建工具gulp | Ruiming&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="​    类似Gulp这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有Grunt和Webpack等，不过我用Gulp比较多一些，所以我只能谈谈Gulp了。
 ​    Gulp上面优秀的插件特别多，我所使用到的有
 123456789101112const gulp = require(&apos;gulp&apos;),      uglify = require(&apos;gulp-uglify&apos;),">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Ruiming's Blog">
+<meta property="og:title" content="谈谈前端自动构建工具gulp">
 <meta property="og:url" content="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="​    类似Gulp这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有Grunt和Webpack等，不过我用Gulp比较多一些，所以我只能谈谈Gulp了。
 ​    Gulp上面优秀的插件特别多，我所使用到的有
 123456789101112const gulp = require(&apos;gulp&apos;),      uglify = require(&apos;gulp-uglify&apos;),">
-<meta property="og:updated_time" content="2016-06-18T12:16:32.562Z">
+<meta property="og:updated_time" content="2016-06-18T12:18:50.437Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ruiming's Blog">
+<meta name="twitter:title" content="谈谈前端自动构建工具gulp">
 <meta name="twitter:description" content="​    类似Gulp这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有Grunt和Webpack等，不过我用Gulp比较多一些，所以我只能谈谈Gulp了。
 ​    Gulp上面优秀的插件特别多，我所使用到的有
 123456789101112const gulp = require(&apos;gulp&apos;),      uglify = require(&apos;gulp-uglify&apos;),">
@@ -72,12 +72,26 @@
         <section id="main"><article id="post-谈谈前端自动构建工具gulp" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/06/18/谈谈前端自动构建工具gulp/" class="article-date">
-  <time datetime="2016-06-18T12:16:13.310Z" itemprop="datePublished">2016-06-18</time>
+  <time datetime="2016-06-18T12:18:17.000Z" itemprop="datePublished">2016-06-18</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/前端/">前端</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      谈谈前端自动构建工具gulp
+    </h1>
+  
+
+      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
@@ -126,18 +140,12 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'default'</span>, [<span class="string">'css'</span>, <span class="string">'js'</span>, <span class="string">'angular'</span>, <span class="string">'img'</span>, <span class="string">'templates:dist'</span>, <span class="string">'sass'</span>, <span class="string">'fonts'</span>])</span><br></pre></td></tr></table></figure>
 <p>​    这段代码帮我做了</p>
 <ul>
-<li><p><code>css</code>文件(这些文件是第三方<code>css</code>文件如<code>bootstrap</code>)的合并</p>
-</li>
-<li><p><code>javascript</code>文件的合并，这是将所有我写的<code>Angular</code>文件进行合并，但不进行压缩以方便我调试</p>
-</li>
-<li><p><code>angular</code>是将项目所有的<code>js</code>依赖如<code>angular</code>, <code>ui-router</code>, <code>jquery</code>等文件进行压缩合并</p>
-</li>
-<li><p><code>img</code>是将图片进行压缩和迁移，这些图片压缩后放入生产环境对应的文件夹中</p>
-</li>
-<li><p><code>templates:dist</code>是对<code>Angular</code>的视图进行合并，适用了上述的<code>gulp-ng-template</code>插件，合并后为一个<code>javascript</code>文件</p>
-</li>
-<li><p><code>sass</code>是将我写的<code>scss</code>代码进行编译</p>
-</li>
+<li><code>css</code>文件(这些文件是第三方<code>css</code>文件如<code>bootstrap</code>)的合并</li>
+<li><code>javascript</code>文件的合并，这是将所有我写的<code>Angular</code>文件进行合并，但不进行压缩以方便我调试</li>
+<li><code>angular</code>是将项目所有的<code>js</code>依赖如<code>angular</code>, <code>ui-router</code>, <code>jquery</code>等文件进行压缩合并</li>
+<li><code>img</code>是将图片进行压缩和迁移，这些图片压缩后放入生产环境对应的文件夹中</li>
+<li><code>templates:dist</code>是对<code>Angular</code>的视图进行合并，适用了上述的<code>gulp-ng-template</code>插件，合并后为一个<code>javascript</code>文件</li>
+<li><code>sass</code>是将我写的<code>scss</code>代码进行编译</li>
 <li><p><code>fonts</code>是移动相应的字体文件到生产环境中</p>
 <p>​开发环境下我们需要自动构建，也需要便于调试，所以我用上面这样的方式来处理，并且开启了<code>watch</code>在有更改发生时自动构建。当我处理完全部工作后需要<code>push</code>到服务器上面时，会执行<code>gulp product</code>即下面的<code>task</code></p>
 </li>
@@ -153,9 +161,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipl4pi4r0000i0s6d8ap9ggf" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipl4s8bc0000m8s6xxupgpyf" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gulp/">gulp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
+
     </footer>
   </div>
   
@@ -168,12 +178,33 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/前端/">前端</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gulp/">gulp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端/">前端</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Angular/" style="font-size: 10px;">Angular</a> <a href="/tags/gulp/" style="font-size: 10px;">gulp</a> <a href="/tags/前端/" style="font-size: 10px;">前端</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -192,7 +223,7 @@
       <ul>
         
           <li>
-            <a href="/2016/06/18/谈谈前端自动构建工具gulp/">(no title)</a>
+            <a href="/2016/06/18/谈谈前端自动构建工具gulp/">谈谈前端自动构建工具gulp</a>
           </li>
         
       </ul>
