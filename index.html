@@ -133,28 +133,28 @@
 <img src="/2016/06/24/从输入URL到页面展示/tls-handshake.jpg" alt="TLS-handshake" title="TLS-handshake">
 <ul>
 <li><p>Client Hello</p>
-<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-1.png" alt="TLS-handshake-1" title="TLS-handshake-1">
-<p>可以看到TCP报文的<code>Push</code>为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。</p>
-<p>这是一个TLS握手包，我们可以看到<code>HandShakeType</code>为<code>ClientHello</code>，对应TLS握手图的第一部。</p>
-<p>同时，该过程浏览器还发送了自己支持的一套加密规则。</p>
+ <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-1.png" alt="TLS-handshake-1" title="TLS-handshake-1">
+<p> 可以看到TCP报文的<code>Push</code>为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。</p>
+<p> 这是一个TLS握手包，我们可以看到<code>HandShakeType</code>为<code>ClientHello</code>，对应TLS握手图的第一部。</p>
+<p> 同时，该过程浏览器还发送了自己支持的一套加密规则。</p>
 </li>
 <li><p>Server Hello</p>
-<p>服务端接受到上述报文后，会发送TCP报文进行确认。报文如下</p>
-<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-2.png" alt="TLS-handshake-2" title="TLS-handshake-2">
-<p>服务端发出ACK包的同时，发送TLS报文，此时<code>HandShakeType</code>为<code>ServerHello</code>，对应TLS握手图的第二步</p>
-<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-3.png" alt="TLS-handshake-3" title="TLS-handshake-3">
-<p>接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。</p>
-<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-4.png" alt="TLS-handshake-4" title="TLS-handshake-4">
+<p> 服务端接受到上述报文后，会发送TCP报文进行确认。报文如下</p>
+ <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-2.png" alt="TLS-handshake-2" title="TLS-handshake-2">
+<p> 服务端发出ACK包的同时，发送TLS报文，此时<code>HandShakeType</code>为<code>ServerHello</code>，对应TLS握手图的第二步</p>
+ <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-3.png" alt="TLS-handshake-3" title="TLS-handshake-3">
+<p> 接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。</p>
+ <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-4.png" alt="TLS-handshake-4" title="TLS-handshake-4">
 </li>
 <li><p>Client Key Exchange</p>
-<p>浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。</p>
+<p> 浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。</p>
 </li>
 <li><p>Cipher Change Spec</p>
-<p>服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。</p>
-<p>接着使用这个密码来加密一段握手信息，发给客户端即浏览器。</p>
+<p> 服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。</p>
+<p> 接着使用这个密码来加密一段握手信息，发给客户端即浏览器。</p>
 </li>
 <li><p>Finish</p>
-<p>客户端用密码进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。</p>
+<p> 客户端用密码进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。</p>
 </li>
 </ul>
 <p>至此，HTTPS连接已成功建立。</p>
@@ -163,13 +163,13 @@
 <h2 id="客户端请求网站信息"><a href="#客户端请求网站信息" class="headerlink" title="客户端请求网站信息"></a>客户端请求网站信息</h2><p>…</p>
 <p>参考资料</p>
 <ul>
-<li><a href="https://technet.microsoft.com/en-us/library/cc775637(v=ws.10" target="_blank" rel="external">How DNS query works</a>.aspx)</li>
+<li><a href="https://technet.microsoft.com/en-us/library/cc775637.aspx" target="_blank" rel="external">How DNS query works</a></li>
 </ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/" data-id="cipu06mer0001e4s67y8s9lfh" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/" data-id="cipu085p40001oos6ubrnroo4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DNS/">DNS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
@@ -253,7 +253,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="cipu06mem0000e4s6j1o1v59y" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="cipu085oy0000oos6uwr0lthq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
@@ -357,7 +357,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipu06mfg000ce4s6jdskkjys" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipu085pb0003oos63yihoxih" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gulp/">gulp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
