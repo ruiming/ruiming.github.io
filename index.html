@@ -77,9 +77,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
-<ol>
-<li><p>DNS查询</p>
-<p>DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。</p>
+<h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p>DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。</p>
 <ul>
 <li><p>浏览器首先会查看自身是否已经有进行DNS缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度，但缓存时间不会太长。</p>
 <img src="/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png" alt="Chrome的DNS缓存" title="Chrome的DNS缓存">
@@ -108,11 +106,11 @@
 <li>这里对<code>Rcode</code>也稍加说明下，<code>Rcode=0</code>表示成功，他还有好几种状态码，比如1表示<code>Format error</code>，2表示<code>Server failure</code>，3表示<code>Name error</code>，4表示<code>Not lmplemented</code>，5表示<code>Refused</code>，具体信息可以参考<code>RFC1035</code>。</li>
 </ol>
 </li>
-<li><p>三次握手建立连接</p>
-<p>经过上述过程，此时浏览器得到了要访问的域名的IP地址。由于DNS查询需要一定时间，所以有些网站会使用<code>DNS Prefetching</code>进行DNS预解析，结合浏览器的DNS缓存，以加快网站速度。这里不做详细叙述。</p>
+</ul>
+<h2 id="三次握手建立连接"><a href="#三次握手建立连接" class="headerlink" title="三次握手建立连接"></a>三次握手建立连接</h2><p>经过上述过程，此时浏览器得到了要访问的域名的IP地址。由于DNS查询需要一定时间，所以有些网站会使用<code>DNS Prefetching</code>进行DNS预解析，结合浏览器的DNS缓存，以加快网站速度。这里不做详细叙述。</p>
 <p>首先贴出TCP三次握手的建立图。</p>
 <img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands.jpg" alt="三次握手} 我们抓包依次进行分析。 1. 第一个握手包 {% asset_img tcp-shake-hands-1.png 第一个握手包" title="三次握手} 我们抓包依次进行分析。 1. 第一个握手包 {% asset_img tcp-shake-hands-1.png 第一个握手包">
-<p>  从这个包我们可以得到以下信息:</p>
+<p>   从这个包我们可以得到以下信息:</p>
 <ul>
 <li>Seq = 2988862522 这个是本报文段所发送的数据的第一个字节的序号</li>
 <li><p>DataOffset = 32（字节） 指明TCP报文段的数据起始处距离TCP报文段的起始处有多远</p>
@@ -127,7 +125,7 @@
 </ul>
 <ol>
 <li><p>第二个握手包</p>
-<img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-2.png" alt="第二个握手包} 在接收到客户端发来的握手包后，服务端进行应答，我们对这个包进行分析： - Seq = 1648068786 - Ack = 2988862523 表示服务端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 当ACK=1时确认号字段有效。 - SYN = 1 ACK=1且SYN=1表示这是一个同意建立连接的响应报文。 - Window = 63343（字节） 服务端的滑动窗口为63343字节。 - MaxSegmentSize = 1448（字节） 服务端的TCP报文中数据字段的最大长度为1448字节。 在前两次握手时，双方交换一些信息如`Window`和`MSS`，确定`seq`和`ack`起始号。 3. 第三个握手包 {% asset_img tcp-shake-hands-3.png 第三个握手包} 服务端接受请求后，客户端还需要在发送一个握手包。这个握手包明显信息更少了，同样我们查看一些关键值： - Seq = 2988862523 由于上一个握手包没有携带正文信息，不占用字节空间，所以Seq与上一个握手包的Ack值相同。 - Ack = 1648068787 同上，双方建立通信之后是会进行数据交换，同样的，这个地方表示客户端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 表示对上一个握手包的确认 - Window = 260（字节） TCP的发送窗口时会不断变化的，TCP的流量控制和拥塞控制会根据情况动态地调整发送窗口上限值，从而控制发送数据的平均速率。 自此三次握手完成，连接建立，可以开始传输数据。 - 建立HTTPS连接 以上完成握手，只能建立HTTP连接。但如果网站使用了HTTPS协议，那么还需要进行SSL/TLS握手。 在这之前，我们先介绍下SSL/TLS。 SSL/TLS是一种互联网安全加密技术。HTTP报文是进行明文传输的，这意味着用户的`cookie`或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用`HTTPS`协议是非常有必要的，并且目前最新的`HTTP2`规范也仅支持`HTTPS`。而SSL/TLS协议位于TCP/IP协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。 那么`SSL`和`TLS`又有什么区别呢？ 简单的说，`TLS`的建立在`SSL 3.0`协议规范之上的，是`SSL v3`的强化版，在整个协议格式上和`SSL`类似。`TLS`增强了加密算法，并带来了更严格的警报，在安全性方面有很多改进。 关于`HTTP`与`HTTPS`和`SSL`与`TLS`的具体差别自行搜索。 {% asset_img ssl-tls-protocol.png SSL/TLS Protocol" title="第二个握手包} 在接收到客户端发来的握手包后，服务端进行应答，我们对这个包进行分析： - Seq = 1648068786 - Ack = 2988862523 表示服务端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 当ACK=1时确认号字段有效。 - SYN = 1 ACK=1且SYN=1表示这是一个同意建立连接的响应报文。 - Window = 63343（字节） 服务端的滑动窗口为63343字节。 - MaxSegmentSize = 1448（字节） 服务端的TCP报文中数据字段的最大长度为1448字节。 在前两次握手时，双方交换一些信息如`Window`和`MSS`，确定`seq`和`ack`起始号。 3. 第三个握手包 {% asset_img tcp-shake-hands-3.png 第三个握手包} 服务端接受请求后，客户端还需要在发送一个握手包。这个握手包明显信息更少了，同样我们查看一些关键值： - Seq = 2988862523 由于上一个握手包没有携带正文信息，不占用字节空间，所以Seq与上一个握手包的Ack值相同。 - Ack = 1648068787 同上，双方建立通信之后是会进行数据交换，同样的，这个地方表示客户端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 表示对上一个握手包的确认 - Window = 260（字节） TCP的发送窗口时会不断变化的，TCP的流量控制和拥塞控制会根据情况动态地调整发送窗口上限值，从而控制发送数据的平均速率。 自此三次握手完成，连接建立，可以开始传输数据。 - 建立HTTPS连接 以上完成握手，只能建立HTTP连接。但如果网站使用了HTTPS协议，那么还需要进行SSL/TLS握手。 在这之前，我们先介绍下SSL/TLS。 SSL/TLS是一种互联网安全加密技术。HTTP报文是进行明文传输的，这意味着用户的`cookie`或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用`HTTPS`协议是非常有必要的，并且目前最新的`HTTP2`规范也仅支持`HTTPS`。而SSL/TLS协议位于TCP/IP协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。 那么`SSL`和`TLS`又有什么区别呢？ 简单的说，`TLS`的建立在`SSL 3.0`协议规范之上的，是`SSL v3`的强化版，在整个协议格式上和`SSL`类似。`TLS`增强了加密算法，并带来了更严格的警报，在安全性方面有很多改进。 关于`HTTP`与`HTTPS`和`SSL`与`TLS`的具体差别自行搜索。 {% asset_img ssl-tls-protocol.png SSL/TLS Protocol">
+<img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-2.png" alt="第二个握手包} 在接收到客户端发来的握手包后，服务端进行应答，我们对这个包进行分析： - Seq = 1648068786 - Ack = 2988862523 表示服务端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 当ACK=1时确认号字段有效。 - SYN = 1 ACK=1且SYN=1表示这是一个同意建立连接的响应报文。 - Window = 63343（字节） 服务端的滑动窗口为63343字节。 - MaxSegmentSize = 1448（字节） 服务端的TCP报文中数据字段的最大长度为1448字节。 在前两次握手时，双方交换一些信息如`Window`和`MSS`，确定`seq`和`ack`起始号。 3. 第三个握手包 {% asset_img tcp-shake-hands-3.png 第三个握手包} 服务端接受请求后，客户端还需要在发送一个握手包。这个握手包明显信息更少了，同样我们查看一些关键值： - Seq = 2988862523 由于上一个握手包没有携带正文信息，不占用字节空间，所以Seq与上一个握手包的Ack值相同。 - Ack = 1648068787 同上，双方建立通信之后是会进行数据交换，同样的，这个地方表示客户端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 表示对上一个握手包的确认 - Window = 260（字节） TCP的发送窗口时会不断变化的，TCP的流量控制和拥塞控制会根据情况动态地调整发送窗口上限值，从而控制发送数据的平均速率。 自此三次握手完成，连接建立，可以开始传输数据。 ## 建立HTTPS连接 以上完成握手，只能建立HTTP连接。但如果网站使用了HTTPS协议，那么还需要进行SSL/TLS握手。 在这之前，我们先介绍下SSL/TLS。 SSL/TLS是一种互联网安全加密技术。HTTP报文是进行明文传输的，这意味着用户的`cookie`或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用`HTTPS`协议是非常有必要的，并且目前最新的`HTTP2`规范也仅支持`HTTPS`。而SSL/TLS协议位于TCP/IP协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。 那么`SSL`和`TLS`又有什么区别呢？ 简单的说，`TLS`的建立在`SSL 3.0`协议规范之上的，是`SSL v3`的强化版，在整个协议格式上和`SSL`类似。`TLS`增强了加密算法，并带来了更严格的警报，在安全性方面有很多改进。 关于`HTTP`与`HTTPS`和`SSL`与`TLS`的具体差别自行搜索。 {% asset_img ssl-tls-protocol.png SSL/TLS Protocol" title="第二个握手包} 在接收到客户端发来的握手包后，服务端进行应答，我们对这个包进行分析： - Seq = 1648068786 - Ack = 2988862523 表示服务端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 当ACK=1时确认号字段有效。 - SYN = 1 ACK=1且SYN=1表示这是一个同意建立连接的响应报文。 - Window = 63343（字节） 服务端的滑动窗口为63343字节。 - MaxSegmentSize = 1448（字节） 服务端的TCP报文中数据字段的最大长度为1448字节。 在前两次握手时，双方交换一些信息如`Window`和`MSS`，确定`seq`和`ack`起始号。 3. 第三个握手包 {% asset_img tcp-shake-hands-3.png 第三个握手包} 服务端接受请求后，客户端还需要在发送一个握手包。这个握手包明显信息更少了，同样我们查看一些关键值： - Seq = 2988862523 由于上一个握手包没有携带正文信息，不占用字节空间，所以Seq与上一个握手包的Ack值相同。 - Ack = 1648068787 同上，双方建立通信之后是会进行数据交换，同样的，这个地方表示客户端期望收到对方的下一个报文段的第一个数据字节的序号。 - ACK = 1 表示对上一个握手包的确认 - Window = 260（字节） TCP的发送窗口时会不断变化的，TCP的流量控制和拥塞控制会根据情况动态地调整发送窗口上限值，从而控制发送数据的平均速率。 自此三次握手完成，连接建立，可以开始传输数据。 ## 建立HTTPS连接 以上完成握手，只能建立HTTP连接。但如果网站使用了HTTPS协议，那么还需要进行SSL/TLS握手。 在这之前，我们先介绍下SSL/TLS。 SSL/TLS是一种互联网安全加密技术。HTTP报文是进行明文传输的，这意味着用户的`cookie`或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用`HTTPS`协议是非常有必要的，并且目前最新的`HTTP2`规范也仅支持`HTTPS`。而SSL/TLS协议位于TCP/IP协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。 那么`SSL`和`TLS`又有什么区别呢？ 简单的说，`TLS`的建立在`SSL 3.0`协议规范之上的，是`SSL v3`的强化版，在整个协议格式上和`SSL`类似。`TLS`增强了加密算法，并带来了更严格的警报，在安全性方面有很多改进。 关于`HTTP`与`HTTPS`和`SSL`与`TLS`的具体差别自行搜索。 {% asset_img ssl-tls-protocol.png SSL/TLS Protocol">
 </li>
 </ol>
 <p>关于SSL/TLS协议这里不做详解，此处主要讲述TLS握手的建立过程和<code>HTTPS</code>安全的原因。</p>
@@ -162,24 +160,20 @@
 <p>至此，HTTPS连接已成功建立。</p>
 <p>现给出TCP三次握手和TLS握手的列表信息。</p>
 <img src="/2016/06/24/从输入URL到页面展示/handshake.png" alt="HandsShake" title="HandsShake">
-</li>
-<li><p>客户端请求网站信息</p>
-<p>…</p>
+<h2 id="客户端请求网站信息"><a href="#客户端请求网站信息" class="headerlink" title="客户端请求网站信息"></a>客户端请求网站信息</h2><p>…</p>
 <p>参考资料</p>
 <ul>
 <li><a href="https://technet.microsoft.com/en-us/library/cc775637(v=ws.10" target="_blank" rel="external">How DNS query works</a>.aspx)</li>
 </ul>
-</li>
-</ul>
-</li>
-</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/" data-id="ciptzyj9o0000wss634lcei40" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/" data-id="cipu06mer0001e4s67y8s9lfh" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DNS/">DNS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
+
     </footer>
   </div>
   
@@ -259,7 +253,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="ciptzyj9u0001wss6mvtlw3qo" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/" data-id="cipu06mem0000e4s6j1o1v59y" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
@@ -363,7 +357,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="ciptzyjaj0006wss602gl6p8r" class="article-share-link">Share</a>
+      <a data-url="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/" data-id="cipu06mfg000ce4s6jdskkjys" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gulp/">gulp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端/">前端</a></li></ul>
@@ -394,7 +388,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gulp/">gulp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端/">前端</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/">DNS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gulp/">gulp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端/">前端</a></li></ul>
     </div>
   </div>
 
@@ -404,7 +398,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Angular/" style="font-size: 20px;">Angular</a> <a href="/tags/gulp/" style="font-size: 10px;">gulp</a> <a href="/tags/前端/" style="font-size: 20px;">前端</a>
+      <a href="/tags/Angular/" style="font-size: 20px;">Angular</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/gulp/" style="font-size: 10px;">gulp</a> <a href="/tags/前端/" style="font-size: 20px;">前端</a>
     </div>
   </div>
 
