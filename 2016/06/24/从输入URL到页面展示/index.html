@@ -107,6 +107,10 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tcp-shake-hands-3.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/ssl-tls-protocol.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake.jpg">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-1.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-2.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-3.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-4.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/handshake.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/request-1.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/php-fpm.jpg">
@@ -114,7 +118,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/html-parse.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/render-tree-construction.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/webkitflow.png">
-<meta property="og:updated_time" content="2016-06-25T08:09:13.344Z">
+<meta property="og:updated_time" content="2016-06-25T08:18:48.058Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从输入URL到页面展示">
 <meta name="twitter:description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
@@ -350,27 +354,27 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
       
 
       
-        <p>本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
-<h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p>DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。</p>
+        <p>本文主要是大概说明本人对从浏览器输入<code>URL</code>到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
+<h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p><code>DNS</code>缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，<code>ISP</code>缓存。</p>
 <ul>
-<li><p>浏览器首先会查看自身是否已经有进行DNS缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度，但缓存时间不会太长。</p>
+<li><p>浏览器首先会查看自身是否已经有进行<code>DNS</code>缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的<code>DNS</code>，浏览器的<code>DNS</code>缓存可以加快<code>DNS</code>解析速度，但缓存时间不会太长。</p>
 <img src="/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png" alt="Chrome的DNS缓存" title="Chrome的DNS缓存">
 </li>
 <li><p>如果浏览器没有相应的缓存，则查找系统缓存，浏览器会向系统发送一个查询请求，如果系统存在缓存或者设置了<code>host</code>，则返回相应的<code>ip</code>地址给浏览器。</p>
 </li>
-<li><p>如果系统没有缓存，那么它会发出一个DNS查询请求给路由器。</p>
-<p>如果路由器有DNS缓存，他会提取出IP地址返回。否则，他会向本地域名服务器发出查询，从请求主机到本地域名服务器的请求一般是递归查询，而其他的查询一般是迭代查询。</p>
+<li><p>如果系统没有缓存，那么它会发出一个<code>DNS</code>查询请求给路由器。</p>
+<p>如果路由器有<code>DNS</code>缓存，他会提取出<code>IP</code>地址返回。否则，他会向本地域名服务器发出查询，从请求主机到本地域名服务器的请求一般是递归查询，而其他的查询一般是迭代查询。</p>
 <img src="/2016/06/24/从输入URL到页面展示/client-to-server-query.gif" alt="DNS请求主机到本地域名服务器的查询" title="DNS请求主机到本地域名服务器的查询">
 <img src="/2016/06/24/从输入URL到页面展示/server-to-server-query.gif" alt="DNS域名服务器之间的查询" title="DNS域名服务器之间的查询">
 <p>请求报文如下</p>
 <img src="/2016/06/24/从输入URL到页面展示/dns-request-1.png" alt="DNS请求报文" title="DNS请求报文">
 <p>我们先简单分析下请求报文。</p>
 <ol>
-<li>DNS使用UDP协议，端口号53。</li>
-<li>在DNS报文的<code>Flags</code>中的<code>RD=1</code>。表示它建议域名服务器以递归方式查询。</li>
+<li><code>DNS</code>使用<code>UDP</code>协议，端口号53。</li>
+<li>在<code>DNS</code>报文的<code>Flags</code>中的<code>RD=1</code>。表示它建议域名服务器以递归方式查询。</li>
 <li><code>Question section format</code>需要给出<code>QNAME</code>, <code>QTYPE</code>, <code>QCLASS</code>。即查询的域名，查询的类型以及查询的类。</li>
 </ol>
-<p>有关DNS报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035" target="_blank" rel="external">RFC1035</a></p>
+<p>有关<code>DNS</code>报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035" target="_blank" rel="external">RFC1035</a></p>
 <p>响应报文如下</p>
 <img src="/2016/06/24/从输入URL到页面展示/dns-response-1.png" alt="DNS响应报文" title="DNS响应报文">
 <p>我们也简单分析下，如果想详细了解，可以查看上面的<code>RFC1035</code>标准。</p>
@@ -382,8 +386,8 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 </ol>
 </li>
 </ul>
-<h2 id="三次握手建立连接"><a href="#三次握手建立连接" class="headerlink" title="三次握手建立连接"></a>三次握手建立连接</h2><p>经过上述过程，此时浏览器得到了要访问的域名的IP地址。由于DNS查询需要一定时间，所以有些网站会使用<code>DNS Prefetching</code>进行DNS预解析，结合浏览器的DNS缓存，以加快网站速度。这里不做详细叙述。</p>
-<p>首先贴出TCP三次握手的建立图。</p>
+<h2 id="三次握手建立连接"><a href="#三次握手建立连接" class="headerlink" title="三次握手建立连接"></a>三次握手建立连接</h2><p>经过上述过程，此时浏览器得到了要访问的域名的IP地址。由于<code>DNS</code>查询需要一定时间，所以有些网站会使用<code>DNS Prefetching</code>进行<code>DNS</code>预解析，结合浏览器的<code>DNS</code>缓存，以加快网站速度。这里不做详细叙述。</p>
+<p>首先贴出<code>TCP</code>三次握手的建立图。</p>
 <img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands.jpg" alt="三次握手" title="三次握手">
 <p>我们抓包依次进行分析。</p>
 <ol>
@@ -391,14 +395,14 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-1.png" alt="第一个握手包" title="第一个握手包">
 <p>从这个包我们可以得到以下信息:</p>
 <ul>
-<li>Seq = 2988862522 这个是本报文段所发送的数据的第一个字节的序号</li>
-<li><p>DataOffset = 32（字节） 指明TCP报文段的数据起始处距离TCP报文段的起始处有多远</p>
+<li><code>Seq</code> = 2988862522 这个是本报文段所发送的数据的第一个字节的序号</li>
+<li><p><code>DataOffset</code> = 32（字节） 指明<code>TCP</code>报文段的数据起始处距离<code>TCP</code>报文段的起始处有多远</p>
 </li>
-<li><p>SYN = 1 SYN=1而ACK=0时表示这是一个连接请求报文。</p>
+<li><p><code>SYN</code> = 1 <code>SYN</code>=1而<code>ACK</code>=0时表示这是一个连接请求报文。</p>
 </li>
-<li>Window = 8192（字节） 客户端滑动窗口8192字节，滑动窗口协议是设计来提高报文段的传输效率，这里不详细叙述，可以自己查资料。</li>
-<li>Checksum=0x5818 校验和，校验和字段校验的范围包括首部和数据这两个部分，在计算校验和时，要在TCP报文段的前面加上12字节的伪首部。接收方接收到此报文段后，加上这个伪首部来计算校验和。校验和是用来保证数据的无差错。</li>
-<li>MaxSegmentSize = 1460（字节） 即MSS，表示TCP报文段中数据字段的最大长度。注意它加上TCP首部才等于整个的TCP报文。有关MSS的信息自己查资料。</li>
+<li><code>Window</code> = 8192（字节） 客户端滑动窗口8192字节，滑动窗口协议是设计来提高报文段的传输效率，这里不详细叙述，可以自己查资料。</li>
+<li><code>Checksum</code>=0x5818 校验和，校验和字段校验的范围包括首部和数据这两个部分，在计算校验和时，要在<code>TCP</code>报文段的前面加上12字节的伪首部。接收方接收到此报文段后，加上这个伪首部来计算校验和。校验和是用来保证数据的无差错。</li>
+<li><code>MaxSegmentSize</code> = 1460（字节） 即<code>MSS</code>，表示<code>TCP</code>报文段中数据字段的最大长度。注意它加上<code>TCP</code>首部才等于整个的<code>TCP</code>报文。有关<code>MSS</code>的信息自己查资料。</li>
 </ul>
 <p>比较重要的就是上述信息，客户端需要在第一次发包时要告知自身的一些信息。</p>
 </li>
@@ -406,12 +410,12 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-2.png" alt="第二个握手包" title="第二个握手包">
 <p>在接收到客户端发来的握手包后，服务端进行应答，我们对这个包进行分析：</p>
 <ul>
-<li>Seq = 1648068786</li>
-<li>Ack = 2988862523 表示服务端期望收到对方的下一个报文段的第一个数据字节的序号。</li>
-<li>ACK = 1 当ACK=1时确认号字段有效。</li>
-<li>SYN = 1 ACK=1且SYN=1表示这是一个同意建立连接的响应报文。</li>
-<li>Window = 63343（字节） 服务端的滑动窗口为63343字节。</li>
-<li>MaxSegmentSize = 1448（字节） 服务端的TCP报文中数据字段的最大长度为1448字节。</li>
+<li><code>Seq</code> = 1648068786</li>
+<li><code>Ack</code> = 2988862523 表示服务端期望收到对方的下一个报文段的第一个数据字节的序号。</li>
+<li><code>ACK</code> = 1 当ACK=1时确认号字段有效。</li>
+<li><code>SYN</code> = 1 ACK=1且SYN=1表示这是一个同意建立连接的响应报文。</li>
+<li><code>Window</code> = 63343（字节） 服务端的滑动窗口为63343字节。</li>
+<li><code>MaxSegmentSize</code> = 1448（字节） 服务端的TCP报文中数据字段的最大长度为1448字节。</li>
 </ul>
 <p>在前两次握手时，双方交换一些信息如<code>Window</code>和<code>MSS</code>，确定<code>seq</code>和<code>ack</code>起始号。</p>
 </li>
@@ -419,61 +423,52 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-3.png" alt="第三个握手包" title="第三个握手包">
 <p>服务端接受请求后，客户端还需要在发送一个握手包。这个握手包明显信息更少了，同样我们查看一些关键值：</p>
 <ul>
-<li>Seq = 2988862523 由于上一个握手包没有携带正文信息，不占用字节空间，所以Seq与上一个握手包的Ack值相同。</li>
-<li>Ack = 1648068787 同上，双方建立通信之后是会进行数据交换，同样的，这个地方表示客户端期望收到对方的下一个报文段的第一个数据字节的序号。</li>
-<li>ACK = 1 表示对上一个握手包的确认</li>
-<li>Window = 260（字节） TCP的发送窗口时会不断变化的，TCP的流量控制和拥塞控制会根据情况动态地调整发送窗口上限值，从而控制发送数据的平均速率。</li>
+<li><code>Seq</code> = 2988862523 由于上一个握手包没有携带正文信息，不占用字节空间，所以<code>Seq</code>与上一个握手包的<code>Ack</code>值相同。</li>
+<li><code>Ack</code> = 1648068787 同上，双方建立通信之后是会进行数据交换，同样的，这个地方表示客户端期望收到对方的下一个报文段的第一个数据字节的序号。</li>
+<li><code>ACK</code> = 1 表示对上一个握手包的确认</li>
+<li><code>Window</code> = 260（字节） <code>TCP</code>的发送窗口时会不断变化的，<code>TCP</code>的流量控制和拥塞控制会根据情况动态地调整发送窗口上限值，从而控制发送数据的平均速率。</li>
 </ul>
 </li>
 </ol>
 <p>自此三次握手完成，连接建立，可以开始传输数据。</p>
-<h2 id="建立HTTPS连接"><a href="#建立HTTPS连接" class="headerlink" title="建立HTTPS连接"></a>建立HTTPS连接</h2><p>以上完成握手，只能建立HTTP连接。但如果网站使用了HTTPS协议，那么还需要进行SSL/TLS握手。</p>
-<p>在这之前，我们先介绍下SSL/TLS。</p>
-<p>SSL/TLS是一种互联网安全加密技术。HTTP报文是进行明文传输的，这意味着用户的<code>cookie</code>或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用<code>HTTPS</code>协议是非常有必要的，并且目前最新的<code>HTTP2</code>规范也仅支持<code>HTTPS</code>。而SSL/TLS协议位于TCP/IP协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。</p>
+<h2 id="建立HTTPS连接"><a href="#建立HTTPS连接" class="headerlink" title="建立HTTPS连接"></a>建立HTTPS连接</h2><p>以上完成握手，只能建立<code>HTTP</code>连接。但如果网站使用了<code>HTTPS</code>协议，那么还需要进行<code>SSL/TLS</code>握手。</p>
+<p>在这之前，我们先介绍下<code>SSL/TLS</code>。</p>
+<p><code>SSL/TLS</code>是一种互联网安全加密技术。<code>HTTP</code>报文是进行明文传输的，这意味着用户的<code>cookie</code>或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用<code>HTTPS</code>协议是非常有必要的，并且目前最新的<code>HTTP2</code>规范也仅支持<code>HTTPS</code>。而<code>SSL/TLS</code>协议位于<code>TCP/IP</code>协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。</p>
 <p>那么<code>SSL</code>和<code>TLS</code>又有什么区别呢？</p>
 <p>简单的说，<code>TLS</code>的建立在<code>SSL 3.0</code>协议规范之上的，是<code>SSL v3</code>的强化版，在整个协议格式上和<code>SSL</code>类似。<code>TLS</code>增强了加密算法，并带来了更严格的警报，在安全性方面有很多改进。</p>
 <p>关于<code>HTTP</code>与<code>HTTPS</code>和<code>SSL</code>与<code>TLS</code>的具体差别自行搜索。</p>
 <img src="/2016/06/24/从输入URL到页面展示/ssl-tls-protocol.png" alt="SSL/TLS Protocol" title="SSL/TLS Protocol">
-<p>关于SSL/TLS协议这里不做详解，此处主要讲述TLS握手的建立过程和<code>HTTPS</code>安全的原因。</p>
-<p>我们来看看TLS握手的大致过程，这里不再详细叙述每个握手包</p>
+<p>关于<code>SSL/TLS</code>协议这里不做详解，此处主要讲述<code>TLS</code>握手的建立过程和<code>HTTPS</code>安全的原因。</p>
+<p>我们来看看<code>TLS</code>握手的大致过程，这里不再详细叙述每个握手包</p>
 <img src="/2016/06/24/从输入URL到页面展示/tls-handshake.jpg" alt="TLS-handshake" title="TLS-handshake">
 <ul>
 <li><p>Client Hello</p>
-<pre><code>{% asset_img tls-handshake-1.png TLS-handshake-1 %}
-
-可以看到TCP报文的`Push`为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。
-
-这是一个TLS握手包，我们可以看到`HandShakeType`为`ClientHello`，对应TLS握手图的第一部。
-
-同时，该过程浏览器还发送了自己支持的一套加密规则。
-</code></pre></li>
+<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-1.png" alt="TLS-handshake-1" title="TLS-handshake-1">
+<p>可以看到<code>TCP</code>报文的<code>Push</code>为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。</p>
+<p>这是一个<code>TLS</code>握手包，我们可以看到<code>HandShakeType</code>为<code>ClientHello</code>，对应<code>TLS</code>握手图的第一步。</p>
+<p> 同时，该过程浏览器还发送了自己支持的一套加密规则。</p>
+</li>
 <li><p>Server Hello</p>
-<pre><code>服务端接受到上述报文后，会发送TCP报文进行确认。报文如下
-
-{% asset_img tls-handshake-2.png TLS-handshake-2 %}
-
-服务端发出ACK包的同时，发送TLS报文，此时`HandShakeType`为`ServerHello`，对应TLS握手图的第二步
-
-{% asset_img tls-handshake-3.png TLS-handshake-3 %}
-
-接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。
-
-{% asset_img tls-handshake-4.png TLS-handshake-4 %}
-</code></pre></li>
+<p>服务端接受到上述报文后，会发送<code>TCP</code>报文进行确认。报文如下</p>
+<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-2.png" alt="TLS-handshake-2" title="TLS-handshake-2">
+<p>服务端发出<code>ACK</code>包的同时，发送<code>TLS</code>报文，此时<code>HandShakeType</code>为<code>ServerHello</code>，对应<code>TLS</code>握手图的第二步。</p>
+<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-3.png" alt="TLS-handshake-3" title="TLS-handshake-3">
+<p>接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和<code>HASH</code>算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送<code>ACK</code>确认报文进行确认，注意这个报文和上面的<code>ACK</code>报文一样不占用空间，只是进行确认而已。</p>
+<img src="/2016/06/24/从输入URL到页面展示/tls-handshake-4.png" alt="TLS-handshake-4" title="TLS-handshake-4">
+</li>
 <li><p>Client Key Exchange</p>
-<pre><code>浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。
-</code></pre></li>
+<p>浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的<code>HASH</code>算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。</p>
+</li>
 <li><p>Cipher Change Spec</p>
-<pre><code>服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。
-
-接着使用这个密码来加密一段握手信息，发给客户端即浏览器。
-</code></pre></li>
+<p>服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。</p>
+<p>接着使用这个密码来加密一段握手信息，发给客户端即浏览器。</p>
+</li>
 <li><p>Finish</p>
-<pre><code>客户端用密码对加密握手包进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。
-</code></pre></li>
+<p>客户端用密码对加密握手包进行解密（注意此时已经变为对称加密），同时计算<code>HASH</code>值，若<code>HASH</code>值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。</p>
+</li>
 </ul>
-<p>至此，HTTPS连接已成功建立。由于浏览器会对证书进行校验，由证书授权机构保证其有效性，可以保证证书不被篡改。同时浏览器方面生成的随机数密码，一开始只有浏览器知道，而这个密码用公钥加密之后，只有私钥能解开，公钥也无法解开，这是非对称加密。服务器接收到该数据包后解开得到该密码，双方就可以使用该密码通过对称加密传输数据了。</p>
-<p>现给出TCP三次握手和TLS握手的列表信息。</p>
+<p>至此，<code>HTTPS</code>连接已成功建立。由于浏览器会对证书进行校验，由证书授权机构保证其有效性，可以保证证书不被篡改。同时浏览器方面生成的随机数密码，一开始只有浏览器知道，而这个密码用公钥加密之后，只有私钥能解开，公钥也无法解开，这是非对称加密。服务器接收到该数据包后解开得到该密码，双方就可以使用该密码通过对称加密传输数据了。</p>
+<p>现给出<code>TCP</code>三次握手和<code>TLS</code>握手的列表信息。</p>
 <img src="/2016/06/24/从输入URL到页面展示/handshake.png" alt="HandsShake" title="HandsShake">
 <p>这之后双方都是用<code>TLS</code>来传输数据，但不带数据的<code>ACK</code>确认包不进行加密，仍然使用<code>TCP</code>协议来传输。</p>
 <p>需要明确的是，<code>TLS</code>协议还是建立在<code>TCP</code>协议之上的，此处为便于说明将两者区分对待。即<code>TCP</code>协议是不进行加密的，<code>TLS</code>是进行加密的<code>TCP</code>协议。</p>
@@ -481,9 +476,9 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <li><p>如果访问的是网站的主页，那么此时会发送一个请求给服务器，如下：</p>
 <img src="/2016/06/24/从输入URL到页面展示/request-1.png" alt="request-package" title="request-package">
 <p><code>HTTP</code>里面附带了<code>URI</code>, <code>ProtocolVersion</code>, <code>Host</code>, <code>Connection</code>以及<code>Cookie</code>等很多信息。</p>
-<p>这里不讨论301转移之类的，只讨论正常访问的情况。</p>
+<p>这里只讨论正常访问的情况。</p>
 </li>
-<li><p>服务端接收到该请求后，验证无误后，首先发送ACK报文进行确认。接着对该请求进行处理，如果是静态页面则直接返回。但大多数时候服务端都需要动态生成一个新的页面再返回该页面。这里讨论下<code>php</code>的处理。</p>
+<li><p>服务端接收到该请求后，验证无误后，首先发送<code>ACK</code>报文进行确认。接着对该请求进行处理，如果是静态页面则直接返回。但大多数时候服务端都需要动态生成一个新的页面再返回该页面。这里讨论下<code>php</code>的处理。</p>
 <p>假设我们这时候访问的是<code>index.php</code>这个页面，服务器例如<code>Nginx</code>知道这个不是静态文件，它回去寻找<code>PHP</code>解析器去做处理，这依靠的就是<code>CGI</code>来实现。</p>
 <p>下面介绍几个概念，即<code>CGI</code>, <code>PHP-CGI</code>, <code>FastCGI</code>, <code>PHP-FPM</code>。</p>
 <ul>
@@ -497,7 +492,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <li><p>FastCGI</p>
 <p><code>FastCGI</code>全称是“快速通用网关接口”（Fast Common Gateway Interface / FastCGI）是一种让交互程序与Web服务器通信的协议。它是<code>CGI</code>的增强版本。</p>
 <p><code>CGI</code>程序运行在独立的进程中，并对每一个请求建立一个进程，每个建立都要经过解析配置文件和初始化执行环境。这种方法易于实现，但效率很差，难以面对大量请求。</p>
-<p><code>FastCGI</code>使用持续的进程来处理一连串的请求。这些进程由<code>FastCGI</code>服务器管理，而不是Web服务器。它是一个常驻型的<code>CGI</code>(master)，只要激活后就不需要重新去解析<code>php.ini</code>和初始化，提高了效率。他在自身初始化后会启动多个CGI解析器(worker)，当有请求过来时，他会交给其中一个worker去处理。同时，它还可以动态调整<code>worker</code>的数量。</p>
+<p><code>FastCGI</code>使用持续的进程来处理一连串的请求。这些进程由<code>FastCGI</code>服务器管理，而不是Web服务器。它是一个常驻型的<code>CGI</code>(<code>master</code>)，只要激活后就不需要重新去解析<code>php.ini</code>和初始化，提高了效率。他在自身初始化后会启动多个CGI解析器(<code>worker</code>)，当有请求过来时，他会交给其中一个<code>worker</code>去处理。同时，它还可以动态调整<code>worker</code>的数量。</p>
 </li>
 <li><p>PHP-FPM</p>
 <p><code>PHP-FPM</code>是一个<code>PHP FastCGI</code>管理器，从<code>PHP 5.3.3</code>开始已经继承了<code>PHP-FPM</code>，在编译安装时可以通过<code>-enable-fpm</code>参数开启。</p>
@@ -505,12 +500,12 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 </li>
 </ul>
 <p>所以浏览器如果请求<code>/index.html</code>那么Web服务器会直接把这个静态页面返回，如果是请求<code>/index.php</code>，则交由<code>PHP-FPM</code>进行处理，<code>PHP-FPM</code>处理后再把结果返回给Web服务器，由Web服务器发给浏览器。</p>
-<p>我们来看看相应报文</p>
+<p>我们来看看响应报文</p>
 <img src="/2016/06/24/从输入URL到页面展示/response-1.png" alt="response-1" title="response-1">
-<p>可以看到除了对浏览器请求的ACK确认包之外，服务端发回了10个包。第一个报文里面有<code>StatusCode</code>, <code>Etag</code>, <code>ContentEncoding</code>等信息。这里面涉及到不少网站优化的技巧，我们将在下一篇中再讨论。这里大概了解下就可以了。</p>
+<p>可以看到除了对浏览器请求的<code>ACK</code>确认包之外，服务端发回了10个包。第一个报文里面有<code>StatusCode</code>, <code>Etag</code>, <code>ContentEncoding</code>等信息。这里面涉及到不少网站优化的技巧，我们将在下一篇中再讨论。这里大概了解下就可以了。</p>
 <p>接下来的9个报文都是跟着第1个报文一起过来的。最后一个报文设置了<code>PUSH</code>标志，因为报文已经传输完毕，所以它请求浏览器客户端尽快交付。</p>
-<p>接着客户端会发送ACK确认报文，之所以这里客户端对最后一个报文进行了确认，是因为<code>TCP Delayed Ack</code>的原因，它是为了避免多次发送ACK确认报文而设置的延时，一般为<code>40ms</code>，也就是说如果接收到一个报文<code>40ms</code>后没有接收到第二个报文，他就会对这个报文进行确认。</p>
-<p>服务器发送完全部数据后，最后再发送一个报文，即图中的#191报文，表示我已经发完。客户端相应的发出ACK确认报文。主页请求结束。</p>
+<p>接着客户端会发送<code>ACK</code>确认报文，之所以这里客户端对最后一个报文进行了确认，是因为<code>TCP Delayed Ack</code>的原因，它是为了避免多次发送<code>ACK</code>确认报文而设置的延时，一般为<code>40ms</code>，也就是说如果接收到一个报文<code>40ms</code>后没有接收到第二个报文，他就会对这个报文进行确认。</p>
+<p>服务器发送完全部数据后，最后再发送一个报文，即图中的#191报文，表示我已经发完。客户端相应的发出<code>ACK</code>确认报文。主页请求结束。</p>
 </li>
 </ol>
 <h2 id="浏览器渲染"><a href="#浏览器渲染" class="headerlink" title="浏览器渲染"></a>浏览器渲染</h2><p>浏览器接收到<code>index.html</code>后，开始浏览器渲染，这里讨论<code>webkit</code>内核，其他内核不予讨论。主要分为四步进行。如下图:</p>

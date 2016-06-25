@@ -327,27 +327,27 @@
 
       
         
-          <p>本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
-<h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p>DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。</p>
+          <p>本文主要是大概说明本人对从浏览器输入<code>URL</code>到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
+<h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p><code>DNS</code>缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，<code>ISP</code>缓存。</p>
 <ul>
-<li><p>浏览器首先会查看自身是否已经有进行DNS缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度，但缓存时间不会太长。</p>
+<li><p>浏览器首先会查看自身是否已经有进行<code>DNS</code>缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的<code>DNS</code>，浏览器的<code>DNS</code>缓存可以加快<code>DNS</code>解析速度，但缓存时间不会太长。</p>
 <img src="/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png" alt="Chrome的DNS缓存" title="Chrome的DNS缓存">
 </li>
 <li><p>如果浏览器没有相应的缓存，则查找系统缓存，浏览器会向系统发送一个查询请求，如果系统存在缓存或者设置了<code>host</code>，则返回相应的<code>ip</code>地址给浏览器。</p>
 </li>
-<li><p>如果系统没有缓存，那么它会发出一个DNS查询请求给路由器。</p>
-<p>如果路由器有DNS缓存，他会提取出IP地址返回。否则，他会向本地域名服务器发出查询，从请求主机到本地域名服务器的请求一般是递归查询，而其他的查询一般是迭代查询。</p>
+<li><p>如果系统没有缓存，那么它会发出一个<code>DNS</code>查询请求给路由器。</p>
+<p>如果路由器有<code>DNS</code>缓存，他会提取出<code>IP</code>地址返回。否则，他会向本地域名服务器发出查询，从请求主机到本地域名服务器的请求一般是递归查询，而其他的查询一般是迭代查询。</p>
 <img src="/2016/06/24/从输入URL到页面展示/client-to-server-query.gif" alt="DNS请求主机到本地域名服务器的查询" title="DNS请求主机到本地域名服务器的查询">
 <img src="/2016/06/24/从输入URL到页面展示/server-to-server-query.gif" alt="DNS域名服务器之间的查询" title="DNS域名服务器之间的查询">
 <p>请求报文如下</p>
 <img src="/2016/06/24/从输入URL到页面展示/dns-request-1.png" alt="DNS请求报文" title="DNS请求报文">
 <p>我们先简单分析下请求报文。</p>
 <ol>
-<li>DNS使用UDP协议，端口号53。</li>
-<li>在DNS报文的<code>Flags</code>中的<code>RD=1</code>。表示它建议域名服务器以递归方式查询。</li>
+<li><code>DNS</code>使用<code>UDP</code>协议，端口号53。</li>
+<li>在<code>DNS</code>报文的<code>Flags</code>中的<code>RD=1</code>。表示它建议域名服务器以递归方式查询。</li>
 <li><code>Question section format</code>需要给出<code>QNAME</code>, <code>QTYPE</code>, <code>QCLASS</code>。即查询的域名，查询的类型以及查询的类。</li>
 </ol>
-<p>有关DNS报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035">RFC1035</a></p>
+<p>有关<code>DNS</code>报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035">RFC1035</a></p>
 <p>响应报文如下</p>
 <img src="/2016/06/24/从输入URL到页面展示/dns-response-1.png" alt="DNS响应报文" title="DNS响应报文">
 <p>我们也简单分析下，如果想详细了解，可以查看上面的<code>RFC1035</code>标准。</p>
