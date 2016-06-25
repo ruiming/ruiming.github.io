@@ -92,7 +92,7 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="这学期基本都是在学习和使用Angular，这篇文章主要是想介绍几个Angular需要注意或者了解的地方。
 Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条件满足的时候才会创建DOM，一个是只有在条件满足的时候才会显示DOM也就是一开始也会跟着创建。但是你可能不知道，ng-if会产生新的作用域，ng-repeat和ng-switch和ng-include也是如此。">
-<meta property="og:updated_time" content="2016-06-18T14:44:43.715Z">
+<meta property="og:updated_time" content="2016-06-25T03:22:41.281Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Angular学习总结">
 <meta name="twitter:description" content="这学期基本都是在学习和使用Angular，这篇文章主要是想介绍几个Angular需要注意或者了解的地方。
@@ -322,6 +322,7 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
 <p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later, <code>ngRepeat</code> will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier, <code>track by $index</code> can also provide a performance boost.</p>
 </blockquote>
 <h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​    <code>Angular</code>拦截器是<code>Angular</code>的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
+<a id="more"></a>
 <ul>
 <li><p>判断请求是否成功</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$httpProvider.defaults.transformResponse.push((response) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span>(response.data) != <span class="literal">undefined</span> &amp;&amp; response.status == <span class="string">'success'</span>) &#123;</span><br><span class="line">  	response = response.data;</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(response.status == <span class="string">'error'</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Err: "</span> + response.message);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> response;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>

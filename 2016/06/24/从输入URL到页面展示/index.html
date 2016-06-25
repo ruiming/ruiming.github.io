@@ -112,7 +112,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-3.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-4.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/handshake.png">
-<meta property="og:updated_time" content="2016-06-24T17:26:56.447Z">
+<meta property="og:updated_time" content="2016-06-25T03:22:59.655Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从输入URL到页面展示">
 <meta name="twitter:description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
@@ -343,9 +343,10 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <p>响应报文如下</p>
 <img src="/2016/06/24/从输入URL到页面展示/dns-response-1.png" alt="DNS响应报文" title="DNS响应报文">
 <p>我们也简单分析下，如果想详细了解，可以查看上面的<code>RFC1035</code>标准。</p>
+<a id="more"></a>
 <ol>
 <li>与请求报文相比，对比<code>Flags</code>可以发现，<code>QR=1</code>表示这是一个响应报文。<code>RA=1</code>表示递归查询可用。</li>
-<li><code>ARecord</code>记录了DNS请求获得的一个或多个IP地址。</li>
+<li><code>ARecord</code>记录了DNS请求获得的一个或多个IP地址。一般还会得到<code>CNAME</code>记录和存活时间等信息。</li>
 <li>这里对<code>Rcode</code>也稍加说明下，<code>Rcode=0</code>表示成功，他还有好几种状态码，比如1表示<code>Format error</code>，2表示<code>Server failure</code>，3表示<code>Name error</code>，4表示<code>Not lmplemented</code>，5表示<code>Refused</code>，具体信息可以参考<code>RFC1035</code>。</li>
 </ol>
 </li>
@@ -407,33 +408,35 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <img src="/2016/06/24/从输入URL到页面展示/tls-handshake.jpg" alt="TLS-handshake" title="TLS-handshake">
 <ul>
 <li><p>Client Hello</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-1.png" alt="TLS-handshake-1" title="TLS-handshake-1">
-<p>  可以看到TCP报文的<code>Push</code>为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。</p>
-<p>  这是一个TLS握手包，我们可以看到<code>HandShakeType</code>为<code>ClientHello</code>，对应TLS握手图的第一部。</p>
-<p>  同时，该过程浏览器还发送了自己支持的一套加密规则。</p>
+   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-1.png" alt="TLS-handshake-1" title="TLS-handshake-1">
+<p>   可以看到TCP报文的<code>Push</code>为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。</p>
+<p>   这是一个TLS握手包，我们可以看到<code>HandShakeType</code>为<code>ClientHello</code>，对应TLS握手图的第一部。</p>
+<p>   同时，该过程浏览器还发送了自己支持的一套加密规则。</p>
 </li>
 <li><p>Server Hello</p>
-<p>  服务端接受到上述报文后，会发送TCP报文进行确认。报文如下</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-2.png" alt="TLS-handshake-2" title="TLS-handshake-2">
-<p>  服务端发出ACK包的同时，发送TLS报文，此时<code>HandShakeType</code>为<code>ServerHello</code>，对应TLS握手图的第二步</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-3.png" alt="TLS-handshake-3" title="TLS-handshake-3">
-<p>  接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-4.png" alt="TLS-handshake-4" title="TLS-handshake-4">
+<p>   服务端接受到上述报文后，会发送TCP报文进行确认。报文如下</p>
+   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-2.png" alt="TLS-handshake-2" title="TLS-handshake-2">
+<p>   服务端发出ACK包的同时，发送TLS报文，此时<code>HandShakeType</code>为<code>ServerHello</code>，对应TLS握手图的第二步</p>
+   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-3.png" alt="TLS-handshake-3" title="TLS-handshake-3">
+<p>   接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。</p>
+   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-4.png" alt="TLS-handshake-4" title="TLS-handshake-4">
 </li>
 <li><p>Client Key Exchange</p>
-<p>  浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。</p>
+<p>   浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。</p>
 </li>
 <li><p>Cipher Change Spec</p>
-<p>  服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。</p>
-<p>  接着使用这个密码来加密一段握手信息，发给客户端即浏览器。</p>
+<p>   服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。</p>
+<p>   接着使用这个密码来加密一段握手信息，发给客户端即浏览器。</p>
 </li>
 <li><p>Finish</p>
-<p>  客户端用密码进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。</p>
+<p>   客户端用密码对加密握手包进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。</p>
 </li>
 </ul>
-<p>至此，HTTPS连接已成功建立。</p>
+<p>至此，HTTPS连接已成功建立。由于浏览器会对证书进行校验，由证书授权机构保证其有效性，可以保证证书不被篡改。同时浏览器方面生成的随机数密码，一开始只有浏览器知道，而这个密码用公钥加密之后，只有私钥能解开，公钥也无法解开，这是非对称加密。服务器接收到该数据包后解开得到该密码，双方就可以使用该密码通过对称加密传输数据了。</p>
 <p>现给出TCP三次握手和TLS握手的列表信息。</p>
 <img src="/2016/06/24/从输入URL到页面展示/handshake.png" alt="HandsShake" title="HandsShake">
+<p>这之后双方都是用<code>TLS</code>来传输数据，但不带数据的<code>ACK</code>确认包不进行加密，仍然使用<code>TCP</code>协议来传输。</p>
+<p>需要明确的是，<code>TLS</code>协议还是建立在<code>TCP</code>协议之上的，此处为便于说明将两者区分对待。即<code>TCP</code>协议是不进行加密的，<code>TLS</code>是进行加密的<code>TCP</code>协议。</p>
 <h2 id="客户端请求网站信息"><a href="#客户端请求网站信息" class="headerlink" title="客户端请求网站信息"></a>客户端请求网站信息</h2><p>…</p>
 <p>参考资料</p>
 <ul>

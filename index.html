@@ -298,8 +298,7 @@
 
       
         
-          
-            <p>本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
+          <p>本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
 <h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p>DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。</p>
 <ul>
 <li><p>浏览器首先会查看自身是否已经有进行DNS缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度，但缓存时间不会太长。</p>
@@ -319,108 +318,15 @@
 <li>在DNS报文的<code>Flags</code>中的<code>RD=1</code>。表示它建议域名服务器以递归方式查询。</li>
 <li><code>Question section format</code>需要给出<code>QNAME</code>, <code>QTYPE</code>, <code>QCLASS</code>。即查询的域名，查询的类型以及查询的类。</li>
 </ol>
-<p>有关DNS报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035" target="_blank" rel="external">RFC1035</a></p>
+<p>有关DNS报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035">RFC1035</a></p>
 <p>响应报文如下</p>
 <img src="/2016/06/24/从输入URL到页面展示/dns-response-1.png" alt="DNS响应报文" title="DNS响应报文">
 <p>我们也简单分析下，如果想详细了解，可以查看上面的<code>RFC1035</code>标准。</p>
-<ol>
-<li>与请求报文相比，对比<code>Flags</code>可以发现，<code>QR=1</code>表示这是一个响应报文。<code>RA=1</code>表示递归查询可用。</li>
-<li><code>ARecord</code>记录了DNS请求获得的一个或多个IP地址。</li>
-<li>这里对<code>Rcode</code>也稍加说明下，<code>Rcode=0</code>表示成功，他还有好几种状态码，比如1表示<code>Format error</code>，2表示<code>Server failure</code>，3表示<code>Name error</code>，4表示<code>Not lmplemented</code>，5表示<code>Refused</code>，具体信息可以参考<code>RFC1035</code>。</li>
-</ol>
-</li>
-</ul>
-<h2 id="三次握手建立连接"><a href="#三次握手建立连接" class="headerlink" title="三次握手建立连接"></a>三次握手建立连接</h2><p>经过上述过程，此时浏览器得到了要访问的域名的IP地址。由于DNS查询需要一定时间，所以有些网站会使用<code>DNS Prefetching</code>进行DNS预解析，结合浏览器的DNS缓存，以加快网站速度。这里不做详细叙述。</p>
-<p>首先贴出TCP三次握手的建立图。</p>
-<img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands.jpg" alt="三次握手" title="三次握手">
-<p>我们抓包依次进行分析。</p>
-<ol>
-<li><p>第一个握手包</p>
-<img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-1.png" alt="第一个握手包" title="第一个握手包">
-<p>从这个包我们可以得到以下信息:</p>
-<ul>
-<li>Seq = 2988862522 这个是本报文段所发送的数据的第一个字节的序号</li>
-<li><p>DataOffset = 32（字节） 指明TCP报文段的数据起始处距离TCP报文段的起始处有多远</p>
-</li>
-<li><p>SYN = 1 SYN=1而ACK=0时表示这是一个连接请求报文。</p>
-</li>
-<li>Window = 8192（字节） 客户端滑动窗口8192字节，滑动窗口协议是设计来提高报文段的传输效率，这里不详细叙述，可以自己查资料。</li>
-<li>Checksum=0x5818 校验和，校验和字段校验的范围包括首部和数据这两个部分，在计算校验和时，要在TCP报文段的前面加上12字节的伪首部。接收方接收到此报文段后，加上这个伪首部来计算校验和。校验和是用来保证数据的无差错。</li>
-<li>MaxSegmentSize = 1460（字节） 即MSS，表示TCP报文段中数据字段的最大长度。注意它加上TCP首部才等于整个的TCP报文。有关MSS的信息自己查资料。</li>
-</ul>
-<p>比较重要的就是上述信息，客户端需要在第一次发包时要告知自身的一些信息。</p>
-</li>
-<li><p>第二个握手包</p>
-<img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-2.png" alt="第二个握手包" title="第二个握手包">
-<p>在接收到客户端发来的握手包后，服务端进行应答，我们对这个包进行分析：</p>
-<ul>
-<li>Seq = 1648068786</li>
-<li>Ack = 2988862523 表示服务端期望收到对方的下一个报文段的第一个数据字节的序号。</li>
-<li>ACK = 1 当ACK=1时确认号字段有效。</li>
-<li>SYN = 1 ACK=1且SYN=1表示这是一个同意建立连接的响应报文。</li>
-<li>Window = 63343（字节） 服务端的滑动窗口为63343字节。</li>
-<li>MaxSegmentSize = 1448（字节） 服务端的TCP报文中数据字段的最大长度为1448字节。</li>
-</ul>
-<p>在前两次握手时，双方交换一些信息如<code>Window</code>和<code>MSS</code>，确定<code>seq</code>和<code>ack</code>起始号。</p>
-</li>
-<li><p>第三个握手包</p>
-<img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands-3.png" alt="第三个握手包" title="第三个握手包">
-<p>服务端接受请求后，客户端还需要在发送一个握手包。这个握手包明显信息更少了，同样我们查看一些关键值：</p>
-<ul>
-<li>Seq = 2988862523 由于上一个握手包没有携带正文信息，不占用字节空间，所以Seq与上一个握手包的Ack值相同。</li>
-<li>Ack = 1648068787 同上，双方建立通信之后是会进行数据交换，同样的，这个地方表示客户端期望收到对方的下一个报文段的第一个数据字节的序号。</li>
-<li>ACK = 1 表示对上一个握手包的确认</li>
-<li>Window = 260（字节） TCP的发送窗口时会不断变化的，TCP的流量控制和拥塞控制会根据情况动态地调整发送窗口上限值，从而控制发送数据的平均速率。</li>
-</ul>
-</li>
-</ol>
-<p>自此三次握手完成，连接建立，可以开始传输数据。</p>
-<h2 id="建立HTTPS连接"><a href="#建立HTTPS连接" class="headerlink" title="建立HTTPS连接"></a>建立HTTPS连接</h2><p>以上完成握手，只能建立HTTP连接。但如果网站使用了HTTPS协议，那么还需要进行SSL/TLS握手。</p>
-<p>在这之前，我们先介绍下SSL/TLS。</p>
-<p>SSL/TLS是一种互联网安全加密技术。HTTP报文是进行明文传输的，这意味着用户的<code>cookie</code>或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用<code>HTTPS</code>协议是非常有必要的，并且目前最新的<code>HTTP2</code>规范也仅支持<code>HTTPS</code>。而SSL/TLS协议位于TCP/IP协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。</p>
-<p>那么<code>SSL</code>和<code>TLS</code>又有什么区别呢？</p>
-<p>简单的说，<code>TLS</code>的建立在<code>SSL 3.0</code>协议规范之上的，是<code>SSL v3</code>的强化版，在整个协议格式上和<code>SSL</code>类似。<code>TLS</code>增强了加密算法，并带来了更严格的警报，在安全性方面有很多改进。</p>
-<p>关于<code>HTTP</code>与<code>HTTPS</code>和<code>SSL</code>与<code>TLS</code>的具体差别自行搜索。</p>
-<img src="/2016/06/24/从输入URL到页面展示/ssl-tls-protocol.png" alt="SSL/TLS Protocol" title="SSL/TLS Protocol">
-<p>关于SSL/TLS协议这里不做详解，此处主要讲述TLS握手的建立过程和<code>HTTPS</code>安全的原因。</p>
-<p>我们来看看TLS握手的大致过程，这里不再详细叙述每个握手包</p>
-<img src="/2016/06/24/从输入URL到页面展示/tls-handshake.jpg" alt="TLS-handshake" title="TLS-handshake">
-<ul>
-<li><p>Client Hello</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-1.png" alt="TLS-handshake-1" title="TLS-handshake-1">
-<p>  可以看到TCP报文的<code>Push</code>为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。</p>
-<p>  这是一个TLS握手包，我们可以看到<code>HandShakeType</code>为<code>ClientHello</code>，对应TLS握手图的第一部。</p>
-<p>  同时，该过程浏览器还发送了自己支持的一套加密规则。</p>
-</li>
-<li><p>Server Hello</p>
-<p>  服务端接受到上述报文后，会发送TCP报文进行确认。报文如下</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-2.png" alt="TLS-handshake-2" title="TLS-handshake-2">
-<p>  服务端发出ACK包的同时，发送TLS报文，此时<code>HandShakeType</code>为<code>ServerHello</code>，对应TLS握手图的第二步</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-3.png" alt="TLS-handshake-3" title="TLS-handshake-3">
-<p>  接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。</p>
-  <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-4.png" alt="TLS-handshake-4" title="TLS-handshake-4">
-</li>
-<li><p>Client Key Exchange</p>
-<p>  浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。</p>
-</li>
-<li><p>Cipher Change Spec</p>
-<p>  服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。</p>
-<p>  接着使用这个密码来加密一段握手信息，发给客户端即浏览器。</p>
-</li>
-<li><p>Finish</p>
-<p>  客户端用密码进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。</p>
-</li>
-</ul>
-<p>至此，HTTPS连接已成功建立。</p>
-<p>现给出TCP三次握手和TLS握手的列表信息。</p>
-<img src="/2016/06/24/从输入URL到页面展示/handshake.png" alt="HandsShake" title="HandsShake">
-<h2 id="客户端请求网站信息"><a href="#客户端请求网站信息" class="headerlink" title="客户端请求网站信息"></a>客户端请求网站信息</h2><p>…</p>
-<p>参考资料</p>
-<ul>
-<li><a href="https://technet.microsoft.com/en-us/library/cc775637.aspx" target="_blank" rel="external">How DNS query works</a></li>
-</ul>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/06/24/从输入URL到页面展示/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -518,14 +424,13 @@
 
       
         
-          
-            <p>这学期基本都是在学习和使用<code>Angular</code>，这篇文章主要是想介绍几个<code>Angular</code>需要注意或者了解的地方。</p>
+          <p>这学期基本都是在学习和使用<code>Angular</code>，这篇文章主要是想介绍几个<code>Angular</code>需要注意或者了解的地方。</p>
 <h2 id="Angular作用域"><a href="#Angular作用域" class="headerlink" title="Angular作用域"></a>Angular作用域</h2><p>​    也许你知道<code>ng-if</code>和<code>ng-show</code>的区别是一个只有条件满足的时候才会创建<code>DOM</code>，一个是只有在条件满足的时候才会显示<code>DOM</code>也就是一开始也会跟着创建。但是你可能不知道，<code>ng-if</code>会产生新的作用域，<code>ng-repeat</code>和<code>ng-switch</code>和<code>ng-include</code>也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为<code>Angular</code>的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性，<code>Angular</code>会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。</p>
 <blockquote>
 <p>读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    </p>
 <p>写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</p>
 </blockquote>
-<p>​    关于原型链继承这个可以参考此处<a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482" target="_blank" rel="external">JavaScript Prototypal Inheritance</a>，或者<a href="https://www.zybuluo.com/lxjwlt/note/107324" target="_blank" rel="external">[译文] 深入浅出 AngularJS 作用域</a></p>
+<p>​    关于原型链继承这个可以参考此处<a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482">JavaScript Prototypal Inheritance</a>，或者<a href="https://www.zybuluo.com/lxjwlt/note/107324">[译文] 深入浅出 AngularJS 作用域</a></p>
 <p>​    使用上述的<code>ng-if</code>, <code>ng-repeat</code>, <code>ng-switch</code>, <code>ng-include</code>都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用<code>$parent</code>。</p>
 <p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外，<code>textarea</code>也会自己创建一级作用域。所以你可能会发现你在<code>textarea</code>写的内容获取不到，但是却发现<code>textarea</code>总能取到第一次分配的初值。比如</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -540,33 +445,16 @@
 <h2 id="Angular-track-by"><a href="#Angular-track-by" class="headerlink" title="Angular track by"></a>Angular track by</h2><p>​    在使用<code>Angular</code>的<code>ng-repeat</code>迭代数组时，有时候会出现<code>Duplicates in a repeater are not allowed</code>的提示。</p>
 <p>​    <code>track by</code>是用来建立<code>$watchCollection</code>和<code>DOM</code>之间的联系。建议自己加上<code>track by</code>后面带的值可以自己写，但要确保每个<code>ngRepeat</code>的值唯一，比如可以写<code>track by $index</code>。</p>
 <p>​    之所以要这么做，是因为，如果不使用<code>track by</code>，那么每个<code>ng-repeat</code>都会添加一个<code>$$hashkey</code>来对的<code>DOM</code>进行跟踪，这样会导致不能存在相同的<code>DOM</code>，使用<code>track by</code>的意义是避免不必要的渲染。</p>
-<p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="https://docs.angularjs.org/api/ng/directive/ngRepeat" target="_blank" rel="external">AngularJS: API: ngRepeat</a></p>
+<p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="https://docs.angularjs.org/api/ng/directive/ngRepeat">AngularJS: API: ngRepeat</a></p>
 <blockquote>
 <p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later, <code>ngRepeat</code> will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier, <code>track by $index</code> can also provide a performance boost.</p>
 </blockquote>
 <h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​    <code>Angular</code>拦截器是<code>Angular</code>的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
-<ul>
-<li><p>判断请求是否成功</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$httpProvider.defaults.transformResponse.push((response) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span>(response.data) != <span class="literal">undefined</span> &amp;&amp; response.status == <span class="string">'success'</span>) &#123;</span><br><span class="line">  	response = response.data;</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(response.status == <span class="string">'error'</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Err: "</span> + response.message);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> response;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>​    应该都能看懂，就不过多解释了。需要说明你的是，我们只需要一次配置，即可在整个项目中适用，特别方便。</p>
-<p>​</p>
-</li>
-<li><p>timestampMarker</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'timestampMarker'</span>, [() =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> timestampMarker = &#123;</span><br><span class="line">    request: (config) = &gt; &#123;</span><br><span class="line">      config.requestTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> config;</span><br><span class="line">    &#125;,</span><br><span class="line">    response: (response) = &gt; &#123;</span><br><span class="line">      response.config.responseTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
-<p>​    这是给每个请求加上时间戳来防止浏览器缓存。</p>
-</li>
-</ul>
-<ul>
-<li><p>tokenInjector</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'tokenInjector'</span>, [<span class="string">'$injector'</span>, <span class="string">'$q'</span>, ($injector, $q) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> tokenInjector = &#123;</span><br><span class="line">      	request: (config) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> url = host + <span class="string">'/auth_verify'</span>;</span><br><span class="line">        <span class="keyword">let</span> deferred = $q.defer();</span><br><span class="line">        <span class="keyword">let</span> http = $injector.get(<span class="string">'$http'</span>);</span><br><span class="line">        <span class="keyword">if</span>(config.url === url) &#123;</span><br><span class="line">          <span class="keyword">return</span> config;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sessionStorage.verify === <span class="string">'true'</span>) &#123;</span><br><span class="line">          <span class="keyword">let</span> timestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() / <span class="number">1000</span>;</span><br><span class="line">           <span class="keyword">if</span>(timestamp - sessionStorage.createdtime &gt;= <span class="number">7000</span>) &#123;</span><br><span class="line">              sessionStorage.verify = <span class="literal">false</span>;  </span><br><span class="line">          &#125;</span><br><span class="line">           config.headers[<span class="string">'token'</span>] = sessionStorage.token;</span><br><span class="line">           config.headers[<span class="string">'userid'</span>] = sessionStorage.user_id;</span><br><span class="line">           deferred.resolve(config);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
-<p>​    上面是我从我的项目中截取的代码，作用是每次请求时，如果已经验证过，判断<code>token</code>创建时间和当前时间以判断<code>token</code>是否过期，如未过期，将<code>token</code>和<code>userid</code>加到请求的<code>headers</code>中。如果没有验证或者已经超时，则要去获取新的<code>token</code>，这里没有把代码写上。</p>
-<p>​    通过这三个例子，我想已经很明显的展示了<code>Angular</code>拦截器的强大之处。一次使用，终身受益，爽。</p>
-<hr>
-<p>​</p>
-</li>
-</ul>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/06/18/Angular学习总结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -683,8 +571,7 @@
 
       
         
-          
-            <p>​    类似<code>Gulp</code>这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有<code>Grunt</code>和<code>Webpack</code>等，不过我用<code>Gulp</code>比较多一些，所以我只能谈谈<code>Gulp</code>了。</p>
+          <p>​    类似<code>Gulp</code>这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有<code>Grunt</code>和<code>Webpack</code>等，不过我用<code>Gulp</code>比较多一些，所以我只能谈谈<code>Gulp</code>了。</p>
 <p>​    <code>Gulp</code>上面优秀的插件特别多，我所使用到的有</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>),</span><br><span class="line">      uglify = <span class="built_in">require</span>(<span class="string">'gulp-uglify'</span>),</span><br><span class="line">      ngAnnotate = <span class="built_in">require</span>(<span class="string">'gulp-ng-annotate'</span>),</span><br><span class="line">      concat = <span class="built_in">require</span>(<span class="string">'gulp-concat'</span>),</span><br><span class="line">      cleanCSS = <span class="built_in">require</span>(<span class="string">'gulp-clean-css'</span>),</span><br><span class="line">      imagemin = <span class="built_in">require</span>(<span class="string">'gulp-imagemin'</span>),</span><br><span class="line">      minifyHtml = <span class="built_in">require</span>(<span class="string">'gulp-minify-html'</span>),</span><br><span class="line">      ngTemplate = <span class="built_in">require</span>(<span class="string">'gulp-ng-template'</span>),</span><br><span class="line">      pluber = <span class="built_in">require</span>(<span class="string">'gulp-plumber'</span>),</span><br><span class="line">      sass = <span class="built_in">require</span>(<span class="string">'gulp-sass'</span>),</span><br><span class="line">      runSequence = <span class="built_in">require</span>(<span class="string">'gulp-run-sequence'</span>),</span><br><span class="line">      usemin = <span class="built_in">require</span>(<span class="string">'gulp-usemin'</span>);</span><br></pre></td></tr></table></figure>
 <p>​    用了这么多插件，也难怪我会这么喜欢<code>Gulp</code>了~</p>
@@ -709,45 +596,11 @@
 </li>
 <li><p><code>gulp-ng-template</code></p>
 <p>这个也是<code>Angular</code>里面比较响当当的一个插件了，他的作用是将<code>Angular</code>模板存到<code>templateCache</code>，可以提升模板加载速度</p>
-</li>
-<li><p><code>gulp-plumber</code></p>
-<p>这个貌似也是<code>gulp</code>必不可少的插件之一了，可以避免<code>gulp</code>出错导致整个进程崩掉</p>
-</li>
-<li><p><code>gulp-sass</code></p>
-<p>编译<code>sass</code>代码为<code>css</code>，非常方便</p>
-</li>
-<li><p><code>gulp-run-sequence</code></p>
-<p>可以让<code>gulp</code>的任务顺序执行，有些时候我们希望<code>gulp</code>执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了</p>
-</li>
-<li><p><code>gulp-usemin</code></p>
-<p>这个是用来从工作环境到生产环境进行部署的工具</p>
-</li>
-</ul>
-<p>​    </p>
-<p>​    上面的这些插件都是我在一个项目中使用到的，通过这些工具实现了前端的自动化开发，我在项目中有开发环境和生产环境之分。</p>
-<p>​    在<code>gulp</code>中，我有一段在开发环境下执行的<code>task</code></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'default'</span>, [<span class="string">'css'</span>, <span class="string">'js'</span>, <span class="string">'angular'</span>, <span class="string">'img'</span>, <span class="string">'templates:dist'</span>, <span class="string">'sass'</span>, <span class="string">'fonts'</span>])</span><br></pre></td></tr></table></figure>
-<p>​    这段代码帮我做了</p>
-<ul>
-<li><code>css</code>文件(这些文件是第三方<code>css</code>文件如<code>bootstrap</code>)的合并</li>
-<li><code>javascript</code>文件的合并，这是将所有我写的<code>Angular</code>文件进行合并，但不进行压缩以方便我调试</li>
-<li><code>angular</code>是将项目所有的<code>js</code>依赖如<code>angular</code>, <code>ui-router</code>, <code>jquery</code>等文件进行压缩合并</li>
-<li><code>img</code>是将图片进行压缩和迁移，这些图片压缩后放入生产环境对应的文件夹中</li>
-<li><code>templates:dist</code>是对<code>Angular</code>的视图进行合并，适用了上述的<code>gulp-ng-template</code>插件，合并后为一个<code>javascript</code>文件</li>
-<li><code>sass</code>是将我写的<code>scss</code>代码进行编译</li>
-<li><p><code>fonts</code>是移动相应的字体文件到生产环境中</p>
-<p>​开发环境下我们需要自动构建，也需要便于调试，所以我用上面这样的方式来处理，并且开启了<code>watch</code>在有更改发生时自动构建。当我处理完全部工作后需要<code>push</code>到服务器上面时，会执行<code>gulp product</code>即下面的<code>task</code></p>
-</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'product'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>)</span>&#123;</span><br><span class="line">  runSequence(<span class="string">'together'</span>, <span class="string">'move'</span>, cb)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'together'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>)</span>&#123;</span><br><span class="line">    gulp.src(<span class="string">'index.html'</span>)</span><br><span class="line">        .pipe(plumber())</span><br><span class="line">        .pipe(usemin(&#123;</span><br><span class="line">            cssProduct: [<span class="string">'concat'</span>],</span><br><span class="line">            jsProduct: [ngAnnotate(),<span class="string">'concat'</span>,uglify()]</span><br><span class="line">        &#125;))</span><br><span class="line">        .pipe(gulp.dest(<span class="string">'backend/app/'</span>))</span><br><span class="line">        .on(<span class="string">'end'</span>,cb);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'move'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> gulp.src(<span class="string">'backend/app/index.html'</span>)</span><br><span class="line">                .pipe(gulp.dest(<span class="string">'backend/app/templates/'</span>));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>​    这里使用了上述说的<code>ng-run-sequence</code>插件，这里会在执行完<code>together</code>的任务后才开始执行<code>move</code>的任务。这里主要使用的插件是<code>gulp-usemin</code>，我用它来做了这些事情，为了方便说明，我贴下代码。需要先说明的是，我在项目中一共有3个<code>index.html</code>文件。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"zh-CN"</span> <span class="attr">ng-app</span>=<span class="string">"index"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- build:cssProduct /static/css/app.min.css --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/app.min.css"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/bookist.css"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">&lt;!-- build:jsProduct /static/js/app.min.js --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/dependence.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/app.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/templates.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- build:remove --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span><br><span class="line">        开发环境 development</span><br><span class="line">        app.min.css             其他css文件</span><br><span class="line">        bookist.css             自己写的css文件</span><br><span class="line">        dependence.min.js       Angular和jQuery相关Js文件，无需理会</span><br><span class="line">        app.js                  自己写的js文件，进行整合但未压缩，便于查错</span><br><span class="line">        template.js             模板文件</span><br><span class="line">    --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>​    省去了没有用的代码，这里需要你对<code>ng-usemin</code>有一定的了解。这个<code>index.html</code>是我在开发环境下使用的，使用了我开发环境的<code>task</code>生成文件，我在上面有补充说明了。</p>
-<p>​    所以，在部署生产环境时执行这段<code>task</code>的意义是，将开发环境下的代码再做进一步的合并和压缩。<code>ng-usemin</code>这个插件会帮我们处理这个<code>index.html</code>文件，最后会在我们指定的目录下部署好这些东西。但是因为后端处理<code>index.html</code>的路径原因，我还要对<code>index.html</code>做一次移动，所以有了第三个<code>index.html</code>。</p>
-<p>​    最终生成的index和相应的资源位置如下</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"zh-CN"</span> <span class="attr">ng-app</span>=<span class="string">"index"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"/static/css/app.min.css"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/static/js/app.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/06/18/谈谈前端自动构建工具gulp/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
