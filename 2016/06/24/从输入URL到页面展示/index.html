@@ -107,12 +107,14 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tcp-shake-hands-3.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/ssl-tls-protocol.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake.jpg">
-<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-1.png">
-<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-2.png">
-<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-3.png">
-<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/tls-handshake-4.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/handshake.png">
-<meta property="og:updated_time" content="2016-06-25T03:22:59.655Z">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/request-1.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/php-fpm.jpg">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/response-1.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/html-parse.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/render-tree-construction.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/webkitflow.png">
+<meta property="og:updated_time" content="2016-06-25T07:59:51.647Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从输入URL到页面展示">
 <meta name="twitter:description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
@@ -418,39 +420,111 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <img src="/2016/06/24/从输入URL到页面展示/tls-handshake.jpg" alt="TLS-handshake" title="TLS-handshake">
 <ul>
 <li><p>Client Hello</p>
-   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-1.png" alt="TLS-handshake-1" title="TLS-handshake-1">
-<p>   可以看到TCP报文的<code>Push</code>为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。</p>
-<p>   这是一个TLS握手包，我们可以看到<code>HandShakeType</code>为<code>ClientHello</code>，对应TLS握手图的第一部。</p>
-<p>   同时，该过程浏览器还发送了自己支持的一套加密规则。</p>
-</li>
+<pre><code>{% asset_img tls-handshake-1.png TLS-handshake-1 %}
+
+可以看到TCP报文的`Push`为1，表示接收方尽快对该报文要尽快交付而不是积累到足够多的数据。
+
+这是一个TLS握手包，我们可以看到`HandShakeType`为`ClientHello`，对应TLS握手图的第一部。
+
+同时，该过程浏览器还发送了自己支持的一套加密规则。
+</code></pre></li>
 <li><p>Server Hello</p>
-<p>   服务端接受到上述报文后，会发送TCP报文进行确认。报文如下</p>
-   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-2.png" alt="TLS-handshake-2" title="TLS-handshake-2">
-<p>   服务端发出ACK包的同时，发送TLS报文，此时<code>HandShakeType</code>为<code>ServerHello</code>，对应TLS握手图的第二步</p>
-   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-3.png" alt="TLS-handshake-3" title="TLS-handshake-3">
-<p>   接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。</p>
-   <img src="/2016/06/24/从输入URL到页面展示/tls-handshake-4.png" alt="TLS-handshake-4" title="TLS-handshake-4">
-</li>
+<pre><code>服务端接受到上述报文后，会发送TCP报文进行确认。报文如下
+
+{% asset_img tls-handshake-2.png TLS-handshake-2 %}
+
+服务端发出ACK包的同时，发送TLS报文，此时`HandShakeType`为`ServerHello`，对应TLS握手图的第二步
+
+{% asset_img tls-handshake-3.png TLS-handshake-3 %}
+
+接着上述的报文，服务端从客户端发来的加密规则中选出一组加密算法和HASH算法，并把自己的身份信息以证书形式发给客户端。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。如图，发送公钥使用了两个报文，最后客户端发送ACK确认报文进行确认，注意这个报文和上面的ACK报文一样不占用空间，只是进行确认而已。
+
+{% asset_img tls-handshake-4.png TLS-handshake-4 %}
+</code></pre></li>
 <li><p>Client Key Exchange</p>
-<p>   浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。</p>
-</li>
+<pre><code>浏览器获得证书后，会首先验证证书的合法性，如果证书受信任，则浏览器栏里面会显示一个小绿锁。同时浏览器会生成一串随机数的密码，并用证书中提供的公钥进行加密，然后使用约定好的HASH算法计算握手信息，并使用未加密的随机数对消息进行加密。然后将消息重新发给服务端。这一步是加密握手包的开始。
+</code></pre></li>
 <li><p>Cipher Change Spec</p>
-<p>   服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。</p>
-<p>   接着使用这个密码来加密一段握手信息，发给客户端即浏览器。</p>
-</li>
+<pre><code>服务端使用自己的私钥对信息进行解密取出密码（密码被用公钥加密，只有用私钥才能加开，非对称加密），然后用该密码来解密握手消息，然后验证HASH是否与浏览器发来的一致。
+
+接着使用这个密码来加密一段握手信息，发给客户端即浏览器。
+</code></pre></li>
 <li><p>Finish</p>
-<p>   客户端用密码对加密握手包进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。</p>
-</li>
+<pre><code>客户端用密码对加密握手包进行解密（注意此时已经变为对称加密），同时计算HASH值，若HASH值一致，则握手过程结束。之后双方通信都使用之前浏览器生成的密码来进行加密。
+</code></pre></li>
 </ul>
 <p>至此，HTTPS连接已成功建立。由于浏览器会对证书进行校验，由证书授权机构保证其有效性，可以保证证书不被篡改。同时浏览器方面生成的随机数密码，一开始只有浏览器知道，而这个密码用公钥加密之后，只有私钥能解开，公钥也无法解开，这是非对称加密。服务器接收到该数据包后解开得到该密码，双方就可以使用该密码通过对称加密传输数据了。</p>
 <p>现给出TCP三次握手和TLS握手的列表信息。</p>
 <img src="/2016/06/24/从输入URL到页面展示/handshake.png" alt="HandsShake" title="HandsShake">
 <p>这之后双方都是用<code>TLS</code>来传输数据，但不带数据的<code>ACK</code>确认包不进行加密，仍然使用<code>TCP</code>协议来传输。</p>
 <p>需要明确的是，<code>TLS</code>协议还是建立在<code>TCP</code>协议之上的，此处为便于说明将两者区分对待。即<code>TCP</code>协议是不进行加密的，<code>TLS</code>是进行加密的<code>TCP</code>协议。</p>
-<h2 id="客户端请求网站信息"><a href="#客户端请求网站信息" class="headerlink" title="客户端请求网站信息"></a>客户端请求网站信息</h2><p>…</p>
+<h2 id="客户端请求网站信息"><a href="#客户端请求网站信息" class="headerlink" title="客户端请求网站信息"></a>客户端请求网站信息</h2><ol>
+<li><p>如果访问的是网站的主页，那么此时会发送一个请求给服务器，如下：</p>
+<img src="/2016/06/24/从输入URL到页面展示/request-1.png" alt="request-package" title="request-package">
+<p><code>HTTP</code>里面附带了<code>URI</code>, <code>ProtocolVersion</code>, <code>Host</code>, <code>Connection</code>以及<code>Cookie</code>等很多信息。</p>
+<p>这里不讨论301转移之类的，只讨论正常访问的情况。</p>
+</li>
+<li><p>服务端接收到该请求后，验证无误后，首先发送ACK报文进行确认。接着对该请求进行处理，如果是静态页面则直接返回。但大多数时候服务端都需要动态生成一个新的页面再返回该页面。这里讨论下<code>php</code>的处理。</p>
+<p>假设我们这时候访问的是<code>index.php</code>这个页面，服务器例如<code>Nginx</code>知道这个不是静态文件，它回去寻找<code>PHP</code>解析器去做处理，这依靠的就是<code>CGI</code>来实现。</p>
+<p>下面介绍几个概念，即<code>CGI</code>, <code>PHP-CGI</code>, <code>FastCGI</code>, <code>PHP-FPM</code>。</p>
+<ul>
+<li><p>CGI</p>
+<p><code>CGI</code>全称是“公共网关接口”（Common Gateway Interface），HTTP服务器与服务器上其他程序进行通讯的一种协议。</p>
+</li>
+<li><p>PHP-CGI</p>
+<p>简单的说<code>PHP-CGI</code>就是HTTP服务器与<code>PHP</code>进行通讯的工具，当浏览器发出一个类似<code>/index.php</code>的请求时，HTTP服务器请求<code>PHP-CGI</code>去处理这个请求，<code>PHP-CGI</code>处理完成后再把处理结果发回给HTTP服务器，然后由HTTP服务器发给浏览器。</p>
+<p><code>PHP-CGI</code>在处理请求之前，需要解析<code>php.ini</code>文件，初始化执行环境，然后才开始处理请求。</p>
+</li>
+<li><p>FastCGI</p>
+<p><code>FastCGI</code>全称是“快速通用网关接口”（Fast Common Gateway Interface / FastCGI）是一种让交互程序与Web服务器通信的协议。它是<code>CGI</code>的增强版本。</p>
+<p><code>CGI</code>程序运行在独立的进程中，并对每一个请求建立一个进程，每个建立都要经过解析配置文件和初始化执行环境。这种方法易于实现，但效率很差，难以面对大量请求。</p>
+<p><code>FastCGI</code>使用持续的进程来处理一连串的请求。这些进程由<code>FastCGI</code>服务器管理，而不是Web服务器。它是一个常驻型的<code>CGI</code>(master)，只要激活后就不需要重新去解析<code>php.ini</code>和初始化，提高了效率。他在自身初始化后会启动多个CGI解析器(worker)，当有请求过来时，他会交给其中一个worker去处理。同时，它还可以动态调整<code>worker</code>的数量。</p>
+</li>
+<li><p>PHP-FPM</p>
+<p><code>PHP-FPM</code>是一个<code>PHP FastCGI</code>管理器，从<code>PHP 5.3.3</code>开始已经继承了<code>PHP-FPM</code>，在编译安装时可以通过<code>-enable-fpm</code>参数开启。</p>
+<img src="/2016/06/24/从输入URL到页面展示/php-fpm.jpg" alt="php-fpm" title="php-fpm">
+</li>
+</ul>
+<p>所以浏览器如果请求<code>/index.html</code>那么Web服务器会直接把这个静态页面返回，如果是请求<code>/index.php</code>，则交由<code>PHP-FPM</code>进行处理，<code>PHP-FPM</code>处理后再把结果返回给Web服务器，由Web服务器发给浏览器。</p>
+<p>我们来看看相应报文</p>
+<img src="/2016/06/24/从输入URL到页面展示/response-1.png" alt="response-1" title="response-1">
+<p>可以看到除了对浏览器请求的ACK确认包之外，服务端发回了10个包。第一个报文里面有<code>StatusCode</code>, <code>Etag</code>, <code>ContentEncoding</code>等信息。这里面涉及到不少网站优化的技巧，我们将在下一篇中再讨论。这里大概了解下就可以了。</p>
+<p>接下来的9个报文都是跟着第1个报文一起过来的。最后一个报文设置了<code>PUSH</code>标志，因为报文已经传输完毕，所以它请求浏览器客户端尽快交付。</p>
+<p>接着客户端会发送ACK确认报文，之所以这里客户端对最后一个报文进行了确认，是因为<code>TCP Delayed Ack</code>的原因，它是为了避免多次发送ACK确认报文而设置的延时，一般为<code>40ms</code>，也就是说如果接收到一个报文<code>40ms</code>后没有接收到第二个报文，他就会对这个报文进行确认。</p>
+<p>服务器发送完全部数据后，最后再发送一个报文，即图中的#191报文，表示我已经发完。客户端相应的发出ACK确认报文。主页请求结束。</p>
+</li>
+</ol>
+<h2 id="浏览器渲染"><a href="#浏览器渲染" class="headerlink" title="浏览器渲染"></a>浏览器渲染</h2><p>浏览器接收到<code>index.html</code>后，开始浏览器渲染，这里讨论<code>webkit</code>内核，其他内核不予讨论。主要分为四步进行。如下图:</p>
+<img src="/2016/06/24/从输入URL到页面展示/html-parse.png" alt="html-parse" title="html-parse">
+<p>浏览器渲染不是本文的重点，所以只做简单说明。</p>
+<ul>
+<li><p>Parsing HTML to construct the DOM tree</p>
+<p>数据会交给<code>HTMLDocumentParser</code>，然后<code>HTMLDocumentParser</code>将文本字符的解析交给<code>HTMLDocumentTokenizer</code>来负责，<code>HTMLDocumentTokenizer</code>解析出一个一个的标签，然后<code>HTMLDocumentParser</code>将标签交给<code>HTMLTreeBuilder</code>来构建DOM树。</p>
+<p>有些节点需要加载其他资源，比如加载外链CSS和图片等。会调用资源加载器进行异步加载，不会阻碍当前DOM树的构造。但是如果是非<code>defer</code>非<code>async</code>的<code>script</code>标签，则需要停止当前<code>DOM</code>树的构造，直到脚本被加载并被<code>javascript</code>执行后才继续<code>DOM</code>树的构造。</p>
+<p>因此我们有时候会要求<code>&lt;script&gt;</code>标签放到最后面，目的是为了不影响前面<code>DOM</code>树的构建。</p>
+<p>对于<code>css</code>文件，会解析<code>css</code>生成<code>CSS Rule Tree</code>。</p>
+<p>对于<code>javascript</code>文件，主要是通过<code>DOM API</code>和<code>CSSOM API</code>来操作<code>DOM TREE</code>和<code>CSS Rule Tree</code>，从而改变渲染的效果。</p>
+</li>
+<li><p>Render tree construction</p>
+<p>接着浏览器会开始构建渲染树(Rendering Tree)。<code>Renderint Tree</code>只包括渲染页面需要的节点。</p>
+<p><code>CSS Rule Tree</code>会匹配的把<code>CSS Rule</code>附加到相应的<code>Rendering Tree</code>的元素上面。</p>
+<img src="/2016/06/24/从输入URL到页面展示/render-tree-construction.png" alt="render-tree-construction" title="render-tree-construction">
+</li>
+<li><p>Layout of the render tree</p>
+<p>到目前为止，我们已经计算了哪些节点是可见的，以及它们的计算样式，但还没有计算它们在设备视窗中的准确位置与尺寸。这就是布局阶段做的事情。</p>
+<p>渲染树的构建、布局与绘制所需的时间取决于文档大小、应用的样式，当然，还有运行文档的设备：文档越大，浏览器要完成的工作就越多；样式越复杂，绘制需要的时间就越长（例如，绘制单色成本较低，而计算、呈现阴影的成本就非常高了）。</p>
+</li>
+<li><p>Painting the render tree</p>
+<p>一旦布局完成，浏览器便会发出<code>Paint Setup</code>与<code>Paint</code>事件，将渲染树转化为屏幕上的实际像素。</p>
+</li>
+</ul>
+<p>大概可以用下图来表示整个过程。</p>
+<img src="/2016/06/24/从输入URL到页面展示/webkitflow.png" alt="webkitflow" title="webkitflow">
 <p>参考资料</p>
 <ul>
 <li><a href="https://technet.microsoft.com/en-us/library/cc775637.aspx" target="_blank" rel="external">How DNS query works</a></li>
+<li><a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-tree-construction" target="_blank" rel="external">Render Tree Construction</a></li>
+<li><a href="http://taligarsiel.com/Projects/howbrowserswork1.htm#Render_tree_construction" target="_blank" rel="external">How browsers work</a></li>
 </ul>
 
       
@@ -630,7 +704,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS查询"><span class="nav-number">1.</span> <span class="nav-text">DNS查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三次握手建立连接"><span class="nav-number">2.</span> <span class="nav-text">三次握手建立连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立HTTPS连接"><span class="nav-number">3.</span> <span class="nav-text">建立HTTPS连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端请求网站信息"><span class="nav-number">4.</span> <span class="nav-text">客户端请求网站信息</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS查询"><span class="nav-number">1.</span> <span class="nav-text">DNS查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三次握手建立连接"><span class="nav-number">2.</span> <span class="nav-text">三次握手建立连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立HTTPS连接"><span class="nav-number">3.</span> <span class="nav-text">建立HTTPS连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端请求网站信息"><span class="nav-number">4.</span> <span class="nav-text">客户端请求网站信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器渲染"><span class="nav-number">5.</span> <span class="nav-text">浏览器渲染</span></a></li></ol></div>
             
           </div>
         </section>
