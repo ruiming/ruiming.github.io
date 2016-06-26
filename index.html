@@ -351,6 +351,13 @@
 <p>响应报文如下</p>
 <img src="/2016/06/24/从输入URL到页面展示/dns-response-1.png" alt="DNS响应报文" title="DNS响应报文">
 <p>我们也简单分析下，如果想详细了解，可以查看上面的<code>RFC1035</code>标准。</p>
+<ol>
+<li>与请求报文相比，对比<code>Flags</code>可以发现，<code>QR=1</code>表示这是一个响应报文。<code>RA=1</code>表示递归查询可用。</li>
+<li><code>ARecord</code>记录了DNS请求获得的一个或多个IP地址。一般还会得到<code>CNAME</code>记录和存活时间等信息。</li>
+<li>这里对<code>Rcode</code>也稍加说明下，<code>Rcode=0</code>表示成功，他还有好几种状态码，比如1表示<code>Format error</code>，2表示<code>Server failure</code>，3表示<code>Name error</code>，4表示<code>Not lmplemented</code>，5表示<code>Refused</code>，具体信息可以参考<code>RFC1035</code>。</li>
+</ol>
+</li>
+</ul>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/06/24/从输入URL到页面展示/#more" rel="contents">
               阅读全文 &raquo;
@@ -644,6 +651,22 @@
 </li>
 <li><p><code>gulp-ng-template</code></p>
 <p>这个也是<code>Angular</code>里面比较响当当的一个插件了，他的作用是将<code>Angular</code>模板存到<code>templateCache</code>，可以提升模板加载速度</p>
+</li>
+</ul>
+<ul>
+<li><p><code>gulp-plumber</code></p>
+<p>这个貌似也是<code>gulp</code>必不可少的插件之一了，可以避免<code>gulp</code>出错导致整个进程崩掉</p>
+</li>
+<li><p><code>gulp-sass</code></p>
+<p>编译<code>sass</code>代码为<code>css</code>，非常方便</p>
+</li>
+<li><p><code>gulp-run-sequence</code></p>
+<p>可以让<code>gulp</code>的任务顺序执行，有些时候我们希望<code>gulp</code>执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了</p>
+</li>
+<li><p><code>gulp-usemin</code></p>
+<p>这个是用来从工作环境到生产环境进行部署的工具</p>
+</li>
+</ul>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/06/18/谈谈前端自动构建工具gulp/#more" rel="contents">
               阅读全文 &raquo;
