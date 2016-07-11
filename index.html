@@ -328,7 +328,7 @@
       
         
           <p>本文主要是大概说明本人对从浏览器输入<code>URL</code>到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
-<h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p><code>DNS</code>缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，<code>ISP</code>缓存。</p>
+<h2 id="1-DNS查询"><a href="#1-DNS查询" class="headerlink" title="1. DNS查询"></a>1. <a name='DNS-0'></a>DNS查询</h2><p><code>DNS</code>缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，<code>ISP</code>缓存。</p>
 <ul>
 <li><p>浏览器首先会查看自身是否已经有进行<code>DNS</code>缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的<code>DNS</code>，浏览器的<code>DNS</code>缓存可以加快<code>DNS</code>解析速度，但缓存时间不会太长。</p>
 <img src="/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png" alt="Chrome的DNS缓存" title="Chrome的DNS缓存">

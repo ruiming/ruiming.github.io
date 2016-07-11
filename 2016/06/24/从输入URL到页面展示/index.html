@@ -85,17 +85,17 @@
 
 
 <meta name="description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
-DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
+1. DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
 
-浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度，但缓">
+浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从输入URL到页面展示">
 <meta property="og:url" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
-DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
+1. DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
 
-浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度，但缓">
+浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/client-to-server-query.gif">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/server-to-server-query.gif">
@@ -118,13 +118,13 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/html-parse.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/render-tree-construction.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/webkitflow.png">
-<meta property="og:updated_time" content="2016-06-26T07:32:14.196Z">
+<meta property="og:updated_time" content="2016-07-11T09:43:41.576Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从输入URL到页面展示">
 <meta name="twitter:description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
-DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
+1. DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
 
-浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度，但缓">
+浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度">
 <meta name="twitter:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png">
 
 
@@ -355,7 +355,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 
       
         <p>本文主要是大概说明本人对从浏览器输入<code>URL</code>到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
-<h2 id="DNS查询"><a href="#DNS查询" class="headerlink" title="DNS查询"></a>DNS查询</h2><p><code>DNS</code>缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，<code>ISP</code>缓存。</p>
+<h2 id="1-DNS查询"><a href="#1-DNS查询" class="headerlink" title="1. DNS查询"></a>1. <a name="DNS-0"></a>DNS查询</h2><p><code>DNS</code>缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，<code>ISP</code>缓存。</p>
 <ul>
 <li><p>浏览器首先会查看自身是否已经有进行<code>DNS</code>缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的<code>DNS</code>，浏览器的<code>DNS</code>缓存可以加快<code>DNS</code>解析速度，但缓存时间不会太长。</p>
 <img src="/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png" alt="Chrome的DNS缓存" title="Chrome的DNS缓存">
@@ -386,7 +386,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 </li>
 </ul>
 <a id="more"></a>
-<h2 id="三次握手建立连接"><a href="#三次握手建立连接" class="headerlink" title="三次握手建立连接"></a>三次握手建立连接</h2><p>经过上述过程，此时浏览器得到了要访问的域名的IP地址。由于<code>DNS</code>查询需要一定时间，所以有些网站会使用<code>DNS Prefetching</code>进行<code>DNS</code>预解析，结合浏览器的<code>DNS</code>缓存，以加快网站速度。这里不做详细叙述。</p>
+<h2 id="2-三次握手建立连接"><a href="#2-三次握手建立连接" class="headerlink" title="2. 三次握手建立连接"></a>2. <a name="-1"></a>三次握手建立连接</h2><p>经过上述过程，此时浏览器得到了要访问的域名的IP地址。由于<code>DNS</code>查询需要一定时间，所以有些网站会使用<code>DNS Prefetching</code>进行<code>DNS</code>预解析，结合浏览器的<code>DNS</code>缓存，以加快网站速度。这里不做详细叙述。</p>
 <p>首先贴出<code>TCP</code>三次握手的建立图。</p>
 <img src="/2016/06/24/从输入URL到页面展示/tcp-shake-hands.jpg" alt="三次握手" title="三次握手">
 <p>我们抓包依次进行分析。</p>
@@ -431,7 +431,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 </li>
 </ol>
 <p>自此三次握手完成，连接建立，可以开始传输数据。</p>
-<h2 id="建立HTTPS连接"><a href="#建立HTTPS连接" class="headerlink" title="建立HTTPS连接"></a>建立HTTPS连接</h2><p>以上完成握手，只能建立<code>HTTP</code>连接。但如果网站使用了<code>HTTPS</code>协议，那么还需要进行<code>SSL/TLS</code>握手。</p>
+<h2 id="3-建立HTTPS连接"><a href="#3-建立HTTPS连接" class="headerlink" title="3. 建立HTTPS连接"></a>3. <a name="HTTPS-2"></a>建立HTTPS连接</h2><p>以上完成握手，只能建立<code>HTTP</code>连接。但如果网站使用了<code>HTTPS</code>协议，那么还需要进行<code>SSL/TLS</code>握手。</p>
 <p>在这之前，我们先介绍下<code>SSL/TLS</code>。</p>
 <p><code>SSL/TLS</code>是一种互联网安全加密技术。<code>HTTP</code>报文是进行明文传输的，这意味着用户的<code>cookie</code>或者其提交的信息比如账号和密码都是在互联网上裸奔，如果这个报文被其他人抓取到，会带来很大的不安全性。使用<code>HTTPS</code>协议是非常有必要的，并且目前最新的<code>HTTP2</code>规范也仅支持<code>HTTPS</code>。而<code>SSL/TLS</code>协议位于<code>TCP/IP</code>协议与各个应用层协议之间，为数据通信提供安全支持。他们可以分为记录协议和握手协议。</p>
 <p>那么<code>SSL</code>和<code>TLS</code>又有什么区别呢？</p>
@@ -472,7 +472,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <img src="/2016/06/24/从输入URL到页面展示/handshake.png" alt="HandsShake" title="HandsShake">
 <p>这之后双方都是用<code>TLS</code>来传输数据，但不带数据的<code>ACK</code>确认包不进行加密，仍然使用<code>TCP</code>协议来传输。</p>
 <p>需要明确的是，<code>TLS</code>协议还是建立在<code>TCP</code>协议之上的，此处为便于说明将两者区分对待。即<code>TCP</code>协议是不进行加密的，<code>TLS</code>是进行加密的<code>TCP</code>协议。</p>
-<h2 id="客户端请求网站信息"><a href="#客户端请求网站信息" class="headerlink" title="客户端请求网站信息"></a>客户端请求网站信息</h2><ol>
+<h2 id="4-客户端请求网站信息"><a href="#4-客户端请求网站信息" class="headerlink" title="4. 客户端请求网站信息"></a>4. <a name="-3"></a>客户端请求网站信息</h2><ol>
 <li><p>如果访问的是网站的主页，那么此时会发送一个请求给服务器，如下：</p>
 <img src="/2016/06/24/从输入URL到页面展示/request-1.png" alt="request-package" title="request-package">
 <p><code>HTTP</code>里面附带了<code>URI</code>, <code>ProtocolVersion</code>, <code>Host</code>, <code>Connection</code>以及<code>Cookie</code>等很多信息。</p>
@@ -508,7 +508,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
 <p>服务器发送完全部数据后，最后再发送一个报文，即图中的#191报文，表示我已经发完。客户端相应的发出<code>ACK</code>确认报文。主页请求结束。</p>
 </li>
 </ol>
-<h2 id="浏览器渲染"><a href="#浏览器渲染" class="headerlink" title="浏览器渲染"></a>浏览器渲染</h2><p>浏览器接收到<code>index.html</code>后，开始浏览器渲染，这里讨论<code>webkit</code>内核，其他内核不予讨论。主要分为四步进行。如下图:</p>
+<h2 id="5-浏览器渲染"><a href="#5-浏览器渲染" class="headerlink" title="5. 浏览器渲染"></a>5. <a name="-4"></a>浏览器渲染</h2><p>浏览器接收到<code>index.html</code>后，开始浏览器渲染，这里讨论<code>webkit</code>内核，其他内核不予讨论。主要分为四步进行。如下图:</p>
 <img src="/2016/06/24/从输入URL到页面展示/html-parse.png" alt="html-parse" title="html-parse">
 <p>浏览器渲染不是本文的重点，所以只做简单说明。</p>
 <ul>
@@ -741,7 +741,7 @@ DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由�
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS查询"><span class="nav-number">1.</span> <span class="nav-text">DNS查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三次握手建立连接"><span class="nav-number">2.</span> <span class="nav-text">三次握手建立连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立HTTPS连接"><span class="nav-number">3.</span> <span class="nav-text">建立HTTPS连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端请求网站信息"><span class="nav-number">4.</span> <span class="nav-text">客户端请求网站信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器渲染"><span class="nav-number">5.</span> <span class="nav-text">浏览器渲染</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-DNS查询"><span class="nav-number">1.</span> <span class="nav-text">1. DNS查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-三次握手建立连接"><span class="nav-number">2.</span> <span class="nav-text">2. 三次握手建立连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-建立HTTPS连接"><span class="nav-number">3.</span> <span class="nav-text">3. 建立HTTPS连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-客户端请求网站信息"><span class="nav-number">4.</span> <span class="nav-text">4. 客户端请求网站信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-浏览器渲染"><span class="nav-number">5.</span> <span class="nav-text">5. 浏览器渲染</span></a></li></ol></div>
             
           </div>
         </section>
