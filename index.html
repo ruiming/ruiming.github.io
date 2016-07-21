@@ -331,7 +331,7 @@
             <p>暑假打算研究一下<code>Underscore</code>源码，我会对一些我觉得比较有意思的点拿出来讨论下，不过我不会过多介绍，也不会去分析<code>Underscore</code>的各个方法，但我会附上一些相关的不错的参考资料。由于我也是初学阶段，所以如果有说的不正确的地方望指出。</p>
 <h2 id="要点1：立即执行函数"><a href="#要点1：立即执行函数" class="headerlink" title="要点1：立即执行函数"></a>要点1：立即执行函数</h2><p><code>Underscore</code>的内容都用这么一个东西包装起来了。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;..&#125;());</span><br></pre></td></tr></table></figure></p>
 <p>其实也可以这样写<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;)();</span><br></pre></td></tr></table></figure></p>
-<p>为什么要这样写呢，我们知道<code>JavaScript</code>存在变量提升的问题，解决变量提升问题的一个方法就是使用立即执行函数，当然用<code>let</code>语句也是ok的。<code>Underscore</code>把全部内容封装在立即执行函数里面，就形成了一个闭包，与外部隔离，还可以封装一些外部无法读取的私有变量。<br>推荐阅读：</p>
+<p><code>Underscore</code>把全部内容封装在立即执行函数里面，就形成了一个独立的作用域，与外部隔离，并且这样做还形成了闭包，可以模拟私有方法。<br>推荐阅读：</p>
 <ul>
 <li><a href="http://benalman.com/news/2010/11/immediately-invoked-function-expression/" target="_blank" rel="external">immediately-invoked-function-expression(英)</a></li>
 <li><a href="http://www.cnblogs.com/tomxu/archive/2011/12/31/2289423.html" target="_blank" rel="external">immediately-invoked-function-expression(中)</a></li>
