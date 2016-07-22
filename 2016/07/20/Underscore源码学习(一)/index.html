@@ -94,7 +94,7 @@
 <meta property="og:description" content="暑假打算研究一下Underscore源码，我会对一些我觉得比较有意思的点拿出来讨论下，不过我不会过多介绍，也不会去分析Underscore的各个方法，但我会附上一些相关的不错的参考资料。由于我也是初学阶段，所以如果有说的不正确的地方望指出。
 要点1：立即执行函数Underscore的内容都用这么一个东西包装起来了。1(function()&amp;#123;..&amp;#125;());
 其实也可以这样写1(f">
-<meta property="og:updated_time" content="2016-07-21T14:56:52.160Z">
+<meta property="og:updated_time" content="2016-07-22T07:05:36.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Underscore源码学习(一)">
 <meta name="twitter:description" content="暑假打算研究一下Underscore源码，我会对一些我觉得比较有意思的点拿出来讨论下，不过我不会过多介绍，也不会去分析Underscore的各个方法，但我会附上一些相关的不错的参考资料。由于我也是初学阶段，所以如果有说的不正确的地方望指出。
@@ -345,10 +345,11 @@
 <ul>
 <li><a href="https://zzz.buzz/2016/06/30/the-global-object-in-various-javascript-environments/" target="_blank" rel="external">The Global Object in Various JavaScript Environments</a></li>
 </ul>
-<h2 id="要点3：提供命名冲突解决"><a href="#要点3：提供命名冲突解决" class="headerlink" title="要点3：提供命名冲突解决"></a>要点3：提供命名冲突解决</h2><p><code>Underscore</code>在给<code>root</code>赋值前，先保存了原先<code>root</code>的<code>_</code>对象。之所以这样做，是因为可能我们用的其他库也使用了<code>_</code>这个作为命名空间。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> previousUnderscore = root._;</span><br></pre></td></tr></table></figure></p>
+<h2 id="要点3：提供命名冲突解决方法"><a href="#要点3：提供命名冲突解决方法" class="headerlink" title="要点3：提供命名冲突解决方法"></a>要点3：提供命名冲突解决方法</h2><p><code>Underscore</code>在给<code>root</code>赋值前，先保存了原先<code>root</code>的<code>_</code>对象。之所以这样做，是因为可能我们用的其他库也使用了<code>_</code>这个作为命名空间。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> previousUnderscore = root._;</span><br></pre></td></tr></table></figure></p>
 <p>我们结合<code>Underscore</code>最下面的这个方法来看。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_.noConflict = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    root._ = previousUnderscore;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>如果<code>_</code>出现了冲突，可以使用下面方法<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _new = _.noConflict();</span><br></pre></td></tr></table></figure></p>
 <p>这样一来应该很明显了，<code>noConflict</code>将<code>previousUnderscore</code>即原先的<code>root._</code>重新放回去，然后重新定义<code>Underscore</code>命名给<code>_new</code>，这样就解决了<code>_</code>冲突问题。</p>
+<a id="more"></a>
 <h2 id="要点4：考虑压缩问题"><a href="#要点4：考虑压缩问题" class="headerlink" title="要点4：考虑压缩问题"></a>要点4：考虑压缩问题</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ArrayProto = <span class="built_in">Array</span>.prototype, ObjProto = <span class="built_in">Object</span>.prototype;</span><br><span class="line"><span class="keyword">var</span> SymbolProto = <span class="keyword">typeof</span> <span class="built_in">Symbol</span> !== <span class="string">'undefined'</span> ? <span class="built_in">Symbol</span>.prototype : <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">var</span> push = ArrayProto.push,</span><br><span class="line">    slice = ArrayProto.slice,</span><br><span class="line">    toString = ObjProto.toString,</span><br><span class="line">    hasOwnProperty = ObjProto.hasOwnProperty;</span><br></pre></td></tr></table></figure>
 <p>这里首先说一下<code>Symbol</code>，<code>ES5</code>规定了六种语言类型即<code>Null</code>, <code>Undefined</code>, <code>Number</code>, <code>Boolean</code>, <code>String</code>, <code>Object</code>，而新出台的<code>ES6</code>则新增了<code>Symbol</code>。关于<code>Symbol</code>查看推荐阅读。<br>这里把<code>Array</code>和<code>Object</code>和<code>Symbol</code>的原型都用变量来引用的原因是变量可以进行压缩，如果有使用过代码压缩工具的话，一个常见的压缩技巧就是用短变量名代替长变量名，而对于一些出现频率高的方法我们可以用变量来进行引用来便于压缩。<br>而<code>push</code>,<code>slice</code>,<code>toString</code>,<code>hasOwnProperty</code>这些引用不仅便于压缩，还可以减少在原型链中的查找次数，提高速度。即直接在原型上操作，避免原型链查找。关于原型链是个大问题了，这里不打算过多讲解（其实是我也不怎么懂），下一篇再进行介绍。<br>还有一个地方顺便提一下的是，<code>Underscore</code>的源码不使用<code>undefined</code>而是使用<code>void  0</code>。这个也是代码压缩的时候会做的事情。虽然从<code>ES5</code>开始<code>undefined</code>是全局对象的只读属性不能重写，但是在局部作用域中仍然可以被重写，而<code>void</code>运算符能对给定的表达式进行求值，然后返回<code>undefined</code>，可以保证返回的是<code>undefined</code>，<code>void</code>不能重写。再者，之所以跟的是<code>0</code>，只是因为<code>0</code>短并且习惯问题而已。<br>推荐阅读：</p>
 <ul>
@@ -401,6 +402,10 @@
           </div>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/22/JavaScript闭包，继承与原型链/" rel="prev" title="JavaScript闭包，继承与原型链">
+                JavaScript闭包，继承与原型链 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -472,7 +477,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-count">6</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -556,7 +561,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#要点1：立即执行函数"><span class="nav-number">1.</span> <span class="nav-text">要点1：立即执行函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点2：兼容浏览器和Node环境"><span class="nav-number">2.</span> <span class="nav-text">要点2：兼容浏览器和Node环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点3：提供命名冲突解决"><span class="nav-number">3.</span> <span class="nav-text">要点3：提供命名冲突解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点4：考虑压缩问题"><span class="nav-number">4.</span> <span class="nav-text">要点4：考虑压缩问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点5：区别apply-call和bind"><span class="nav-number">5.</span> <span class="nav-text">要点5：区别apply, call和bind</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#要点1：立即执行函数"><span class="nav-number">1.</span> <span class="nav-text">要点1：立即执行函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点2：兼容浏览器和Node环境"><span class="nav-number">2.</span> <span class="nav-text">要点2：兼容浏览器和Node环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点3：提供命名冲突解决方法"><span class="nav-number">3.</span> <span class="nav-text">要点3：提供命名冲突解决方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点4：考虑压缩问题"><span class="nav-number">4.</span> <span class="nav-text">要点4：考虑压缩问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要点5：区别apply-call和bind"><span class="nav-number">5.</span> <span class="nav-text">要点5：区别apply, call和bind</span></a></li></ol></div>
             
           </div>
         </section>
