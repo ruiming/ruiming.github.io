@@ -345,7 +345,7 @@
 <li>使用<code>ES6</code>语法，用<code>babel</code>转为<code>ES5</code></li>
 <li>使用<code>eslint</code>来做代码格式检查</li>
 </ul>
-<p>之前我几乎没有使用<code>Factory</code>这一层，全部业务逻辑都在<code>Controller</code>里面做，随着项目越来越大(有26个模块)，模块之间函数重复的情况很多，而且控制器太厚，可读性差，给维护带来了巨大的困难。在这次重构之中，我把全部的<code>HTTP</code>请求全部放在<code>Factory</code>实现，从而做到了以下几点：</p>
+<p>之前我几乎没有使用<code>Factory</code>这一层，全部业务逻辑都在<code>Controller</code>里面做，随着项目越来越大(有26个页面)，页面之间函数重复的情况很多，而且控制器太厚，可读性差，给维护带来了巨大的困难。在这次重构之中，我把全部的<code>HTTP</code>请求全部放在<code>Factory</code>实现，从而做到了以下几点：</p>
 <ul>
 <li>函数复用，多个控制器用一个<code>Factory</code>，避免同个函数多次书写</li>
 <li><code>HTTP</code>请求返回<code>promise</code>，集合<code>angular-promise-buttons</code>做到了按钮状态的自动变化以及过渡效果，去掉了先前实现同样目的的全部辅助变量</li>
