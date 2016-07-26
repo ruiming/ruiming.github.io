@@ -350,7 +350,8 @@
 <li>函数复用，多个控制器用一个<code>Factory</code>，避免同个函数多次书写</li>
 <li><code>HTTP</code>请求返回<code>promise</code>，集合<code>angular-promise-buttons</code>做到了按钮状态的自动变化以及过渡效果，去掉了先前实现同样目的的全部辅助变量</li>
 <li>对部分相对不变的数据，在第一次缓存后直接在该<code>Factory</code>进行缓存，第二次获取的时候直接返回内存中的数据，加快了部分页面的二次加载速度，对跨页面你的同个请求同样有效</li>
-<li>容易做单元测试和更改逻辑，因为全部<code>HTTP</code>请求都放在<code>Factory</code>实现，对后期修改以及代码测试都带来了很大的方便
+<li>容易做单元测试和更改逻辑，因为全部<code>HTTP</code>请求都放在<code>Factory</code>实现，对后期修改以及代码测试都带来了很大的方便</li>
+</ul>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/07/26/一次项目重构/#more" rel="contents">
               阅读全文 &raquo;
