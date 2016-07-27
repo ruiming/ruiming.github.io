@@ -84,18 +84,18 @@
 
 
 
-<meta name="description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
+<meta name="description" content="本文从网络层以上讨论从浏览器输入HTTPS协议的URL到页面展现的全过程。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
 1. DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
 
-浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度">
+浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从输入URL到页面展示">
 <meta property="og:url" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
+<meta property="og:description" content="本文从网络层以上讨论从浏览器输入HTTPS协议的URL到页面展现的全过程。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
 1. DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
 
-浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度">
+浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/client-to-server-query.gif">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/server-to-server-query.gif">
@@ -118,13 +118,13 @@
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/html-parse.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/render-tree-construction.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/webkitflow.png">
-<meta property="og:updated_time" content="2016-07-11T09:43:41.576Z">
+<meta property="og:updated_time" content="2016-07-27T09:00:35.673Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从输入URL到页面展示">
-<meta name="twitter:description" content="本文主要是大概说明本人对从浏览器输入URL到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
+<meta name="twitter:description" content="本文从网络层以上讨论从浏览器输入HTTPS协议的URL到页面展现的全过程。由于不同浏览器之间也存在差异，这里以chrome浏览器为例。
 1. DNS查询DNS缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP缓存。
 
-浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析速度">
+浏览器首先会查看自身是否已经有进行DNS缓存。chrome可以通过chrome://net-internals/#dns查看缓存的DNS，浏览器的DNS缓存可以加快DNS解析">
 <meta name="twitter:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png">
 
 
@@ -354,7 +354,7 @@
       
 
       
-        <p>本文主要是大概说明本人对从浏览器输入<code>URL</code>到整个页面展示的过程的理解。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
+        <p>本文从网络层以上讨论从浏览器输入<code>HTTPS</code>协议的<code>URL</code>到页面展现的全过程。由于不同浏览器之间也存在差异，这里以<code>chrome</code>浏览器为例。</p>
 <h2 id="1-DNS查询"><a href="#1-DNS查询" class="headerlink" title="1. DNS查询"></a>1. <a name="DNS-0"></a>DNS查询</h2><p><code>DNS</code>缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，<code>ISP</code>缓存。</p>
 <ul>
 <li><p>浏览器首先会查看自身是否已经有进行<code>DNS</code>缓存。<code>chrome</code>可以通过<code>chrome://net-internals/#dns</code>查看缓存的<code>DNS</code>，浏览器的<code>DNS</code>缓存可以加快<code>DNS</code>解析速度，但缓存时间不会太长。</p>
@@ -472,6 +472,11 @@
 <img src="/2016/06/24/从输入URL到页面展示/handshake.png" alt="HandsShake" title="HandsShake">
 <p>这之后双方都是用<code>TLS</code>来传输数据，但不带数据的<code>ACK</code>确认包不进行加密，仍然使用<code>TCP</code>协议来传输。</p>
 <p>需要明确的是，<code>TLS</code>协议还是建立在<code>TCP</code>协议之上的，此处为便于说明将两者区分对待。即<code>TCP</code>协议是不进行加密的，<code>TLS</code>是进行加密的<code>TCP</code>协议。</p>
+<p>这个过程其实是先进行<code>HTTP</code>连接建立的三次握手，然后服务器进行3xx重定向，然后再进行<code>HTTPS</code>的三次握手。这样既增加了连接建立的开销，而且也可能在<code>HTTP</code>连接建立的过程被劫持。所以有出现了<code>HSTS</code>。</p>
+<blockquote>
+<p>HTTP严格传输安全(HTTP Strict Transport Security)是一套由互联网工程任务组发布的互联网安全策略机制。网站可以选择使用HSTS策略，来让浏览器强制使用<code>HTTPS</code>与网站进行通信，以减少会话劫持风险。</p>
+</blockquote>
+<p>我们有时候会看到出现证警告的提醒，使用了<code>HSTS</code>之后用户将不再允许忽略警告。但是用户首次访问某个网站是不受<code>HSTS</code>保护的，因为首次访问时浏览器还未收到<code>HSTS</code>，目前比较流行的方案是浏览器预置<code>HTST</code>域名列表，<code>Google Chrome</code>,<code>Firefox</code>,<code>IE</code>,<code>Edge</code>都实现了这一方案，我们可以在服务器配置相关信息后去进行登记。<code>HSTS</code>可以抵御<code>SSL</code>剥离攻击，它利用用户通过<code>HTTP</code>建立连接再重定向到<code>HTTPS</code>连接，阻止浏览器与服务器建立<code>HTTPS</code>连接，攻击者可以在用户访问<code>HTTP</code>页面时替换所有<code>HTTPS</code>链接为<code>HTTP</code>，达到阻止<code>HTTPS</code>的目的。</p>
 <h2 id="4-客户端请求网站信息"><a href="#4-客户端请求网站信息" class="headerlink" title="4. 客户端请求网站信息"></a>4. <a name="-3"></a>客户端请求网站信息</h2><ol>
 <li><p>如果访问的是网站的主页，那么此时会发送一个请求给服务器，如下：</p>
 <img src="/2016/06/24/从输入URL到页面展示/request-1.png" alt="request-package" title="request-package">
