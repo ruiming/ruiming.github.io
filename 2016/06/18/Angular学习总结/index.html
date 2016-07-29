@@ -308,6 +308,13 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
 
           
             
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/18/Angular学习总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/18/Angular学习总结/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -450,6 +457,13 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
 
           
   <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
     
   </div>
 
@@ -710,6 +724,27 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
 
 
 
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'ruimingzhuang';
+      var disqus_identifier = '2016/06/18/Angular学习总结/';
+      var disqus_title = "Angular学习总结";
+      var disqus_url = 'https://ruiming.github.io/2016/06/18/Angular学习总结/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
   
 
 
