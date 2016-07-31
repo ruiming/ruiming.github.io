@@ -1,0 +1,844 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JavaScript,Underscore," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/avatar.jpg?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="这次主要说剩余参数。在ES5中，如果想要函数接收任意数量的参数，必须使用特殊变量arguments，举个例子，我们要实现一个加法函数，要求第一个数乘2，然后与其他数相加。1234567function add() &amp;#123;    var sum = arguments[0] * 2;    for(var i = 1; i &amp;lt; arguments.length; i++) &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Underscore源码学习(三)">
+<meta property="og:url" content="https://ruiming.github.io/2016/07/31/Underscore源码学习(三)/index.html">
+<meta property="og:site_name" content="Ruiming's Blog">
+<meta property="og:description" content="这次主要说剩余参数。在ES5中，如果想要函数接收任意数量的参数，必须使用特殊变量arguments，举个例子，我们要实现一个加法函数，要求第一个数乘2，然后与其他数相加。1234567function add() &amp;#123;    var sum = arguments[0] * 2;    for(var i = 1; i &amp;lt; arguments.length; i++) &amp;#123;">
+<meta property="og:image" content="https://ruiming.github.io/2016/07/31/Underscore源码学习(三)/result1.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/07/31/Underscore源码学习(三)/result2.png">
+<meta property="og:updated_time" content="2016-07-31T08:18:09.293Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Underscore源码学习(三)">
+<meta name="twitter:description" content="这次主要说剩余参数。在ES5中，如果想要函数接收任意数量的参数，必须使用特殊变量arguments，举个例子，我们要实现一个加法函数，要求第一个数乘2，然后与其他数相加。1234567function add() &amp;#123;    var sum = arguments[0] * 2;    for(var i = 1; i &amp;lt; arguments.length; i++) &amp;#123;">
+<meta name="twitter:image" content="https://ruiming.github.io/2016/07/31/Underscore源码学习(三)/result1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6247361191572669000,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://ruiming.github.io/2016/07/31/Underscore源码学习(三)/"/>
+
+  <title> Underscore源码学习(三) | Ruiming's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81637252-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Ruiming's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Underscore源码学习(三)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T14:37:31+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/31/Underscore源码学习(三)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/31/Underscore源码学习(三)/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/31/Underscore源码学习(三)/" class="leancloud_visitors" data-flag-title="Underscore源码学习(三)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这次主要说剩余参数。<br>在<code>ES5</code>中，如果想要函数接收任意数量的参数，必须使用特殊变量<code>arguments</code>，举个例子，我们要实现一个加法函数，要求第一个数乘2，然后与其他数相加。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum = <span class="built_in">arguments</span>[<span class="number">0</span>] * <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">        sum += <span class="built_in">arguments</span>[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>ES6</code>中，我们可以使用<code>...</code>操作符，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">first, ...args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum = first*<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> arg <span class="keyword">of</span> args) &#123;</span><br><span class="line">        sum += arg;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>ES5</code>我们无法给函数定义参数，而只能通过<code>arguments</code>来获取参数，这样写明显带来了可读性的降低。而<code>ES6</code>我们就可以在函数声明里面写明参数，对于不定长的参数，则可以使用<code>...</code>操作符。<br><code>...</code>还有另一个常用的应用场景。比如下面例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span> <span class="keyword">instanceof</span> <span class="built_in">Array</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>);</span><br><span class="line">&#125;</span><br><span class="line">test(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// Result:</span></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="literal">false</span></span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
+<p>如果细看输出的[1, 2, 3]会发现他是这样的：<br><img src="/2016/07/31/Underscore源码学习(三)/result1.png" alt="result1.png" title="result1.png"><br>我们再试试下面的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="built_in">console</span>.log(arr);</span><br><span class="line"><span class="built_in">console</span>.log(arr <span class="keyword">instanceof</span> <span class="built_in">Array</span>);</span><br><span class="line"><span class="built_in">console</span>.log(arr <span class="keyword">instanceof</span> <span class="built_in">Object</span>);</span><br><span class="line"><span class="comment">// Result:</span></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="literal">true</span></span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
+<p>再看下[1, 2, 3]这行输出里面是什么：<br><img src="/2016/07/31/Underscore源码学习(三)/result2.png" alt="result2.png" title="result2.png"><br>从<code>instanceof</code>我们就知道了<code>arguments</code>并不是真正的数组。伪数组实质是一个对象。<br>要把一个伪数组转为数组，可以这样用<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>);</span><br></pre></td></tr></table></figure></p>
+<p>上面这种做法在很多地方都可以看到。除了上面这样做之外，我们还可以使用<code>ES6</code>的<code>Array.from</code>来处理，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = <span class="built_in">Array</span>.from(<span class="built_in">arguments</span>);</span><br></pre></td></tr></table></figure></p>
+<p>但在<code>ES6</code>中，我们使用<code>...</code>运算符并不存在这个问题，比如上面第二个例子，<code>args</code>是一个数组。<br>鉴于此，我们应该尽量使用<code>ES6</code>剩余参数写法和<code>Array.from</code>的写法，因为这样更容易理解，而且写起来更简洁。<br>另外，我们还可以使用<code>...</code>操作符来复制数组，如下：<br><a id="more"></a><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> itemsCopy = [...items];</span><br></pre></td></tr></table></figure></p>
+<p>额，说多了，其实我是想说说<code>Underscore</code>中的<code>restArgs</code>这个东西…<br>看下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> restArgs = <span class="function"><span class="keyword">function</span>(<span class="params">func, startIndex</span>) </span>&#123;</span><br><span class="line">    startIndex = startIndex == <span class="literal">null</span> ? func.length <span class="number">-1</span> : +startIndex;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> length = <span class="built_in">Math</span>.max(<span class="built_in">arguments</span>.length - startIndex, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">var</span> rest = <span class="built_in">Array</span>(length);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> index = <span class="number">0</span>; index &lt; length; index++) &#123;</span><br><span class="line">            rest[index] = <span class="built_in">arguments</span>[index + startIndex];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">switch</span> (startIndex) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>: <span class="keyword">return</span> func.call(<span class="keyword">this</span>, rest);</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span>: <span class="keyword">return</span> func.call(<span class="keyword">this</span>, <span class="built_in">arguments</span>[<span class="number">0</span>], rest);</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>: <span class="keyword">return</span> func.call(<span class="keyword">this</span>, <span class="built_in">arguments</span>[<span class="number">0</span>], <span class="built_in">arguments</span>[<span class="number">1</span>], rest);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> args = <span class="built_in">Array</span>(startIndex + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">for</span> (index = <span class="number">0</span>; index &lt; startIndex; index++) &#123;</span><br><span class="line">            args[index] = <span class="built_in">arguments</span>[index];</span><br><span class="line">        &#125;</span><br><span class="line">        args[startIndex] = rest;</span><br><span class="line">        <span class="keyword">return</span> func.apply(<span class="keyword">this</span>, args);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>这个的作用就类似与<code>ES6</code>中的<code>...</code>操作符。这段代码作用是把<code>func</code>中<code>startIndex</code>开始的（如果没有指定则为被函数声明参数的最后一位开始）后面的参数全部变为一个数组传入<code>func</code>中。<br>这里有几个可圈可点的地方：</p>
+<ul>
+<li><p>fun.length和arguments.length<br>函数也具有<code>length</code>方法，得到的值是函数定义的参数的个数，但注意如果中间有一个含默认值的参数，则这个数和后面的参数都不会计算进去。例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test1</span>(<span class="params">arg1, arg2, arg3 = 1, arg4</span>) </span>&#123;&#125;;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test2</span>(<span class="params">arg1, arg2, arg3</span>) </span>&#123;&#125;;</span><br><span class="line">test1.length;   <span class="comment">// 2</span></span><br><span class="line">test2.length    <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+<p>而<code>arguments.length</code>则一直表示传入函数的参数个数。</p>
+</li>
+<li><p>使用<code>+</code>转换为数字<br>你可能注意到了下面这句话有个<code>+</code>运算符。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">startIndex = startIndex == <span class="literal">null</span> ? func.length - <span class="number">1</span> : +startIndex;</span><br></pre></td></tr></table></figure>
+<p>其用途就是尝试把<code>startIndex</code>转为数字，我们举例看下就明白了。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'123'</span>, b = <span class="string">'123s'</span>, c = <span class="string">'0x321'</span>, d = <span class="string">'-0'</span>, e = <span class="string">'-Infinity'</span></span><br><span class="line">+a;           <span class="comment">// 123</span></span><br><span class="line">+b;           <span class="comment">// NaN</span></span><br><span class="line">+c;           <span class="comment">// 801</span></span><br><span class="line">+d;           <span class="comment">// -0</span></span><br><span class="line">+e;           <span class="comment">// -Infinity</span></span><br></pre></td></tr></table></figure>
+<p>应该很清楚了，就不说明了。<br>然后关于这里的<code>switch</code>其实就是一个优化而已，前面都提到过了，不提了。</p>
+</li>
+</ul>
+<p>我们看下<code>Underscore</code>运用到<code>restArgs</code>方法的地方：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">_.invoke = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">obj, method, args</span>) </span>&#123;</span><br><span class="line"><span class="keyword">var</span> isFunc = _.isFunction(method);</span><br><span class="line">    <span class="keyword">return</span> _.map(obj, <span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> func = isFunc ? method : value[method];</span><br><span class="line">        <span class="keyword">return</span> func == <span class="literal">null</span> ? func : func.apply(value, args);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>这个方法的作用是在<code>obj</code>的每个元素上面执行<code>method</code>方法，例如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_.invoke([[5, 1, 7], [3, 2, 1]], 'sort');</span><br><span class="line">_.invoke([['a', 'b', 'c'], ['w', 'g', 's']], 'join', '#');</span><br><span class="line">// Result:</span><br><span class="line">1,5,7,1,2,3</span><br><span class="line">a#b#c,w#g#s</span><br></pre></td></tr></table></figure></p>
+<p>由于<code>method</code>需要的参数个数是未知的，所以我们这里使用了<code>args</code>再用<code>restArgs</code>达到类似<code>...</code>操作符的效果。<br>本来还想说说<code>Underscore</code>的几个方法的…但是好像已经写了挺多的了，还是下一次再介绍吧，后面的很多方法其实都不难理解，不过最好结合他的实际应用例子这样就更容易去理解些。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+            <a href="/tags/Underscore/" rel="tag">#Underscore</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/29/Underscore源码学习(二)/" rel="next" title="Underscore源码学习(二)">
+                <i class="fa fa-chevron-left"></i> Underscore源码学习(二)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Ruiming" />
+          <p class="site-author-name" itemprop="name">Ruiming</p>
+          <p class="site-description motion-element" itemprop="description">Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Ruiming" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/zhuang-rui-ming" target="_blank" title="Zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Zhihu
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/zhuangruiming" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://plus.google.com/115149019958723046324" target="_blank" title="Google+">
+                  
+                    <i class="fa fa-fw fa-google-plus"></i>
+                  
+                  Google+
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ruiming</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">你是本站的第<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>个小伙伴</span>
+  
+
+  
+    <span class="site-pv">Total<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>views</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'ruiming';
+      var disqus_identifier = '2016/07/31/Underscore源码学习(三)/';
+      var disqus_title = "Underscore源码学习(三)";
+      var disqus_url = 'https://ruiming.github.io/2016/07/31/Underscore源码学习(三)/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("zubvLPlu4282neSFuGISU0Cj-gzGzoHsz", "nWvzBqYiScjyD8wQa4BXQH8f");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
