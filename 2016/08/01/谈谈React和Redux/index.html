@@ -84,23 +84,23 @@
 
 
 
-<meta name="description" content="刚回到家的时候学习了React和Redux，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用React和Redux已经完成了基础的几个功能，但是那个代码量…用Angular写简直轻轻松松的好吧…然后就去重构项目还有现在学的Underscore去了。是时候回头继续学习了。此处主要讲的是redux。
+<meta name="description" content="刚回到家的时候学习了React和Redux，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用React和Redux已经完成了基础的几个功能，但是那个代码量…用Angular写简直轻轻松松的好吧…然后就去重构项目还有现在学的Underscore去了。是时候重新回顾下了。此处主要讲的是redux。
 关于Redux
-redux是facebook 提出的flux架构的一种">
+redux是facebook 提出的flux架构的一种优">
 <meta property="og:type" content="article">
 <meta property="og:title" content="谈谈React和Redux">
 <meta property="og:url" content="https://ruiming.github.io/2016/08/01/谈谈React和Redux/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="刚回到家的时候学习了React和Redux，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用React和Redux已经完成了基础的几个功能，但是那个代码量…用Angular写简直轻轻松松的好吧…然后就去重构项目还有现在学的Underscore去了。是时候回头继续学习了。此处主要讲的是redux。
+<meta property="og:description" content="刚回到家的时候学习了React和Redux，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用React和Redux已经完成了基础的几个功能，但是那个代码量…用Angular写简直轻轻松松的好吧…然后就去重构项目还有现在学的Underscore去了。是时候重新回顾下了。此处主要讲的是redux。
 关于Redux
-redux是facebook 提出的flux架构的一种">
+redux是facebook 提出的flux架构的一种优">
 <meta property="og:image" content="https://ruiming.github.io/2016/08/01/谈谈React和Redux/flux-overview.png">
-<meta property="og:updated_time" content="2016-08-01T13:55:45.066Z">
+<meta property="og:updated_time" content="2016-08-01T14:07:56.056Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="谈谈React和Redux">
-<meta name="twitter:description" content="刚回到家的时候学习了React和Redux，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用React和Redux已经完成了基础的几个功能，但是那个代码量…用Angular写简直轻轻松松的好吧…然后就去重构项目还有现在学的Underscore去了。是时候回头继续学习了。此处主要讲的是redux。
+<meta name="twitter:description" content="刚回到家的时候学习了React和Redux，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用React和Redux已经完成了基础的几个功能，但是那个代码量…用Angular写简直轻轻松松的好吧…然后就去重构项目还有现在学的Underscore去了。是时候重新回顾下了。此处主要讲的是redux。
 关于Redux
-redux是facebook 提出的flux架构的一种">
+redux是facebook 提出的flux架构的一种优">
 <meta name="twitter:image" content="https://ruiming.github.io/2016/08/01/谈谈React和Redux/flux-overview.png">
 
 
@@ -346,12 +346,12 @@ redux是facebook 提出的flux架构的一种">
       
 
       
-        <p>刚回到家的时候学习了<code>React</code>和<code>Redux</code>，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用<code>React</code>和<code>Redux</code>已经完成了基础的几个功能，但是那个代码量…用<code>Angular</code>写简直轻轻松松的好吧…然后就去重构项目还有现在学的<code>Underscore</code>去了。是时候回头继续学习了。<br>此处主要讲的是<code>redux</code>。</p>
+        <p>刚回到家的时候学习了<code>React</code>和<code>Redux</code>，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用<code>React</code>和<code>Redux</code>已经完成了基础的几个功能，但是那个代码量…用<code>Angular</code>写简直轻轻松松的好吧…然后就去重构项目还有现在学的<code>Underscore</code>去了。是时候重新回顾下了。<br>此处主要讲的是<code>redux</code>。</p>
 <h3 id="关于Redux"><a href="#关于Redux" class="headerlink" title="关于Redux"></a>关于Redux</h3><blockquote>
 <p><code>redux</code>是facebook 提出的flux架构的一种优秀实现；而且不局限于为<code>react</code> 提供数据状态处理。 它是零依赖的，可以配合其他任何框架或者类库一起使用。 要想配合<code>react</code>，还得引入<code>react-redux</code>。</p>
 </blockquote>
 <p>恩，没看错，<code>redux</code>不是<code>react</code>独有的，它甚至可以运用在<code>Angular</code>中。</p>
-<h3 id="关于FLux"><a href="#关于FLux" class="headerlink" title="关于FLux"></a>关于FLux</h3><p>那什么是<code>Flux</code>呢？见下图<br><img src="/2016/08/01/谈谈React和Redux/flux-overview.png" alt="flux-overview.png" title="flux-overview.png"><br><code>Flux</code>可以分为四个部分：</p>
+<h3 id="关于Flux"><a href="#关于Flux" class="headerlink" title="关于Flux"></a>关于Flux</h3><p>那什么是<code>Flux</code>呢？见下图<br><img src="/2016/08/01/谈谈React和Redux/flux-overview.png" alt="flux-overview.png" title="flux-overview.png"><br><code>Flux</code>可以分为四个部分：</p>
 <ul>
 <li>View: 视图层</li>
 <li>Action: 视图层触发的动作</li>
@@ -408,7 +408,8 @@ redux是facebook 提出的flux架构的一种">
 <p><code>Angular</code>是一个功能完善全面的框架，还自带了<code>$http</code>, <code>ngRoute</code>, <code>jqLite</code>, <code>$q</code>, <code>service</code>等等。提供了一整套的解决方案，估计这点很合大公司的胃口。并且<code>Angular</code>社区成熟活跃，生态完整，目前仍是最流行的前端框架，没有之一，非常适合用来写单页应用。数据双向绑定给开发带来了很大的便利，但双向绑定带来了性能损耗并且脏值检查也相当耗时，但这在中小型应用根本不是问题。</p>
 <p>对比起来，我还是更喜欢<code>Angular</code>，他的开发效率高，而且写起来很清晰，虽然他也有一些问题，但是在没有达到一个量级前这些问题是很难被体现出来的。而<code>React</code>可能在开发多端或者注重体积或者是在大型应用中可能才会去考虑吧。</p>
 <p>另外<code>Angular2</code>也实现了虚拟DOM，同样支持服务端渲染，使用<code>web worker</code>提升性能，<code>TypeScript</code>提升了<code>JavaScript</code>项目的健壮性，而<code>Web Components</code>无疑是是未来趋势。我对<code>Angular2</code>同样满怀期待，我认为<code>Angular2</code>未来也会同<code>Angular1</code>一样火起来。</p>
-<p>前端真的是充满变化，不是吗？</p>
+<p>计划是再学习<code>react-router</code>，写一个完整的<code>React</code>应用，后端使用<code>Koa</code>来开发。不过还是等手头上的东西处理完先吧。</p>
+<p>除了<code>Angular1</code>和<code>Angular2</code>以及<code>React</code>，还有<code>Vue</code>和<code>Vue2</code>以及阿里的<code>Weex</code>，前端的水深着呢！</p>
 <hr>
 <p><a href="https://github.com/Lucifier129/Lucifier129.github.io/issues/9" target="_blank" rel="external">深入到源码：解读 redux 的设计思路与用法</a></p>
 
@@ -613,7 +614,7 @@ redux是facebook 提出的flux架构的一种">
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于Redux"><span class="nav-number">1.</span> <span class="nav-text">关于Redux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于FLux"><span class="nav-number">2.</span> <span class="nav-text">关于FLux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redux和Flux"><span class="nav-number">3.</span> <span class="nav-text">Redux和Flux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解Redux"><span class="nav-number">4.</span> <span class="nav-text">理解Redux</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Action"><span class="nav-number">4.1.</span> <span class="nav-text">Action</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reducer"><span class="nav-number">4.2.</span> <span class="nav-text">Reducer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Store"><span class="nav-number">4.3.</span> <span class="nav-text">Store</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Views"><span class="nav-number">4.4.</span> <span class="nav-text">Views</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redux运行过程"><span class="nav-number">5.</span> <span class="nav-text">Redux运行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#React和Angular"><span class="nav-number">6.</span> <span class="nav-text">React和Angular</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于Redux"><span class="nav-number">1.</span> <span class="nav-text">关于Redux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于Flux"><span class="nav-number">2.</span> <span class="nav-text">关于Flux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redux和Flux"><span class="nav-number">3.</span> <span class="nav-text">Redux和Flux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解Redux"><span class="nav-number">4.</span> <span class="nav-text">理解Redux</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Action"><span class="nav-number">4.1.</span> <span class="nav-text">Action</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reducer"><span class="nav-number">4.2.</span> <span class="nav-text">Reducer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Store"><span class="nav-number">4.3.</span> <span class="nav-text">Store</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Views"><span class="nav-number">4.4.</span> <span class="nav-text">Views</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redux运行过程"><span class="nav-number">5.</span> <span class="nav-text">Redux运行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#React和Angular"><span class="nav-number">6.</span> <span class="nav-text">React和Angular</span></a></li></ol></div>
             
           </div>
         </section>
