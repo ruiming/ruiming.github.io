@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hack," />
+  <meta name="keywords" content="JavaScript,Underscore," />
 
 
 
@@ -84,24 +84,16 @@
 
 
 
-<meta name="description" content="一次小小的Hack尝试…前段时间换上了Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词，monitor和ARP。
-ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。
-主机发现和端口扫描进行攻击第一步当然就是找目标了。可以使用nmap这个工具来进行，这东西简直渗透利器。1">
+<meta name="description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ARP攻击和无线网卡混杂模式">
-<meta property="og:url" content="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/index.html">
+<meta property="og:title" content="Underscore源码学习(四)">
+<meta property="og:url" content="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="一次小小的Hack尝试…前段时间换上了Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词，monitor和ARP。
-ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。
-主机发现和端口扫描进行攻击第一步当然就是找目标了。可以使用nmap这个工具来进行，这东西简直渗透利器。1">
-<meta property="og:image" content="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png">
-<meta property="og:updated_time" content="2016-07-22T07:12:49.143Z">
+<meta property="og:description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
+<meta property="og:updated_time" content="2016-08-01T07:39:34.746Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ARP攻击和无线网卡混杂模式">
-<meta name="twitter:description" content="一次小小的Hack尝试…前段时间换上了Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词，monitor和ARP。
-ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。
-主机发现和端口扫描进行攻击第一步当然就是找目标了。可以使用nmap这个工具来进行，这东西简直渗透利器。1">
-<meta name="twitter:image" content="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png">
+<meta name="twitter:title" content="Underscore源码学习(四)">
+<meta name="twitter:description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
 
 
 
@@ -122,9 +114,9 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
 
 
 
-  <link rel="canonical" href="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/"/>
+  <link rel="canonical" href="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/"/>
 
-  <title> ARP攻击和无线网卡混杂模式 | Ruiming's Blog </title>
+  <title> Underscore源码学习(四) | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -271,7 +263,7 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
             
             
               
-                ARP攻击和无线网卡混杂模式
+                Underscore源码学习(四)
               
             
           </h1>
@@ -283,8 +275,8 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-14T12:32:41+08:00" content="2016-07-14">
-              2016-07-14
+            <time itemprop="dateCreated" datetime="2016-08-01T15:37:14+08:00" content="2016-08-01">
+              2016-08-01
             </time>
           </span>
 
@@ -297,8 +289,8 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/网络安全/" itemprop="url" rel="index">
-                    <span itemprop="name">网络安全</span>
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
                   </a>
                 </span>
 
@@ -313,8 +305,8 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/07/14/ARP攻击和无线网卡混杂模式/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/14/ARP攻击和无线网卡混杂模式/" itemprop="commentsCount"></span>
+                <a href="/2016/08/01/Underscore源码学习(四)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/01/Underscore源码学习(四)/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -324,7 +316,7 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
 
           
           
-             <span id="/2016/07/14/ARP攻击和无线网卡混杂模式/" class="leancloud_visitors" data-flag-title="ARP攻击和无线网卡混杂模式">
+             <span id="/2016/08/01/Underscore源码学习(四)/" class="leancloud_visitors" data-flag-title="Underscore源码学习(四)">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -346,15 +338,13 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
       
 
       
-        <p>一次小小的Hack尝试…<br>前段时间换上了<code>Arch</code>，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词，<code>monitor</code>和<code>ARP</code>。</p>
-<h2 id="ARP攻击"><a href="#ARP攻击" class="headerlink" title="ARP攻击"></a>ARP攻击</h2><p>学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。</p>
-<h3 id="主机发现和端口扫描"><a href="#主机发现和端口扫描" class="headerlink" title="主机发现和端口扫描"></a>主机发现和端口扫描</h3><p>进行攻击第一步当然就是找目标了。可以使用<code>nmap</code>这个工具来进行，这东西简直渗透利器。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -<span class="built_in">sP</span> <span class="number">192.168</span><span class="meta">.1</span><span class="meta">.0</span>/<span class="number">24</span></span><br></pre></td></tr></table></figure></p>
-<p> 这样就可以扫描192.168.1.0这个网段里面的所有主机了，以<code>ping</code>方式扫描，当然他有很多参数很多用法，网上很多这方面的资料我就不叙述了。<br><img src="/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png" alt="Nmap扫描" title="Nmap扫描"></p>
-<h3 id="发起攻击"><a href="#发起攻击" class="headerlink" title="发起攻击"></a>发起攻击</h3><p>如果是进行ARP攻击，那也是加多三条命令就搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt;&gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line">arpspoof -i wlp3s0 -t 192.168.1.110 192.168.1.1</span><br><span class="line">arpspoof -i wlp3s0 -t 192.168.1.1   192.168.1.110</span><br></pre></td></tr></table></figure></p>
-<p>第一条是开启转发，不然会受害者流量到我们这里出不去就断网了。<br>第二条是告诉受害者说我是网管。<br>第三条是告诉网管我是受害者。<br>这样就完成了ARP欺骗，图片以后再补。这之后对方的网络就完全在你的监控之下了。这告诉我们使用<code>https</code>和不连接免费<code>wifi</code>的重要性!</p>
-<h3 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h3><p>抓包推荐使用<code>wireshark</code>。具体就不介绍了=.=。你还可以使用<code>Driftnet</code>这东西来将对方访问的图片在你这边显示出来～</p>
-<h2 id="监听空气包"><a href="#监听空气包" class="headerlink" title="监听空气包"></a>监听空气包</h2><p>大部分无线网卡都可以设置<code>monitor</code>模式，即无线网卡默认接受下全部经过他的以太网帧而不丢弃，这种方式可以抓到附近范围里面的所以以太网帧。在<code>Arch</code>下也是三条命令搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ifconfig wlp3s0 down</span><br><span class="line">iwconfig wlp3s0 mode monitor</span><br><span class="line">ifconfig wlp3s0 up</span><br></pre></td></tr></table></figure></p>
-<p>接着同样开启<code>wireshark</code>抓包，你会发现很多802.11帧，不过这个并没有什么卵用，理论上应该对于没有加密的帧应该可以直接得到应用层报文才对，但是很奇怪我一直抓不到，即使是对于有加密的Wifi，我填入WAPKEY解密也不行。这个有待继续研究。。。<br><a id="more"></a></p>
+        <p>终于看完了<code>Underscore</code>的集合部分了，看<code>Underscore</code>源码真的是长见识了，感觉真的受益匪浅。<br>但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了<code>Redux</code>，就说下<code>createRedux</code>这个方法吧，为下文讲<code>Redux</code>做个铺垫。<br>先看源码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> createReduce = <span class="function"><span class="keyword">function</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> reducer = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, initial</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),</span><br><span class="line">        length = (keys || obj).length,</span><br><span class="line">        index = dir &gt; <span class="number">0</span> ? <span class="number">0</span> : length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(!initial) &#123;</span><br><span class="line">      memo = obj[keys ? keys[index] : index];</span><br><span class="line">      index += dir;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(; index &gt;= <span class="number">0</span> &amp;&amp; index &lt; length; index += dir) &#123;</span><br><span class="line">      <span class="keyword">var</span> currentKey = keys ? keys[index] : index;</span><br><span class="line">      memo = iteratee(memo, obj[currentKey], currentKey, obj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> memo;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>这是<code>reduce</code>函数的工厂函数，用于生成一个<code>reducer</code>，<code>dir</code>是决定方向用的。<br>我们从最后一个<code>return</code>开始看起，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>我们使用<code>reduce</code>的时候，如果没有指定<code>memo</code>值，这时候参数个数只有两个即<code>obj</code>和<code>iteratee</code>，所以<code>initial</code>为<code>false</code>表示没有初始化。对于没初始的情况，就是增加了一个<code>if</code>语句里面的内容而已，作用是把第一个元素作为<code>memo</code>值。<br>接着就是有没有初始化都共用的部分了，通过一个<code>for</code>循环把<code>keys</code>遍历，并把相应的信息交给<code>iteratee</code>去处理，参数<code>memo</code>是上一次处理结果。遍历完后把最后的处理结果<code>memo</code>返回就完了。<br>这个函数派生了两个方法，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.reduce = _.foldl = _.inject = createReduce(<span class="number">1</span>);</span><br><span class="line">_.reduceRight = _.foldr = createReduce(<span class="number">-1</span>);</span><br></pre></td></tr></table></figure></p>
+<p>只是方向不同而已。<br>举个例子方便理解些，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sum = _.reduce([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> accmulator + value;</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<p>结果为15这个应该很明显，js原生也有<code>reduce</code>方法，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">left, right</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> left + right;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="xml"><span class="comment">&lt;!--more--&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>我们看下<code>Underscore</code>的例子，主要想说明下他的运行过程，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!initial)</span><br><span class="line">    memo = <span class="number">1</span>; index = <span class="number">1</span>;</span><br><span class="line">endif</span><br><span class="line"><span class="keyword">for</span></span><br><span class="line">    memo = iteratee(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">3</span>;</span><br><span class="line">    memo = iteratee(<span class="number">3</span>, <span class="number">3</span>, <span class="number">2</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">6</span>;</span><br><span class="line">    memo = iteratee(<span class="number">6</span>, <span class="number">4</span>, <span class="number">3</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">10</span>;</span><br><span class="line">    memo = iteratee(<span class="number">10</span>, <span class="number">5</span>, <span class="number">4</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">15</span>;</span><br><span class="line">endfor</span><br><span class="line"><span class="keyword">return</span> memo = <span class="number">15</span>;</span><br></pre></td></tr></table></figure></p>
+<p>额，我也不知道写的是什么东西，只是描述下过程而已，你懂的。<br>剩下的集合部分感觉也没啥好说的了，花点时间看下就可以看懂了=.=。</p>
 
       
     </div>
@@ -376,7 +366,9 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
       
         <div class="post-tags">
           
-            <a href="/tags/Hack/" rel="tag">#Hack</a>
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+            <a href="/tags/Underscore/" rel="tag">#Underscore</a>
           
         </div>
       
@@ -385,17 +377,13 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/06/24/从输入URL到页面展示/" rel="next" title="从输入URL到页面展示">
-                <i class="fa fa-chevron-left"></i> 从输入URL到页面展示
+              <a href="/2016/07/31/Underscore源码学习(三)/" rel="next" title="Underscore源码学习(三)">
+                <i class="fa fa-chevron-left"></i> Underscore源码学习(三)
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/20/Underscore源码学习(一)/" rel="prev" title="Underscore源码学习(一)">
-                Underscore源码学习(一) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -421,8 +409,8 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/07/14/ARP攻击和无线网卡混杂模式/"
-           data-title="ARP攻击和无线网卡混杂模式" data-url="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/">
+      <div class="ds-thread" data-thread-key="2016/08/01/Underscore源码学习(四)/"
+           data-title="Underscore源码学习(四)" data-url="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/">
       </div>
     
   </div>
@@ -557,7 +545,7 @@ ARP攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ARP攻击"><span class="nav-number">1.</span> <span class="nav-text">ARP攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现和端口扫描"><span class="nav-number">1.1.</span> <span class="nav-text">主机发现和端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发起攻击"><span class="nav-number">1.2.</span> <span class="nav-text">发起攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抓包"><span class="nav-number">1.3.</span> <span class="nav-text">抓包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监听空气包"><span class="nav-number">2.</span> <span class="nav-text">监听空气包</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
         </section>
