@@ -84,16 +84,16 @@
 
 
 
-<meta name="description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
+<meta name="description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Underscore源码学习(四)">
+<meta property="og:title" content="Underscore 源码学习(四)">
 <meta property="og:url" content="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
-<meta property="og:updated_time" content="2016-08-01T07:40:31.699Z">
+<meta property="og:description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
+<meta property="og:updated_time" content="2016-08-04T08:33:06.281Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Underscore源码学习(四)">
-<meta name="twitter:description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
+<meta name="twitter:title" content="Underscore 源码学习(四)">
+<meta name="twitter:description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
 
 
 
@@ -116,7 +116,7 @@
 
   <link rel="canonical" href="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/"/>
 
-  <title> Underscore源码学习(四) | Ruiming's Blog </title>
+  <title> Underscore 源码学习(四) | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -263,7 +263,7 @@
             
             
               
-                Underscore源码学习(四)
+                Underscore 源码学习(四)
               
             
           </h1>
@@ -289,8 +289,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
+                  <a href="/categories/Underscore/" itemprop="url" rel="index">
+                    <span itemprop="name">Underscore</span>
                   </a>
                 </span>
 
@@ -316,7 +316,7 @@
 
           
           
-             <span id="/2016/08/01/Underscore源码学习(四)/" class="leancloud_visitors" data-flag-title="Underscore源码学习(四)">
+             <span id="/2016/08/01/Underscore源码学习(四)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(四)">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -338,13 +338,13 @@
       
 
       
-        <p>终于看完了<code>Underscore</code>的集合部分了，看<code>Underscore</code>源码真的是长见识了，感觉真的受益匪浅。<br>但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了<code>Redux</code>，就说下<code>createRedux</code>这个方法吧，为下文讲<code>Redux</code>做个铺垫。<br>先看源码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> createReduce = <span class="function"><span class="keyword">function</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> reducer = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, initial</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),</span><br><span class="line">        length = (keys || obj).length,</span><br><span class="line">        index = dir &gt; <span class="number">0</span> ? <span class="number">0</span> : length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(!initial) &#123;</span><br><span class="line">      memo = obj[keys ? keys[index] : index];</span><br><span class="line">      index += dir;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(; index &gt;= <span class="number">0</span> &amp;&amp; index &lt; length; index += dir) &#123;</span><br><span class="line">      <span class="keyword">var</span> currentKey = keys ? keys[index] : index;</span><br><span class="line">      memo = iteratee(memo, obj[currentKey], currentKey, obj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> memo;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>这是<code>reduce</code>函数的工厂函数，用于生成一个<code>reducer</code>，<code>dir</code>是决定方向用的。<br>我们从最后一个<code>return</code>开始看起，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>我们使用<code>reduce</code>的时候，如果没有指定<code>memo</code>值，这时候参数个数只有两个即<code>obj</code>和<code>iteratee</code>，所以<code>initial</code>为<code>false</code>表示没有初始化。对于没初始的情况，就是增加了一个<code>if</code>语句里面的内容而已，作用是把第一个元素作为<code>memo</code>值。<br>接着就是有没有初始化都共用的部分了，通过一个<code>for</code>循环把<code>keys</code>遍历，并把相应的信息交给<code>iteratee</code>去处理，参数<code>memo</code>是上一次处理结果。遍历完后把最后的处理结果<code>memo</code>返回就完了。<br>这个函数派生了两个方法，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.reduce = _.foldl = _.inject = createReduce(<span class="number">1</span>);</span><br><span class="line">_.reduceRight = _.foldr = createReduce(<span class="number">-1</span>);</span><br></pre></td></tr></table></figure></p>
+        <p>终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。<br>但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。<br>先看源码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> createReduce = <span class="function"><span class="keyword">function</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> reducer = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, initial</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),</span><br><span class="line">        length = (keys || obj).length,</span><br><span class="line">        index = dir &gt; <span class="number">0</span> ? <span class="number">0</span> : length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(!initial) &#123;</span><br><span class="line">      memo = obj[keys ? keys[index] : index];</span><br><span class="line">      index += dir;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(; index &gt;= <span class="number">0</span> &amp;&amp; index &lt; length; index += dir) &#123;</span><br><span class="line">      <span class="keyword">var</span> currentKey = keys ? keys[index] : index;</span><br><span class="line">      memo = iteratee(memo, obj[currentKey], currentKey, obj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> memo;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>这是 reduce 函数的工厂函数，用于生成一个 reducer ，dir 是决定方向用的。<br>我们从最后一个 return 开始看起，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>我们使用 reduce 的时候，如果没有指定 memo 值，这时候参数个数只有两个即 obj 和 iteratee，所以 initial 为 false 表示没有初始化。对于没初始的情况，就是增加了一个 if 语句里面的内容而已，作用是把第一个元素作为 memo 值。<br>接着就是有没有初始化都共用的部分了，通过一个 for 循环把 keys 遍历，并把相应的信息交给 iteratee 去处理，参数 memo 是上一次处理结果。遍历完后把最后的处理结果 memo 返回就完了。<br>这个函数派生了两个方法，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.reduce = _.foldl = _.inject = createReduce(<span class="number">1</span>);</span><br><span class="line">_.reduceRight = _.foldr = createReduce(<span class="number">-1</span>);</span><br></pre></td></tr></table></figure></p>
 <p>只是方向不同而已。<br>举个例子方便理解些，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sum = _.reduce([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> accmulator + value;</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
-<p>结果为15这个应该很明显，js原生也有<code>reduce</code>方法，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">left, right</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> left + right;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>结果为 15 这个应该很明显，js 原生也有 reduce 方法，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">left, right</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> left + right;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>
-<p>我们看下<code>Underscore</code>的例子，主要想说明下他的运行过程，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!initial)</span><br><span class="line">    memo = <span class="number">1</span>; index = <span class="number">1</span>;</span><br><span class="line">endif</span><br><span class="line"><span class="keyword">for</span></span><br><span class="line">    memo = iteratee(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">3</span>;</span><br><span class="line">    memo = iteratee(<span class="number">3</span>, <span class="number">3</span>, <span class="number">2</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">6</span>;</span><br><span class="line">    memo = iteratee(<span class="number">6</span>, <span class="number">4</span>, <span class="number">3</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">10</span>;</span><br><span class="line">    memo = iteratee(<span class="number">10</span>, <span class="number">5</span>, <span class="number">4</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">15</span>;</span><br><span class="line">endfor</span><br><span class="line"><span class="keyword">return</span> memo = <span class="number">15</span>;</span><br></pre></td></tr></table></figure></p>
+<p>我们看下 Underscore 的例子，主要想说明下他的运行过程，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!initial)</span><br><span class="line">    memo = <span class="number">1</span>; index = <span class="number">1</span>;</span><br><span class="line">endif</span><br><span class="line"><span class="keyword">for</span></span><br><span class="line">    memo = iteratee(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">3</span>;</span><br><span class="line">    memo = iteratee(<span class="number">3</span>, <span class="number">3</span>, <span class="number">2</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">6</span>;</span><br><span class="line">    memo = iteratee(<span class="number">6</span>, <span class="number">4</span>, <span class="number">3</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">10</span>;</span><br><span class="line">    memo = iteratee(<span class="number">10</span>, <span class="number">5</span>, <span class="number">4</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">15</span>;</span><br><span class="line">endfor</span><br><span class="line"><span class="keyword">return</span> memo = <span class="number">15</span>;</span><br></pre></td></tr></table></figure></p>
 <p>额，我也不知道写的是什么东西，只是描述下过程而已，你懂的。<br>剩下的集合部分感觉也没啥好说的了，花点时间看下就可以看懂了=.=。</p>
 
       
@@ -378,16 +378,16 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/31/Underscore源码学习(三)/" rel="next" title="Underscore源码学习(三)">
-                <i class="fa fa-chevron-left"></i> Underscore源码学习(三)
+              <a href="/2016/07/31/Underscore源码学习(三)/" rel="next" title="Underscore 源码学习(三)">
+                <i class="fa fa-chevron-left"></i> Underscore 源码学习(三)
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/08/01/谈谈React和Redux/" rel="prev" title="谈谈React和Redux">
-                谈谈React和Redux <i class="fa fa-chevron-right"></i>
+              <a href="/2016/08/01/谈谈React和Redux/" rel="prev" title="谈谈 React 和 Redux">
+                谈谈 React 和 Redux <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -415,7 +415,7 @@
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/08/01/Underscore源码学习(四)/"
-           data-title="Underscore源码学习(四)" data-url="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/">
+           data-title="Underscore 源码学习(四)" data-url="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/">
       </div>
     
   </div>
@@ -468,7 +468,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Angular,Front end," />
+  <meta name="keywords" content="Angular,JavaScript,Front end," />
 
 
 
@@ -84,19 +84,19 @@
 
 
 
-<meta name="description" content="这学期基本都是在学习和使用Angular，这篇文章主要是想介绍几个Angular需要注意或者了解的地方。
-Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条件满足的时候才会创建DOM，一个是只有在条件满足的时候才会显示DOM也就是一开始也会跟着创建。但是你可能不知道，ng-if会产生新的作用域，ng-repeat和ng-switch和ng-include也是如此。">
+<meta name="description" content="这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。
+Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Angular学习总结">
+<meta property="og:title" content="Angular 学习总结">
 <meta property="og:url" content="https://ruiming.github.io/2016/06/18/Angular学习总结/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="这学期基本都是在学习和使用Angular，这篇文章主要是想介绍几个Angular需要注意或者了解的地方。
-Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条件满足的时候才会创建DOM，一个是只有在条件满足的时候才会显示DOM也就是一开始也会跟着创建。但是你可能不知道，ng-if会产生新的作用域，ng-repeat和ng-switch和ng-include也是如此。">
-<meta property="og:updated_time" content="2016-07-20T07:57:53.955Z">
+<meta property="og:description" content="这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。
+Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switc">
+<meta property="og:updated_time" content="2016-08-04T09:15:38.865Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Angular学习总结">
-<meta name="twitter:description" content="这学期基本都是在学习和使用Angular，这篇文章主要是想介绍几个Angular需要注意或者了解的地方。
-Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条件满足的时候才会创建DOM，一个是只有在条件满足的时候才会显示DOM也就是一开始也会跟着创建。但是你可能不知道，ng-if会产生新的作用域，ng-repeat和ng-switch和ng-include也是如此。">
+<meta name="twitter:title" content="Angular 学习总结">
+<meta name="twitter:description" content="这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。
+Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switc">
 
 
 
@@ -119,7 +119,7 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
 
   <link rel="canonical" href="https://ruiming.github.io/2016/06/18/Angular学习总结/"/>
 
-  <title> Angular学习总结 | Ruiming's Blog </title>
+  <title> Angular 学习总结 | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -266,7 +266,7 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
             
             
               
-                Angular学习总结
+                Angular 学习总结
               
             
           </h1>
@@ -292,8 +292,8 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
                   </a>
                 </span>
 
@@ -319,7 +319,7 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
 
           
           
-             <span id="/2016/06/18/Angular学习总结/" class="leancloud_visitors" data-flag-title="Angular学习总结">
+             <span id="/2016/06/18/Angular学习总结/" class="leancloud_visitors" data-flag-title="Angular 学习总结">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -341,53 +341,53 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
       
 
       
-        <p>这学期基本都是在学习和使用<code>Angular</code>，这篇文章主要是想介绍几个<code>Angular</code>需要注意或者了解的地方。</p>
-<h2 id="Angular作用域"><a href="#Angular作用域" class="headerlink" title="Angular作用域"></a>Angular作用域</h2><p>​    也许你知道<code>ng-if</code>和<code>ng-show</code>的区别是一个只有条件满足的时候才会创建<code>DOM</code>，一个是只有在条件满足的时候才会显示<code>DOM</code>也就是一开始也会跟着创建。但是你可能不知道，<code>ng-if</code>会产生新的作用域，<code>ng-repeat</code>和<code>ng-switch</code>和<code>ng-include</code>也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为<code>Angular</code>的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性，<code>Angular</code>会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。</p>
+        <p>这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。</p>
+<h2 id="Angular作用域"><a href="#Angular作用域" class="headerlink" title="Angular作用域"></a>Angular作用域</h2><p>​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switch 和 ng-include 也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为 Angular 的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性， Angular 会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。</p>
 <blockquote>
 <p>读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    </p>
 <p>写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</p>
 </blockquote>
 <p>​    关于原型链继承这个可以参考此处<a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482" target="_blank" rel="external">JavaScript Prototypal Inheritance</a>，或者<a href="https://www.zybuluo.com/lxjwlt/note/107324" target="_blank" rel="external">[译文] 深入浅出 AngularJS 作用域</a></p>
-<p>​    使用上述的<code>ng-if</code>, <code>ng-repeat</code>, <code>ng-switch</code>, <code>ng-include</code>都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用<code>$parent</code>。</p>
-<p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外，<code>textarea</code>也会自己创建一级作用域。所以你可能会发现你在<code>textarea</code>写的内容获取不到，但是却发现<code>textarea</code>总能取到第一次分配的初值。比如</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>​    使用上述的 ng-if ,  ng-repeat ,  ng-switch ,  ng-include 都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用 $parent 。</p>
+<p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外， textarea 也会自己创建一级作用域。所以你可能会发现你在 textarea 写的内容获取不到，但是却发现 textarea 总能取到第一次分配的初值。比如</p>
+<pre><code>html
+</code></pre><textarea ng-model="content" ,="" name="content" class="form-control" row="3"></textarea>
+
+
 <p>​    我们在控制器里面定义</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$scope.content = <span class="string">"测试"</span></span><br></pre></td></tr></table></figure>
-<p>​    然后我们就会看到<code>textarea</code>的初值为”测试”，但是当我们更改其中的内容之后，<code>$scope.content</code>却一直保持不变。</p>
-<p>​    同样，我们可以使用<code>$parent</code>的方式来解决这个问题。</p>
+<p>​    然后我们就会看到 textarea 的初值为”测试”，但是当我们更改其中的内容之后， $scope.content 却一直保持不变。</p>
+<p>​    同样，我们可以使用 $parent 的方式来解决这个问题。</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"$parent.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>​    那如果不想使用<code>$parent</code>的话，可以给<code>content</code>分配一个类名，比如</p>
+<p>​    那如果不想使用 $parent 的话，可以给 content 分配一个类名，比如</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"comment.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>​    这样我们就可以通过<code>$scope.comment.content</code>来取值。</p>
-<h2 id="Angular-track-by"><a href="#Angular-track-by" class="headerlink" title="Angular track by"></a>Angular track by</h2><p>​    在使用<code>Angular</code>的<code>ng-repeat</code>迭代数组时，有时候会出现<code>Duplicates in a repeater are not allowed</code>的提示。</p>
-<p>​    <code>track by</code>是用来建立<code>$watchCollection</code>和<code>DOM</code>之间的联系。建议自己加上<code>track by</code>后面带的值可以自己写，但要确保每个<code>ngRepeat</code>的值唯一，比如可以写<code>track by $index</code>。</p>
-<p>​    之所以要这么做，是因为，如果不使用<code>track by</code>，那么每个<code>ng-repeat</code>都会添加一个<code>$$hashkey</code>来对的<code>DOM</code>进行跟踪，这样会导致不能存在相同的<code>DOM</code>，使用<code>track by</code>的意义是避免不必要的渲染。</p>
+<p>​    这样我们就可以通过 $scope.comment.content 来取值。</p>
+<h2 id="Angular-track-by"><a href="#Angular-track-by" class="headerlink" title="Angular track by"></a>Angular track by</h2><p>​    在使用 Angular 的 ng-repeat 迭代数组时，有时候会出现 Duplicates in a repeater are not allowed 的提示。</p>
+<p>​     track by 是用来建立 $watchCollection 和 DOM 之间的联系。建议自己加上 track by 后面带的值可以自己写，但要确保每个 ngRepeat 的值唯一，比如可以写 track by $index 。</p>
+<p>​    之所以要这么做，是因为，如果不使用 track by ，那么每个 ng-repeat 都会添加一个 $$hashkey 来对的 DOM 进行跟踪，这样会导致不能存在相同的 DOM ，使用 track by 的意义是避免不必要的渲染。</p>
 <p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="https://docs.angularjs.org/api/ng/directive/ngRepeat" target="_blank" rel="external">AngularJS: API: ngRepeat</a></p>
 <blockquote>
-<p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later, <code>ngRepeat</code> will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier, <code>track by $index</code> can also provide a performance boost.</p>
+<p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later,  ngRepeat  will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier,  track by $index  can also provide a performance boost.</p>
 </blockquote>
-<h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​    <code>Angular</code>拦截器是<code>Angular</code>的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
+<h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​     Angular 拦截器是 Angular 的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
 <a id="more"></a>
 <ul>
-<li><p>判断请求是否成功</p>
+<li>判断请求是否成功</li>
+</ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$httpProvider.defaults.transformResponse.push((response) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span>(response.data) != <span class="literal">undefined</span> &amp;&amp; response.status == <span class="string">'success'</span>) &#123;</span><br><span class="line">  	response = response.data;</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(response.status == <span class="string">'error'</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Err: "</span> + response.message);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> response;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>​    应该都能看懂，就不过多解释了。需要说明你的是，我们只需要一次配置，即可在整个项目中适用，特别方便。</p>
-<p>​</p>
-</li>
-<li><p>timestampMarker</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'timestampMarker'</span>, [() =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> timestampMarker = &#123;</span><br><span class="line">    request: (config) = &gt; &#123;</span><br><span class="line">      config.requestTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> config;</span><br><span class="line">    &#125;,</span><br><span class="line">    response: (response) = &gt; &#123;</span><br><span class="line">      response.config.responseTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
-<p>​    这是给每个请求加上时间戳来防止浏览器缓存。</p>
-</li>
-</ul>
+<p>  应该都能看懂，就不过多解释了。需要说明你的是，我们只需要一次配置，即可在整个项目中适用，特别方便。</p>
+<p>  ​</p>
 <ul>
-<li><p>tokenInjector</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'tokenInjector'</span>, [<span class="string">'$injector'</span>, <span class="string">'$q'</span>, ($injector, $q) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> tokenInjector = &#123;</span><br><span class="line">      	request: (config) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> url = host + <span class="string">'/auth_verify'</span>;</span><br><span class="line">        <span class="keyword">let</span> deferred = $q.defer();</span><br><span class="line">        <span class="keyword">let</span> http = $injector.get(<span class="string">'$http'</span>);</span><br><span class="line">        <span class="keyword">if</span>(config.url === url) &#123;</span><br><span class="line">          <span class="keyword">return</span> config;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sessionStorage.verify === <span class="string">'true'</span>) &#123;</span><br><span class="line">          <span class="keyword">let</span> timestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() / <span class="number">1000</span>;</span><br><span class="line">           <span class="keyword">if</span>(timestamp - sessionStorage.createdtime &gt;= <span class="number">7000</span>) &#123;</span><br><span class="line">              sessionStorage.verify = <span class="literal">false</span>;  </span><br><span class="line">          &#125;</span><br><span class="line">           config.headers[<span class="string">'token'</span>] = sessionStorage.token;</span><br><span class="line">           config.headers[<span class="string">'userid'</span>] = sessionStorage.user_id;</span><br><span class="line">           deferred.resolve(config);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
-<p>​    上面是我从我的项目中截取的代码，作用是每次请求时，如果已经验证过，判断<code>token</code>创建时间和当前时间以判断<code>token</code>是否过期，如未过期，将<code>token</code>和<code>userid</code>加到请求的<code>headers</code>中。如果没有验证或者已经超时，则要去获取新的<code>token</code>，这里没有把代码写上。</p>
-<p>​    通过这三个例子，我想已经很明显的展示了<code>Angular</code>拦截器的强大之处。一次使用，终身受益，爽。</p>
-<hr>
-<p>​</p>
-</li>
+<li>timestampMarker</li>
 </ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'timestampMarker'</span>, [() =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> timestampMarker = &#123;</span><br><span class="line">    request: (config) = &gt; &#123;</span><br><span class="line">      config.requestTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> config;</span><br><span class="line">    &#125;,</span><br><span class="line">    response: (response) = &gt; &#123;</span><br><span class="line">      response.config.responseTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
+<p>  这是给每个请求加上时间戳来防止浏览器缓存。</p>
+<ul>
+<li>tokenInjector</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'tokenInjector'</span>, [<span class="string">'$injector'</span>, <span class="string">'$q'</span>, ($injector, $q) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> tokenInjector = &#123;</span><br><span class="line">      	request: (config) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> url = host + <span class="string">'/auth_verify'</span>;</span><br><span class="line">        <span class="keyword">let</span> deferred = $q.defer();</span><br><span class="line">        <span class="keyword">let</span> http = $injector.get(<span class="string">'$http'</span>);</span><br><span class="line">        <span class="keyword">if</span>(config.url === url) &#123;</span><br><span class="line">          <span class="keyword">return</span> config;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sessionStorage.verify === <span class="string">'true'</span>) &#123;</span><br><span class="line">          <span class="keyword">let</span> timestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() / <span class="number">1000</span>;</span><br><span class="line">           <span class="keyword">if</span>(timestamp - sessionStorage.createdtime &gt;= <span class="number">7000</span>) &#123;</span><br><span class="line">              sessionStorage.verify = <span class="literal">false</span>;  </span><br><span class="line">          &#125;</span><br><span class="line">           config.headers[<span class="string">'token'</span>] = sessionStorage.token;</span><br><span class="line">           config.headers[<span class="string">'userid'</span>] = sessionStorage.user_id;</span><br><span class="line">           deferred.resolve(config);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
+<p>​    上面是我从我的项目中截取的代码，作用是每次请求时，如果已经验证过，判断 token 创建时间和当前时间以判断 token 是否过期，如未过期，将 token 和 userid 加到请求的 headers 中。如果没有验证或者已经超时，则要去获取新的 token ，这里没有把代码写上。</p>
+<p>​    通过这三个例子，我想已经很明显的展示了 Angular 拦截器的强大之处。一次使用，终身受益，爽。</p>
 
       
     </div>
@@ -411,6 +411,8 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
           
             <a href="/tags/Angular/" rel="tag">#Angular</a>
           
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
             <a href="/tags/Front-end/" rel="tag">#Front end</a>
           
         </div>
@@ -420,16 +422,16 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/06/18/谈谈前端自动构建工具gulp/" rel="next" title="谈谈前端自动构建工具gulp">
-                <i class="fa fa-chevron-left"></i> 谈谈前端自动构建工具gulp
+              <a href="/2016/06/18/谈谈前端自动构建工具gulp/" rel="next" title="谈谈前端自动构建工具 Gulp">
+                <i class="fa fa-chevron-left"></i> 谈谈前端自动构建工具 Gulp
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/06/24/从输入URL到页面展示/" rel="prev" title="从输入URL到页面展示">
-                从输入URL到页面展示 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/06/24/从输入URL到页面展示/" rel="prev" title="从输入 URL 到页面展示">
+                从输入 URL 到页面展示 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -457,7 +459,7 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/06/18/Angular学习总结/"
-           data-title="Angular学习总结" data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/">
+           data-title="Angular 学习总结" data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/">
       </div>
     
   </div>
@@ -510,7 +512,7 @@ Angular作用域​    也许你知道ng-if和ng-show的区别是一个只有条
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
