@@ -84,22 +84,22 @@
 
 
 
-<meta name="description" content="​    类似Gulp这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有Grunt和Webpack等，不过我用Gulp比较多一些，所以我只能谈谈Gulp了。
-​    Gulp上面优秀的插件特别多，我所使用到的有
-123456789101112const gulp = require(&apos;gulp&apos;),      uglify = require(&apos;gulp-uglify&apos;),">
+<meta name="description" content="​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。
+​Gulp 上面优秀的插件特别多，我使用的有这些： 
+1234567891011121314import gulp from &apos;gulp&apos;import babel from &apos;gulp-babel&apos;import">
 <meta property="og:type" content="article">
 <meta property="og:title" content="谈谈前端自动构建工具gulp">
 <meta property="og:url" content="https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="​    类似Gulp这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有Grunt和Webpack等，不过我用Gulp比较多一些，所以我只能谈谈Gulp了。
-​    Gulp上面优秀的插件特别多，我所使用到的有
-123456789101112const gulp = require(&apos;gulp&apos;),      uglify = require(&apos;gulp-uglify&apos;),">
-<meta property="og:updated_time" content="2016-07-20T07:57:15.022Z">
+<meta property="og:description" content="​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。
+​Gulp 上面优秀的插件特别多，我使用的有这些： 
+1234567891011121314import gulp from &apos;gulp&apos;import babel from &apos;gulp-babel&apos;import">
+<meta property="og:updated_time" content="2016-08-04T07:47:29.198Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="谈谈前端自动构建工具gulp">
-<meta name="twitter:description" content="​    类似Gulp这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有Grunt和Webpack等，不过我用Gulp比较多一些，所以我只能谈谈Gulp了。
-​    Gulp上面优秀的插件特别多，我所使用到的有
-123456789101112const gulp = require(&apos;gulp&apos;),      uglify = require(&apos;gulp-uglify&apos;),">
+<meta name="twitter:description" content="​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。
+​Gulp 上面优秀的插件特别多，我使用的有这些： 
+1234567891011121314import gulp from &apos;gulp&apos;import babel from &apos;gulp-babel&apos;import">
 
 
 
@@ -344,71 +344,70 @@
       
 
       
-        <p>​    类似<code>Gulp</code>这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有<code>Grunt</code>和<code>Webpack</code>等，不过我用<code>Gulp</code>比较多一些，所以我只能谈谈<code>Gulp</code>了。</p>
-<p>​    <code>Gulp</code>上面优秀的插件特别多，我所使用到的有</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>),</span><br><span class="line">      uglify = <span class="built_in">require</span>(<span class="string">'gulp-uglify'</span>),</span><br><span class="line">      ngAnnotate = <span class="built_in">require</span>(<span class="string">'gulp-ng-annotate'</span>),</span><br><span class="line">      concat = <span class="built_in">require</span>(<span class="string">'gulp-concat'</span>),</span><br><span class="line">      cleanCSS = <span class="built_in">require</span>(<span class="string">'gulp-clean-css'</span>),</span><br><span class="line">      imagemin = <span class="built_in">require</span>(<span class="string">'gulp-imagemin'</span>),</span><br><span class="line">      minifyHtml = <span class="built_in">require</span>(<span class="string">'gulp-minify-html'</span>),</span><br><span class="line">      ngTemplate = <span class="built_in">require</span>(<span class="string">'gulp-ng-template'</span>),</span><br><span class="line">      pluber = <span class="built_in">require</span>(<span class="string">'gulp-plumber'</span>),</span><br><span class="line">      sass = <span class="built_in">require</span>(<span class="string">'gulp-sass'</span>),</span><br><span class="line">      runSequence = <span class="built_in">require</span>(<span class="string">'gulp-run-sequence'</span>),</span><br><span class="line">      usemin = <span class="built_in">require</span>(<span class="string">'gulp-usemin'</span>);</span><br></pre></td></tr></table></figure>
-<p>​    用了这么多插件，也难怪我会这么喜欢<code>Gulp</code>了~</p>
+        <p>​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。</p>
+<p>​Gulp 上面优秀的插件特别多，我使用的有这些： </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gulp <span class="keyword">from</span> <span class="string">'gulp'</span></span><br><span class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">'gulp-babel'</span></span><br><span class="line"><span class="keyword">import</span> uglify <span class="keyword">from</span> <span class="string">'gulp-uglify'</span></span><br><span class="line"><span class="keyword">import</span> ngAnnotate <span class="keyword">from</span> <span class="string">'gulp-ng-annotate'</span></span><br><span class="line"><span class="keyword">import</span> concat <span class="keyword">from</span> <span class="string">'gulp-concat'</span></span><br><span class="line"><span class="keyword">import</span> cleanCSS <span class="keyword">from</span> <span class="string">'gulp-clean-css'</span></span><br><span class="line"><span class="keyword">import</span> imagemin <span class="keyword">from</span> <span class="string">'gulp-imagemin'</span></span><br><span class="line"><span class="keyword">import</span> minifyHtml <span class="keyword">from</span> <span class="string">'gulp-minify-html'</span></span><br><span class="line"><span class="keyword">import</span> ngTemplate <span class="keyword">from</span> <span class="string">'gulp-ng-template'</span></span><br><span class="line"><span class="keyword">import</span> plumber <span class="keyword">from</span> <span class="string">'gulp-plumber'</span></span><br><span class="line"><span class="keyword">import</span> sass <span class="keyword">from</span> <span class="string">'gulp-sass'</span></span><br><span class="line"><span class="keyword">import</span> usemin <span class="keyword">from</span> <span class="string">'gulp-usemin'</span></span><br><span class="line"><span class="keyword">import</span> runSequence <span class="keyword">from</span> <span class="string">'gulp-run-sequence'</span></span><br><span class="line"><span class="keyword">import</span> eslint <span class="keyword">from</span> <span class="string">'gulp-eslint'</span></span><br></pre></td></tr></table></figure>
 <ul>
-<li><p><code>gulp-uglify</code></p>
-<p>对<code>Javascript</code>进行压缩的插件，可以有效减少<code>Javascript</code>的文件大小</p>
+<li><p>gulp-uglify</p>
+<p>对 JavaScript 进行压缩的插件，可以有效减少 JavaScript 的文件大小。</p>
 </li>
-<li><p><code>gulp-ng-annotate</code></p>
-<p>对<code>Angular</code>的代码进行转换，因为使用上面的<code>gulp-uglify</code>对<code>Angular</code>的代码进行压缩时会破坏<code>Angular</code>文件的依赖注入功能，导致无法正常工作，这个基本上是<code>Angular</code>开发必备的了</p>
+<li><p>gulp-ng-annotate</p>
+<p>对 Angular 的代码进行转换，因为使用上面的 <code>gulp-uglify</code> 对 Angular 的代码进行压缩时会破坏 Angular 文件的依赖注入功能，导致无法正常工作，这个基本上是 Angular 开发必备的了。</p>
 </li>
-<li><p><code>gulp-concat</code></p>
-<p>文件合并，前端合并文件以减少请求是非常重要的优化技巧</p>
+<li><p>gulp-concat</p>
+<p>文件合并，前端合并文件以减少请求是非常重要的优化技巧。</p>
 </li>
-<li><p><code>gulp-clean-css</code></p>
-<p>字如其名，对css进行合并压缩</p>
+<li><p>gulp-clean-css</p>
+<p>字如其名，对css 进行合并压缩。</p>
 </li>
-<li><p><code>gulp-imagemin</code></p>
-<p>对图片进行压缩</p>
+<li><p>gulp-imagemin</p>
+<p>对图片进行压缩。</p>
 </li>
-<li><p><code>gulp-minify-html</code></p>
-<p>对html文件进行压缩</p>
+<li><p>gulp-minify-html</p>
+<p>对html文件进行压缩。</p>
 </li>
-<li><p><code>gulp-ng-template</code></p>
-<p>这个也是<code>Angular</code>里面比较响当当的一个插件了，他的作用是将<code>Angular</code>模板存到<code>templateCache</code>，可以提升模板加载速度</p>
+<li><p>gulp-ng-template</p>
+<p>这个也是 Angular 里面比较响当当的一个插件了，他的作用是将 Angular 模板存到 templateCache ，可以提升模板加载速度。</p>
 </li>
-</ul>
-<ul>
-<li><p><code>gulp-plumber</code></p>
-<p>这个貌似也是<code>gulp</code>必不可少的插件之一了，可以避免<code>gulp</code>出错导致整个进程崩掉</p>
+<li><p>gulp-plumber</p>
+<p>这个貌似也是 Gulp 必不可少的插件之一了，可以避免 Gulp 出错导致整个进程崩掉。</p>
 </li>
-<li><p><code>gulp-sass</code></p>
-<p>编译<code>sass</code>代码为<code>css</code>，非常方便</p>
+<li><p>gulp-sass</p>
+<p>编译 sass 代码为 css，非常方便。</p>
 </li>
-<li><p><code>gulp-run-sequence</code></p>
-<p>可以让<code>gulp</code>的任务顺序执行，有些时候我们希望<code>gulp</code>执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了</p>
+<li><p>gulp-run-sequence</p>
+<p>可以让 Gulp 的任务顺序执行，有些时候我们希望 Gulp 执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了。</p>
 </li>
-<li><p><code>gulp-usemin</code></p>
-<p>这个是用来从工作环境到生产环境进行部署的工具</p>
+<li><p>gulp-usemin</p>
+<p>这个是用来从工作环境到生产环境进行部署的工具。</p>
+</li>
+<li><p>gulp-eslint</p>
+<p>eslint 代码检查。</p>
 </li>
 </ul>
 <a id="more"></a>
 <p>​    上面的这些插件都是我在一个项目中使用到的，通过这些工具实现了前端的自动化开发，我在项目中有开发环境和生产环境之分。</p>
-<p>​    在<code>gulp</code>中，我有一段在开发环境下执行的<code>task</code></p>
+<p>​    在 Gulp 中，我有一段在开发环境下执行的任务</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'default'</span>, [<span class="string">'css'</span>, <span class="string">'js'</span>, <span class="string">'angular'</span>, <span class="string">'img'</span>, <span class="string">'templates:dist'</span>, <span class="string">'sass'</span>, <span class="string">'fonts'</span>])</span><br></pre></td></tr></table></figure>
 <p>​    这段代码帮我做了</p>
 <ul>
-<li><code>css</code>文件(这些文件是第三方<code>css</code>文件如<code>bootstrap</code>)的合并</li>
-<li><code>javascript</code>文件的合并，这是将所有我写的<code>Angular</code>文件进行合并，但不进行压缩以方便我调试</li>
-<li><code>angular</code>是将项目所有的<code>js</code>依赖如<code>angular</code>, <code>ui-router</code>, <code>jquery</code>等文件进行压缩合并</li>
-<li><code>img</code>是将图片进行压缩和迁移，这些图片压缩后放入生产环境对应的文件夹中</li>
-<li><code>templates:dist</code>是对<code>Angular</code>的视图进行合并，适用了上述的<code>gulp-ng-template</code>插件，合并后为一个<code>javascript</code>文件</li>
-<li><code>sass</code>是将我写的<code>scss</code>代码进行编译</li>
-<li><p><code>fonts</code>是移动相应的字体文件到生产环境中</p>
-<p>​开发环境下我们需要自动构建，也需要便于调试，所以我用上面这样的方式来处理，并且开启了<code>watch</code>在有更改发生时自动构建。当我处理完全部工作后需要<code>push</code>到服务器上面时，会执行<code>gulp product</code>即下面的<code>task</code></p>
+<li><code>css</code>：进行 css 文件(这些文件是第三方 css 文件如 bootstrap)的合并。</li>
+<li><code>javascript</code>：进行 JavaScript 文件的合并，这是将所有我写的 Angular 文件进行合并，但不进行压缩以方便我调试。</li>
+<li><code>angular</code>：将项目所有的 JavaScript 依赖如 Angular, ui-router, jQuery 等文件进行压缩合并。</li>
+<li><code>img</code>：将图片进行压缩和迁移，这些图片压缩后放入生产环境对应的文件夹中。</li>
+<li><code>templates:dist</code>：对 Angular 的视图进行合并，使用了上述的 <code>gulp-ng-template</code> 插件，合并后为一个新的 JavaScript 文件。</li>
+<li><code>sass</code>：将我写的 scss 代码进行编译。</li>
+<li><p><code>fonts</code>：移动相应的字体文件到生产环境中。</p>
+<p>​开发环境下我们需要自动构建，也需要便于调试，所以我用上面这样的方式来处理，并且开启了 watch 监视变化，在有更改发生时自动构建。当我处理完全部工作后需要 push 到服务器上面时，会执行 <code>gulp product</code> 即下面的 task。</p>
 </li>
 </ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'product'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>)</span>&#123;</span><br><span class="line">  runSequence(<span class="string">'together'</span>, <span class="string">'move'</span>, cb)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'together'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>)</span>&#123;</span><br><span class="line">    gulp.src(<span class="string">'index.html'</span>)</span><br><span class="line">        .pipe(plumber())</span><br><span class="line">        .pipe(usemin(&#123;</span><br><span class="line">            cssProduct: [<span class="string">'concat'</span>],</span><br><span class="line">            jsProduct: [ngAnnotate(),<span class="string">'concat'</span>,uglify()]</span><br><span class="line">        &#125;))</span><br><span class="line">        .pipe(gulp.dest(<span class="string">'backend/app/'</span>))</span><br><span class="line">        .on(<span class="string">'end'</span>,cb);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'move'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> gulp.src(<span class="string">'backend/app/index.html'</span>)</span><br><span class="line">                .pipe(gulp.dest(<span class="string">'backend/app/templates/'</span>));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>​    这里使用了上述说的<code>ng-run-sequence</code>插件，这里会在执行完<code>together</code>的任务后才开始执行<code>move</code>的任务。这里主要使用的插件是<code>gulp-usemin</code>，我用它来做了这些事情，为了方便说明，我贴下代码。需要先说明的是，我在项目中一共有3个<code>index.html</code>文件。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"zh-CN"</span> <span class="attr">ng-app</span>=<span class="string">"index"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- build:cssProduct /static/css/app.min.css --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/app.min.css"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/bookist.css"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">&lt;!-- build:jsProduct /static/js/app.min.js --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/dependence.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/app.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/templates.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- build:remove --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span><br><span class="line">        开发环境 development</span><br><span class="line">        app.min.css             其他css文件</span><br><span class="line">        bookist.css             自己写的css文件</span><br><span class="line">        dependence.min.js       Angular和jQuery相关Js文件，无需理会</span><br><span class="line">        app.js                  自己写的js文件，进行整合但未压缩，便于查错</span><br><span class="line">        template.js             模板文件</span><br><span class="line">    --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>​    省去了没有用的代码，这里需要你对<code>ng-usemin</code>有一定的了解。这个<code>index.html</code>是我在开发环境下使用的，使用了我开发环境的<code>task</code>生成文件，我在上面有补充说明了。</p>
-<p>​    所以，在部署生产环境时执行这段<code>task</code>的意义是，将开发环境下的代码再做进一步的合并和压缩。<code>ng-usemin</code>这个插件会帮我们处理这个<code>index.html</code>文件，最后会在我们指定的目录下部署好这些东西。但是因为后端处理<code>index.html</code>的路径原因，我还要对<code>index.html</code>做一次移动，所以有了第三个<code>index.html</code>。</p>
-<p>​    最终生成的index和相应的资源位置如下</p>
+<p>​    这里使用了上述说的 <code>ng-run-sequence</code> 插件，这里会在执行完 <code>together</code> 的任务后才开始执行 <code>move</code> 的任务。这里主要使用的插件是 <code>gulp-usemin</code>，我用它来做了这些事情，为了方便说明，我贴下代码。需要先说明的是，我在项目中一共有3个 <code>index.html</code> 文件。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"zh-CN"</span> <span class="attr">ng-app</span>=<span class="string">"index"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- build:cssProduct /static/css/app.min.css --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/app.min.css"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/bookist.css"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">&lt;!-- build:jsProduct /static/js/app.min.js --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/dependence.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/app.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/templates.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- build:remove --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span><br><span class="line">        这段注释会被移除</span><br><span class="line">    --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- endbuild--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>​    省去了没有用的代码，这里需要你对 <code>ng-usemin</code> 有一定的了解。这个 <code>index.html</code> 是我在开发环境下使用的，使用了我开发环境的 task 生成文件，我在上面有补充说明了。</p>
+<p>​    所以，在部署生产环境时执行这段 task 的意义是，将开发环境下的代码再做进一步的合并和压缩。<code>ng-usemin</code> 这个插件会帮我们处理这个 <code>index.html</code> 文件，最后会在我们指定的目录下部署好这些东西。但是因为后端处理 <code>index.html</code> 的路径原因，我还要对 <code>index.html</code> 做一次移动，所以有了第三个 <code>index.html</code>。</p>
+<p>​    最终生成的 index 和相应的资源位置如下</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"zh-CN"</span> <span class="attr">ng-app</span>=<span class="string">"index"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"/static/css/app.min.css"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/static/js/app.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<hr>
 
       
     </div>

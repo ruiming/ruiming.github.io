@@ -499,45 +499,45 @@
 
       
         
-          <p>​    类似<code>Gulp</code>这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有<code>Grunt</code>和<code>Webpack</code>等，不过我用<code>Gulp</code>比较多一些，所以我只能谈谈<code>Gulp</code>了。</p>
-<p>​    <code>Gulp</code>上面优秀的插件特别多，我所使用到的有</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>),</span><br><span class="line">      uglify = <span class="built_in">require</span>(<span class="string">'gulp-uglify'</span>),</span><br><span class="line">      ngAnnotate = <span class="built_in">require</span>(<span class="string">'gulp-ng-annotate'</span>),</span><br><span class="line">      concat = <span class="built_in">require</span>(<span class="string">'gulp-concat'</span>),</span><br><span class="line">      cleanCSS = <span class="built_in">require</span>(<span class="string">'gulp-clean-css'</span>),</span><br><span class="line">      imagemin = <span class="built_in">require</span>(<span class="string">'gulp-imagemin'</span>),</span><br><span class="line">      minifyHtml = <span class="built_in">require</span>(<span class="string">'gulp-minify-html'</span>),</span><br><span class="line">      ngTemplate = <span class="built_in">require</span>(<span class="string">'gulp-ng-template'</span>),</span><br><span class="line">      pluber = <span class="built_in">require</span>(<span class="string">'gulp-plumber'</span>),</span><br><span class="line">      sass = <span class="built_in">require</span>(<span class="string">'gulp-sass'</span>),</span><br><span class="line">      runSequence = <span class="built_in">require</span>(<span class="string">'gulp-run-sequence'</span>),</span><br><span class="line">      usemin = <span class="built_in">require</span>(<span class="string">'gulp-usemin'</span>);</span><br></pre></td></tr></table></figure>
-<p>​    用了这么多插件，也难怪我会这么喜欢<code>Gulp</code>了~</p>
+          <p>​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。</p>
+<p>​Gulp 上面优秀的插件特别多，我使用的有这些： </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gulp <span class="keyword">from</span> <span class="string">'gulp'</span></span><br><span class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">'gulp-babel'</span></span><br><span class="line"><span class="keyword">import</span> uglify <span class="keyword">from</span> <span class="string">'gulp-uglify'</span></span><br><span class="line"><span class="keyword">import</span> ngAnnotate <span class="keyword">from</span> <span class="string">'gulp-ng-annotate'</span></span><br><span class="line"><span class="keyword">import</span> concat <span class="keyword">from</span> <span class="string">'gulp-concat'</span></span><br><span class="line"><span class="keyword">import</span> cleanCSS <span class="keyword">from</span> <span class="string">'gulp-clean-css'</span></span><br><span class="line"><span class="keyword">import</span> imagemin <span class="keyword">from</span> <span class="string">'gulp-imagemin'</span></span><br><span class="line"><span class="keyword">import</span> minifyHtml <span class="keyword">from</span> <span class="string">'gulp-minify-html'</span></span><br><span class="line"><span class="keyword">import</span> ngTemplate <span class="keyword">from</span> <span class="string">'gulp-ng-template'</span></span><br><span class="line"><span class="keyword">import</span> plumber <span class="keyword">from</span> <span class="string">'gulp-plumber'</span></span><br><span class="line"><span class="keyword">import</span> sass <span class="keyword">from</span> <span class="string">'gulp-sass'</span></span><br><span class="line"><span class="keyword">import</span> usemin <span class="keyword">from</span> <span class="string">'gulp-usemin'</span></span><br><span class="line"><span class="keyword">import</span> runSequence <span class="keyword">from</span> <span class="string">'gulp-run-sequence'</span></span><br><span class="line"><span class="keyword">import</span> eslint <span class="keyword">from</span> <span class="string">'gulp-eslint'</span></span><br></pre></td></tr></table></figure>
 <ul>
-<li><p><code>gulp-uglify</code></p>
-<p>对<code>Javascript</code>进行压缩的插件，可以有效减少<code>Javascript</code>的文件大小</p>
+<li><p>gulp-uglify</p>
+<p>对 JavaScript 进行压缩的插件，可以有效减少 JavaScript 的文件大小。</p>
 </li>
-<li><p><code>gulp-ng-annotate</code></p>
-<p>对<code>Angular</code>的代码进行转换，因为使用上面的<code>gulp-uglify</code>对<code>Angular</code>的代码进行压缩时会破坏<code>Angular</code>文件的依赖注入功能，导致无法正常工作，这个基本上是<code>Angular</code>开发必备的了</p>
+<li><p>gulp-ng-annotate</p>
+<p>对 Angular 的代码进行转换，因为使用上面的 <code>gulp-uglify</code> 对 Angular 的代码进行压缩时会破坏 Angular 文件的依赖注入功能，导致无法正常工作，这个基本上是 Angular 开发必备的了。</p>
 </li>
-<li><p><code>gulp-concat</code></p>
-<p>文件合并，前端合并文件以减少请求是非常重要的优化技巧</p>
+<li><p>gulp-concat</p>
+<p>文件合并，前端合并文件以减少请求是非常重要的优化技巧。</p>
 </li>
-<li><p><code>gulp-clean-css</code></p>
-<p>字如其名，对css进行合并压缩</p>
+<li><p>gulp-clean-css</p>
+<p>字如其名，对css 进行合并压缩。</p>
 </li>
-<li><p><code>gulp-imagemin</code></p>
-<p>对图片进行压缩</p>
+<li><p>gulp-imagemin</p>
+<p>对图片进行压缩。</p>
 </li>
-<li><p><code>gulp-minify-html</code></p>
-<p>对html文件进行压缩</p>
+<li><p>gulp-minify-html</p>
+<p>对html文件进行压缩。</p>
 </li>
-<li><p><code>gulp-ng-template</code></p>
-<p>这个也是<code>Angular</code>里面比较响当当的一个插件了，他的作用是将<code>Angular</code>模板存到<code>templateCache</code>，可以提升模板加载速度</p>
+<li><p>gulp-ng-template</p>
+<p>这个也是 Angular 里面比较响当当的一个插件了，他的作用是将 Angular 模板存到 templateCache ，可以提升模板加载速度。</p>
 </li>
-</ul>
-<ul>
-<li><p><code>gulp-plumber</code></p>
-<p>这个貌似也是<code>gulp</code>必不可少的插件之一了，可以避免<code>gulp</code>出错导致整个进程崩掉</p>
+<li><p>gulp-plumber</p>
+<p>这个貌似也是 Gulp 必不可少的插件之一了，可以避免 Gulp 出错导致整个进程崩掉。</p>
 </li>
-<li><p><code>gulp-sass</code></p>
-<p>编译<code>sass</code>代码为<code>css</code>，非常方便</p>
+<li><p>gulp-sass</p>
+<p>编译 sass 代码为 css，非常方便。</p>
 </li>
-<li><p><code>gulp-run-sequence</code></p>
-<p>可以让<code>gulp</code>的任务顺序执行，有些时候我们希望<code>gulp</code>执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了</p>
+<li><p>gulp-run-sequence</p>
+<p>可以让 Gulp 的任务顺序执行，有些时候我们希望 Gulp 执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了。</p>
 </li>
-<li><p><code>gulp-usemin</code></p>
-<p>这个是用来从工作环境到生产环境进行部署的工具</p>
+<li><p>gulp-usemin</p>
+<p>这个是用来从工作环境到生产环境进行部署的工具。</p>
+</li>
+<li><p>gulp-eslint</p>
+<p>eslint 代码检查。</p>
 </li>
 </ul>
           <div class="post-more-link text-center">
