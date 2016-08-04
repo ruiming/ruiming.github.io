@@ -92,7 +92,7 @@ Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只�
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。
 Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switc">
-<meta property="og:updated_time" content="2016-08-04T09:15:38.865Z">
+<meta property="og:updated_time" content="2016-08-04T09:24:58.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Angular 学习总结">
 <meta name="twitter:description" content="这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。
@@ -350,10 +350,7 @@ Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只�
 <p>​    关于原型链继承这个可以参考此处<a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482" target="_blank" rel="external">JavaScript Prototypal Inheritance</a>，或者<a href="https://www.zybuluo.com/lxjwlt/note/107324" target="_blank" rel="external">[译文] 深入浅出 AngularJS 作用域</a></p>
 <p>​    使用上述的 ng-if ,  ng-repeat ,  ng-switch ,  ng-include 都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用 $parent 。</p>
 <p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外， textarea 也会自己创建一级作用域。所以你可能会发现你在 textarea 写的内容获取不到，但是却发现 textarea 总能取到第一次分配的初值。比如</p>
-<pre><code>html
-</code></pre><textarea ng-model="content" ,="" name="content" class="form-control" row="3"></textarea>
-
-
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>​    我们在控制器里面定义</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$scope.content = <span class="string">"测试"</span></span><br></pre></td></tr></table></figure>
 <p>​    然后我们就会看到 textarea 的初值为”测试”，但是当我们更改其中的内容之后， $scope.content 却一直保持不变。</p>
@@ -372,22 +369,20 @@ Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只�
 <h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​     Angular 拦截器是 Angular 的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
 <a id="more"></a>
 <ul>
-<li>判断请求是否成功</li>
-</ul>
+<li><p>判断请求是否成功</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$httpProvider.defaults.transformResponse.push((response) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span>(response.data) != <span class="literal">undefined</span> &amp;&amp; response.status == <span class="string">'success'</span>) &#123;</span><br><span class="line">  	response = response.data;</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(response.status == <span class="string">'error'</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Err: "</span> + response.message);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> response;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>  应该都能看懂，就不过多解释了。需要说明你的是，我们只需要一次配置，即可在整个项目中适用，特别方便。</p>
-<p>  ​</p>
-<ul>
-<li>timestampMarker</li>
-</ul>
+<p>应该都能看懂，就不过多解释了。需要说明你的是，我们只需要一次配置，即可在整个项目中适用，特别方便。<br>​</p>
+</li>
+<li><p>timestampMarker</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'timestampMarker'</span>, [() =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> timestampMarker = &#123;</span><br><span class="line">    request: (config) = &gt; &#123;</span><br><span class="line">      config.requestTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> config;</span><br><span class="line">    &#125;,</span><br><span class="line">    response: (response) = &gt; &#123;</span><br><span class="line">      response.config.responseTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">      <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
-<p>  这是给每个请求加上时间戳来防止浏览器缓存。</p>
-<ul>
-<li>tokenInjector</li>
-</ul>
+<p>这是给每个请求加上时间戳来防止浏览器缓存。</p>
+</li>
+<li><p>tokenInjector</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">app.factory(<span class="string">'tokenInjector'</span>, [<span class="string">'$injector'</span>, <span class="string">'$q'</span>, ($injector, $q) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> tokenInjector = &#123;</span><br><span class="line">      	request: (config) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> url = host + <span class="string">'/auth_verify'</span>;</span><br><span class="line">        <span class="keyword">let</span> deferred = $q.defer();</span><br><span class="line">        <span class="keyword">let</span> http = $injector.get(<span class="string">'$http'</span>);</span><br><span class="line">        <span class="keyword">if</span>(config.url === url) &#123;</span><br><span class="line">          <span class="keyword">return</span> config;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sessionStorage.verify === <span class="string">'true'</span>) &#123;</span><br><span class="line">          <span class="keyword">let</span> timestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() / <span class="number">1000</span>;</span><br><span class="line">           <span class="keyword">if</span>(timestamp - sessionStorage.createdtime &gt;= <span class="number">7000</span>) &#123;</span><br><span class="line">              sessionStorage.verify = <span class="literal">false</span>;  </span><br><span class="line">          &#125;</span><br><span class="line">           config.headers[<span class="string">'token'</span>] = sessionStorage.token;</span><br><span class="line">           config.headers[<span class="string">'userid'</span>] = sessionStorage.user_id;</span><br><span class="line">           deferred.resolve(config);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
-<p>​    上面是我从我的项目中截取的代码，作用是每次请求时，如果已经验证过，判断 token 创建时间和当前时间以判断 token 是否过期，如未过期，将 token 和 userid 加到请求的 headers 中。如果没有验证或者已经超时，则要去获取新的 token ，这里没有把代码写上。</p>
-<p>​    通过这三个例子，我想已经很明显的展示了 Angular 拦截器的强大之处。一次使用，终身受益，爽。</p>
+<p>​上面是我从我的项目中截取的代码，作用是每次请求时，如果已经验证过，判断 token 创建时间和当前时间以判断 token 是否过期，如未过期，将 token 和 userid 加到请求的 headers 中。如果没有验证或者已经超时，则要去获取新的 token ，这里没有把代码写上。</p>
+</li>
+</ul>
+<p>​通过这三个例子，我想已经很明显的展示了 Angular 拦截器的强大之处。一次使用，终身受益，爽。</p>
 
       
     </div>

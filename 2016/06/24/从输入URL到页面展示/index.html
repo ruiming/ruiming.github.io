@@ -116,7 +116,9 @@
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/php-fpm.jpg">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/response-1.png">
 <meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/html-parse.png">
-<meta property="og:updated_time" content="2016-08-04T08:53:38.858Z">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/render-tree-construction.png">
+<meta property="og:image" content="https://ruiming.github.io/2016/06/24/从输入URL到页面展示/webkitflow.png">
+<meta property="og:updated_time" content="2016-08-04T09:20:10.591Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从输入 URL 到页面展示">
 <meta name="twitter:description" content="本文从网络层以上讨论从浏览器输入 HTTPS 协议的 URL 到页面展现的全过程。由于不同浏览器之间也存在差异，这里以 Chrome 浏览器为例。
@@ -534,7 +536,7 @@
 <li><p>Parsing HTML to construct the DOM tree</p>
 <p>数据会交给 HTMLDocumentParser，然后 HTMLDocumentParser 将文本字符的解析交给 HTMLDocumentTokenizer 来负责，HTMLDocumentTokenizer 解析出一个一个的标签，然后 HTMLDocumentParser 将标签交给 HTMLTreeBuilder 来构建 DOM 树。</p>
 <p>有些节点需要加载其他资源，比如加载外链 CSS 和图片等。会调用资源加载器进行异步加载，不会阻碍当前 DOM 树的构造。但是如果是非 defer 非 async 的 script 标签，则需要停止当前 DOM 树的构造，直到脚本被加载并被 JavaScript 执行后才继续 DOM 树的构造。</p>
-<p>因此我们有时候会要求 <script> 标签放到最后面，目的是为了不影响前面 DOM 树的构建。</p>
+<p>因此我们有时候会要求 &lt;script&gt; 标签放到最后面，目的是为了不影响前面 DOM 树的构建。</p>
 <p>对于 css 文件，会解析 css 生成 CSS Rule Tree。</p>
 <p>对于 JavaScript` 文件，主要是通过 DOM API 和 CSSOM API 来操作 DOM TREE 和 CSS Rule Tree，从而改变渲染的效果。</p>
 </li>
@@ -556,11 +558,11 @@
 <hr>
 <p>参考资料</p>
 <ul>
-<li><a href="https://technet.microsoft.com/en-us/library/cc775637.aspx">How DNS query works</a></li>
-<li><a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-tree-construction">Render Tree Construction</a></li>
-<li><a href="http://taligarsiel.com/Projects/howbrowserswork1.htm#Render_tree_construction">How browsers work</a></li>
+<li><a href="https://technet.microsoft.com/en-us/library/cc775637.aspx" target="_blank" rel="external">How DNS query works</a></li>
+<li><a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-tree-construction" target="_blank" rel="external">Render Tree Construction</a></li>
+<li><a href="http://taligarsiel.com/Projects/howbrowserswork1.htm#Render_tree_construction" target="_blank" rel="external">How browsers work</a></li>
 </ul>
-</script></p></li></ul>
+
       
     </div>
 
