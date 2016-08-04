@@ -84,16 +84,19 @@
 
 
 
-<meta name="description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
+<meta name="description" content="Underscore的函数大部分还是挺好理解的，感觉过一遍就行了，不过今天看到两个函数感觉还是听有意思的，并且也听常用，而且不是很好理解。这两个函数就是throttle和debounce
+throttle1234567891011121314151617181920212223242526272829303132333435363738394041424344454647_.throttle =">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Underscore源码学习(四)">
-<meta property="og:url" content="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/index.html">
+<meta property="og:title" content="Underscore源码学习(五)">
+<meta property="og:url" content="https://ruiming.github.io/2016/08/04/Underscore源码学习(五)/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
-<meta property="og:updated_time" content="2016-08-01T07:40:31.699Z">
+<meta property="og:description" content="Underscore的函数大部分还是挺好理解的，感觉过一遍就行了，不过今天看到两个函数感觉还是听有意思的，并且也听常用，而且不是很好理解。这两个函数就是throttle和debounce
+throttle1234567891011121314151617181920212223242526272829303132333435363738394041424344454647_.throttle =">
+<meta property="og:updated_time" content="2016-08-04T07:20:03.471Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Underscore源码学习(四)">
-<meta name="twitter:description" content="终于看完了Underscore的集合部分了，看Underscore源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了Redux，就说下createRedux这个方法吧，为下文讲Redux做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(dir) &amp;#123;">
+<meta name="twitter:title" content="Underscore源码学习(五)">
+<meta name="twitter:description" content="Underscore的函数大部分还是挺好理解的，感觉过一遍就行了，不过今天看到两个函数感觉还是听有意思的，并且也听常用，而且不是很好理解。这两个函数就是throttle和debounce
+throttle1234567891011121314151617181920212223242526272829303132333435363738394041424344454647_.throttle =">
 
 
 
@@ -114,9 +117,9 @@
 
 
 
-  <link rel="canonical" href="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/"/>
+  <link rel="canonical" href="https://ruiming.github.io/2016/08/04/Underscore源码学习(五)/"/>
 
-  <title> Underscore源码学习(四) | Ruiming's Blog </title>
+  <title> Underscore源码学习(五) | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -263,7 +266,7 @@
             
             
               
-                Underscore源码学习(四)
+                Underscore源码学习(五)
               
             
           </h1>
@@ -275,8 +278,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-01T15:37:14+08:00" content="2016-08-01">
-              2016-08-01
+            <time itemprop="dateCreated" datetime="2016-08-04T15:18:48+08:00" content="2016-08-04">
+              2016-08-04
             </time>
           </span>
 
@@ -305,8 +308,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/01/Underscore源码学习(四)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/01/Underscore源码学习(四)/" itemprop="commentsCount"></span>
+                <a href="/2016/08/04/Underscore源码学习(五)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/04/Underscore源码学习(五)/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -316,7 +319,7 @@
 
           
           
-             <span id="/2016/08/01/Underscore源码学习(四)/" class="leancloud_visitors" data-flag-title="Underscore源码学习(四)">
+             <span id="/2016/08/04/Underscore源码学习(五)/" class="leancloud_visitors" data-flag-title="Underscore源码学习(五)">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -338,14 +341,44 @@
       
 
       
-        <p>终于看完了<code>Underscore</code>的集合部分了，看<code>Underscore</code>源码真的是长见识了，感觉真的受益匪浅。<br>但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了<code>Redux</code>，就说下<code>createRedux</code>这个方法吧，为下文讲<code>Redux</code>做个铺垫。<br>先看源码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> createReduce = <span class="function"><span class="keyword">function</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> reducer = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, initial</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),</span><br><span class="line">        length = (keys || obj).length,</span><br><span class="line">        index = dir &gt; <span class="number">0</span> ? <span class="number">0</span> : length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(!initial) &#123;</span><br><span class="line">      memo = obj[keys ? keys[index] : index];</span><br><span class="line">      index += dir;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(; index &gt;= <span class="number">0</span> &amp;&amp; index &lt; length; index += dir) &#123;</span><br><span class="line">      <span class="keyword">var</span> currentKey = keys ? keys[index] : index;</span><br><span class="line">      memo = iteratee(memo, obj[currentKey], currentKey, obj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> memo;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>这是<code>reduce</code>函数的工厂函数，用于生成一个<code>reducer</code>，<code>dir</code>是决定方向用的。<br>我们从最后一个<code>return</code>开始看起，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>我们使用<code>reduce</code>的时候，如果没有指定<code>memo</code>值，这时候参数个数只有两个即<code>obj</code>和<code>iteratee</code>，所以<code>initial</code>为<code>false</code>表示没有初始化。对于没初始的情况，就是增加了一个<code>if</code>语句里面的内容而已，作用是把第一个元素作为<code>memo</code>值。<br>接着就是有没有初始化都共用的部分了，通过一个<code>for</code>循环把<code>keys</code>遍历，并把相应的信息交给<code>iteratee</code>去处理，参数<code>memo</code>是上一次处理结果。遍历完后把最后的处理结果<code>memo</code>返回就完了。<br>这个函数派生了两个方法，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.reduce = _.foldl = _.inject = createReduce(<span class="number">1</span>);</span><br><span class="line">_.reduceRight = _.foldr = createReduce(<span class="number">-1</span>);</span><br></pre></td></tr></table></figure></p>
-<p>只是方向不同而已。<br>举个例子方便理解些，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sum = _.reduce([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> accmulator + value;</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
-<p>结果为15这个应该很明显，js原生也有<code>reduce</code>方法，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">left, right</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> left + right;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+        <p><code>Underscore</code>的函数大部分还是挺好理解的，感觉过一遍就行了，不过今天看到两个函数感觉还是听有意思的，并且也听常用，而且不是很好理解。这两个函数就是<code>throttle</code>和<code>debounce</code></p>
+<h2 id="throttle"><a href="#throttle" class="headerlink" title="throttle"></a>throttle</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">_.throttle = <span class="function"><span class="keyword">function</span>(<span class="params">func, wait, options</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> timeout, context, args, result;</span><br><span class="line">  <span class="keyword">var</span> previous = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (!options) options = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> later = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 更改previous即上一次执行时间为当前时间</span></span><br><span class="line">    previous = options.leading === <span class="literal">false</span> ? <span class="number">0</span> : _.now();</span><br><span class="line">    timeout = <span class="literal">null</span>;</span><br><span class="line">    result = func.apply(context, args);</span><br><span class="line">    <span class="keyword">if</span> (!timeout) context = args = <span class="literal">null</span>;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> throttled = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> now = _.now();</span><br><span class="line">    <span class="comment">// 如果leading为false时禁用第一次首先执行，previous等于now（效果同已经执行过一次，所以第一次被禁用）</span></span><br><span class="line">    <span class="comment">// 这个if语句只在第一次执行该函数的时候有效</span></span><br><span class="line">    <span class="keyword">if</span> (!previous &amp;&amp; options.leading === <span class="literal">false</span>) previous = now;</span><br><span class="line">    <span class="keyword">var</span> remaining = wait - (now - previous);</span><br><span class="line">    context = <span class="keyword">this</span>;</span><br><span class="line">    args = <span class="built_in">arguments</span>;</span><br><span class="line">    <span class="comment">// 超时处理和未到时的处理</span></span><br><span class="line">    <span class="keyword">if</span> (remaining &lt;= <span class="number">0</span> || remaining &gt; wait) &#123;</span><br><span class="line">      <span class="comment">// timeout不为null时清除掉并设置为null</span></span><br><span class="line">      <span class="keyword">if</span> (timeout) &#123;</span><br><span class="line">        clearTimeout(timeout);</span><br><span class="line">        timeout = <span class="literal">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      previous = now;</span><br><span class="line">      <span class="comment">// 立即调用</span></span><br><span class="line">      result = func.apply(context, args);</span><br><span class="line">      <span class="keyword">if</span> (!timeout) context = args = <span class="literal">null</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!timeout &amp;&amp; options.trailing !== <span class="literal">false</span>) &#123;    <span class="comment">// 如果没有禁用最后一次执行</span></span><br><span class="line">      timeout = setTimeout(later, remaining);               <span class="comment">// remaining毫秒后执行later</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回调用的结果</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  throttled.cancel = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    clearTimeout(timeout);</span><br><span class="line">    previous = <span class="number">0</span>;</span><br><span class="line">    timeout = context = args = <span class="literal">null</span>;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> throttled;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其实一步步去理解也不难，就不细说这个方法了。这个方法有可选项设置，分别为<code>{leading: false}</code>和<code>{trailing: false}</code>。</p>
+<p>所以一般有四类情况：</p>
+<ul>
+<li>默认情况<br>第一次调用时立即响应，之后每个周期内最多执行一次，周期内触发会产生定时执行使在上一次执行时间<code>preview</code>周期时间后再次执行。</li>
+<li>设置leading为false<br>同默认情况区别在于第一次调用不会立即执行而是等待周期时间后再次执行，如果在周期时间内触发，一样等待上一次执行时间<code>preview</code>周期时间后再执行。</li>
+<li>设置trailing为false<br>最后周期内最多执行一次，但在周期时间内调用不会触发<code>timeout</code>，只能在上一次<code>timeout</code>失效后调用才能生效并且此时调用将立即执行。</li>
+<li>设置leading和trailing为false<br>如果同时还设置<code>leading</code>为<code>false</code>的话，那么第一次调用不会立即执行而是等待周期时间后才执行，在这段时间内调用都不会有效果。</li>
+</ul>
 <a id="more"></a>
-<p>我们看下<code>Underscore</code>的例子，主要想说明下他的运行过程，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!initial)</span><br><span class="line">    memo = <span class="number">1</span>; index = <span class="number">1</span>;</span><br><span class="line">endif</span><br><span class="line"><span class="keyword">for</span></span><br><span class="line">    memo = iteratee(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">3</span>;</span><br><span class="line">    memo = iteratee(<span class="number">3</span>, <span class="number">3</span>, <span class="number">2</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">6</span>;</span><br><span class="line">    memo = iteratee(<span class="number">6</span>, <span class="number">4</span>, <span class="number">3</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">10</span>;</span><br><span class="line">    memo = iteratee(<span class="number">10</span>, <span class="number">5</span>, <span class="number">4</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">15</span>;</span><br><span class="line">endfor</span><br><span class="line"><span class="keyword">return</span> memo = <span class="number">15</span>;</span><br></pre></td></tr></table></figure></p>
-<p>额，我也不知道写的是什么东西，只是描述下过程而已，你懂的。<br>剩下的集合部分感觉也没啥好说的了，花点时间看下就可以看懂了=.=。</p>
+<p>比如<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> func = _.throttle(updatePosition, <span class="number">100</span>);</span><br><span class="line">$(<span class="built_in">window</span>).scroll(func);</span><br></pre></td></tr></table></figure></p>
+<p>由于<code>scroll</code>过程时,<code>func</code>函数的调用是很密集的，我们不能每次调用都去执行，可以通过设置<code>throttle</code>来达到节流阀的作用。<code>leading</code>和<code>trailing</code>只是实现上细微的不同而已。</p>
+<p><code>throll</code>主要应用在鼠标移动，mousemove事件，DOM 元素动态定位，window对象的resize和scroll等事件。这些事件触发频率高，但又要尽可能进行响应。</p>
+<h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">_.debounce = <span class="function"><span class="keyword">function</span>(<span class="params">func, wait, immediate</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> timeout, result;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> later = <span class="function"><span class="keyword">function</span>(<span class="params">context, args</span>) </span>&#123;</span><br><span class="line">    timeout = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (args) result = func.apply(context, args);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> debounced = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 再次调用且上次还未执行，则清除上次的timeout</span></span><br><span class="line">    <span class="comment">// 只是timeout事件不再执行，但timeout依旧存在</span></span><br><span class="line">    <span class="keyword">if</span> (timeout) clearTimeout(timeout);</span><br><span class="line">    <span class="comment">// 如果immediate为true</span></span><br><span class="line">    <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">      <span class="comment">// 如果timeout为null，则立即调用函数</span></span><br><span class="line">      <span class="comment">// 如果timeout不为null，则callNow为false，函数不执行</span></span><br><span class="line">      <span class="keyword">var</span> callNow = !timeout;</span><br><span class="line">      timeout = setTimeout(later, wait);</span><br><span class="line">      <span class="keyword">if</span> (callNow) result = func.apply(<span class="keyword">this</span>, args);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 延迟later执行，如果这个还没到时间再来一次，则新的会覆盖上一次的</span></span><br><span class="line">      timeout = _.delay(later, wait, <span class="keyword">this</span>, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  debounced.cancel = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    clearTimeout(timeout);</span><br><span class="line">    timeout = <span class="literal">null</span>;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> debounced;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这个函数就要比上面那个好理解一点，说明下这个函数：</p>
+<ul>
+<li><p>如果immediate为true，周期100ms</p>
+<ul>
+<li>0   =&gt; 立即执行，设置timeout</li>
+<li>50  =&gt; 重新设置timeout，不执行</li>
+<li>100 =&gt; 重新设置timeout，不执行</li>
+<li>200 =&gt; timeout到时，执行函数</li>
+</ul>
+</li>
+<li><p>如果immeduate为false, 周期100ms</p>
+<ul>
+<li>0   =&gt; 设置timeout，不执行</li>
+<li>100 =&gt; timeout到时，执行函数</li>
+<li>120 =&gt; 设置timeout，不执行</li>
+<li>180 =&gt; 重新设置timeout，不执行</li>
+<li>280 =&gt; timeout到时，执行函数</li>
+</ul>
+</li>
+</ul>
+<p>其实<code>timeout</code>就变成一个控制两次事件触发间隔用的，并且和上面的<code>throttle</code>不同，<code>timeout</code>会被重新设置。</p>
+<p><code>debounce</code>主要应用在文本输入keydown 事件，keyup 事件，例如做autocomplete。</p>
+<p>结合两个的应用细细体味下他们差别。如果想自己体验下差别，<a href="http://jsfiddle.net/missinglink/19e2r2we/" target="_blank" rel="external">传送门</a>。</p>
 
       
     </div>
@@ -378,17 +411,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/31/Underscore源码学习(三)/" rel="next" title="Underscore源码学习(三)">
-                <i class="fa fa-chevron-left"></i> Underscore源码学习(三)
+              <a href="/2016/08/01/谈谈React和Redux/" rel="next" title="谈谈React和Redux">
+                <i class="fa fa-chevron-left"></i> 谈谈React和Redux
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/08/01/谈谈React和Redux/" rel="prev" title="谈谈React和Redux">
-                谈谈React和Redux <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -414,8 +443,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/08/01/Underscore源码学习(四)/"
-           data-title="Underscore源码学习(四)" data-url="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/">
+      <div class="ds-thread" data-thread-key="2016/08/04/Underscore源码学习(五)/"
+           data-title="Underscore源码学习(五)" data-url="https://ruiming.github.io/2016/08/04/Underscore源码学习(五)/">
       </div>
     
   </div>
@@ -550,7 +579,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#throttle"><span class="nav-number">1.</span> <span class="nav-text">throttle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#debounce"><span class="nav-number">2.</span> <span class="nav-text">debounce</span></a></li></ol></div>
             
           </div>
         </section>
