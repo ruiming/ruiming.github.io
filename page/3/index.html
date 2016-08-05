@@ -265,6 +265,167 @@
             
               
                 
+                <a class="post-title-link" href="/2016/06/24/从输入URL到页面展示/" itemprop="url">
+                  从输入 URL 到页面展示
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-24T15:43:38+08:00" content="2016-06-24">
+              2016-06-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/HTTP/" itemprop="url" rel="index">
+                    <span itemprop="name">HTTP</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/24/从输入URL到页面展示/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/24/从输入URL到页面展示/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/06/24/从输入URL到页面展示/" class="leancloud_visitors" data-flag-title="从输入 URL 到页面展示">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>本文从网络层以上讨论从浏览器输入 HTTPS 协议的 URL 到页面展现的全过程。由于不同浏览器之间也存在差异，这里以 Chrome 浏览器为例。</p>
+<h2 id="1-DNS查询"><a href="#1-DNS查询" class="headerlink" title="1. DNS查询"></a>1. <a name='DNS-0'></a>DNS查询</h2><p>DNS 缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP 缓存。</p>
+<ul>
+<li><p>浏览器首先会查看自身是否已经有进行 DNS 缓存。Chrome 可以通过 <code>chrome://net-internals/#dns</code> 查看缓存的 DNS，浏览器的 DNS 缓存可以加快 DNS 解析速度，但缓存时间不会太长。</p>
+<img src="/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png" alt="Chrome 的 DNS 缓存" title="Chrome 的 DNS 缓存">
+</li>
+<li><p>如果浏览器没有相应的缓存，则查找系统缓存，浏览器会向系统发送一个查询请求，如果系统存在缓存或者设置了 host ，则返回相应的 ip 地址给浏览器。</p>
+</li>
+<li><p>如果系统没有缓存，那么它会发出一个 DNS 查询请求给路由器。</p>
+<p>如果路由器有 DNS 缓存，他会提取出 IP 地址返回。否则，他会向本地域名服务器发出查询，从请求主机到本地域名服务器的请求一般是递归查询，而其他的查询一般是迭代查询。</p>
+<img src="/2016/06/24/从输入URL到页面展示/client-to-server-query.gif" alt="DNS 请求主机到本地域名服务器的查询" title="DNS 请求主机到本地域名服务器的查询">
+<img src="/2016/06/24/从输入URL到页面展示/server-to-server-query.gif" alt="DNS 域名服务器之间的查询" title="DNS 域名服务器之间的查询">
+<p>请求报文如下</p>
+<img src="/2016/06/24/从输入URL到页面展示/dns-request-1.png" alt="DNS 请求报文" title="DNS 请求报文">
+<p>我们先简单分析下请求报文。</p>
+<ol>
+<li>DNS 使用 UDP 协议，端口号53。</li>
+<li>在 DNS 报文的 Flags 中的 RD=1。表示它建议域名服务器以递归方式查询。</li>
+<li>Question section format 需要给出 <code>QNAME</code>, <code>QTYPE</code>, <code>QCLASS</code>。即查询的域名，查询的类型以及查询的类。</li>
+</ol>
+<p>有关<code>DNS</code>报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035">RFC1035</a></p>
+<p>响应报文如下</p>
+<img src="/2016/06/24/从输入URL到页面展示/dns-response-1.png" alt="DNS 响应报文" title="DNS 响应报文">
+<p>我们也简单分析下，如果想详细了解，可以查看上面的 <code>RFC1035</code> 标准。</p>
+<ol>
+<li>与请求报文相比，对比 Flags 可以发现，QR=1 表示这是一个响应报文。RA=1 表示递归查询可用。</li>
+<li>ARecord 记录了DNS请求获得的一个或多个IP地址。一般还会得到 CNAME 记录和存活时间等信息。</li>
+<li>这里对 Rcode 也稍加说明下，Rcode=0 表示成功，他还有好几种状态码，比如1表示 <code>Format error</code>，2表示 <code>Server failure</code>，3表示 <code>Name error</code>，4表示 <code>Not lmplemented</code>，5表示 <code>Refused</code>，具体信息可以参考 <code>RFC1035</code>。</li>
+</ol>
+</li>
+</ul>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/06/24/从输入URL到页面展示/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/06/18/Angular学习总结/" itemprop="url">
                   Angular 学习总结
                 </a>
@@ -616,7 +777,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

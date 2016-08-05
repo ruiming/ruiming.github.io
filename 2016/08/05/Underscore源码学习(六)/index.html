@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="JavaScript,Underscore," />
+  <meta name="keywords" content="blog, NexT, ruiming, angular, front-end" />
 
 
 
@@ -84,16 +84,25 @@
 
 
 
-<meta name="description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
+<meta name="description" content="title: Underscore 源码学习(六)date: 2016-08-05 13:59:06categories: Underscoretags:
+
+Underscore
+JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instance">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Underscore 源码学习(四)">
-<meta property="og:url" content="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/index.html">
+<meta property="og:title" content="Ruiming's Blog">
+<meta property="og:url" content="https://ruiming.github.io/2016/08/05/Underscore源码学习(六)/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
-<meta property="og:updated_time" content="2016-08-04T08:33:06.281Z">
+<meta property="og:description" content="title: Underscore 源码学习(六)date: 2016-08-05 13:59:06categories: Underscoretags:
+
+Underscore
+JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instance">
+<meta property="og:updated_time" content="2016-08-05T06:01:49.401Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Underscore 源码学习(四)">
-<meta name="twitter:description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
+<meta name="twitter:title" content="Ruiming's Blog">
+<meta name="twitter:description" content="title: Underscore 源码学习(六)date: 2016-08-05 13:59:06categories: Underscoretags:
+
+Underscore
+JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instance">
 
 
 
@@ -114,9 +123,9 @@
 
 
 
-  <link rel="canonical" href="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/"/>
+  <link rel="canonical" href="https://ruiming.github.io/2016/08/05/Underscore源码学习(六)/"/>
 
-  <title> Underscore 源码学习(四) | Ruiming's Blog </title>
+  <title>  | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -263,7 +272,7 @@
             
             
               
-                Underscore 源码学习(四)
+                
               
             
           </h1>
@@ -275,38 +284,19 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-01T15:37:14+08:00" content="2016-08-01">
-              2016-08-01
+            <time itemprop="dateCreated" datetime="2016-08-05T14:01:49+08:00" content="2016-08-05">
+              2016-08-05
             </time>
           </span>
 
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/01/Underscore源码学习(四)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/01/Underscore源码学习(四)/" itemprop="commentsCount"></span>
+                <a href="/2016/08/05/Underscore源码学习(六)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/05/Underscore源码学习(六)/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -316,7 +306,7 @@
 
           
           
-             <span id="/2016/08/01/Underscore源码学习(四)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(四)">
+             <span id="/2016/08/05/Underscore源码学习(六)/" class="leancloud_visitors" data-flag-title="">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -338,14 +328,24 @@
       
 
       
-        <p>终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。<br>但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。<br>先看源码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> createReduce = <span class="function"><span class="keyword">function</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> reducer = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, initial</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),</span><br><span class="line">        length = (keys || obj).length,</span><br><span class="line">        index = dir &gt; <span class="number">0</span> ? <span class="number">0</span> : length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(!initial) &#123;</span><br><span class="line">      memo = obj[keys ? keys[index] : index];</span><br><span class="line">      index += dir;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(; index &gt;= <span class="number">0</span> &amp;&amp; index &lt; length; index += dir) &#123;</span><br><span class="line">      <span class="keyword">var</span> currentKey = keys ? keys[index] : index;</span><br><span class="line">      memo = iteratee(memo, obj[currentKey], currentKey, obj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> memo;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>这是 reduce 函数的工厂函数，用于生成一个 reducer ，dir 是决定方向用的。<br>我们从最后一个 return 开始看起，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>我们使用 reduce 的时候，如果没有指定 memo 值，这时候参数个数只有两个即 obj 和 iteratee，所以 initial 为 false 表示没有初始化。对于没初始的情况，就是增加了一个 if 语句里面的内容而已，作用是把第一个元素作为 memo 值。<br>接着就是有没有初始化都共用的部分了，通过一个 for 循环把 keys 遍历，并把相应的信息交给 iteratee 去处理，参数 memo 是上一次处理结果。遍历完后把最后的处理结果 memo 返回就完了。<br>这个函数派生了两个方法，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.reduce = _.foldl = _.inject = createReduce(<span class="number">1</span>);</span><br><span class="line">_.reduceRight = _.foldr = createReduce(<span class="number">-1</span>);</span><br></pre></td></tr></table></figure></p>
-<p>只是方向不同而已。<br>举个例子方便理解些，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sum = _.reduce([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> accmulator + value;</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
-<p>结果为 15 这个应该很明显，js 原生也有 reduce 方法，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">left, right</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> left + right;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<a id="more"></a>
-<p>我们看下 Underscore 的例子，主要想说明下他的运行过程，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!initial)</span><br><span class="line">    memo = <span class="number">1</span>; index = <span class="number">1</span>;</span><br><span class="line">endif</span><br><span class="line"><span class="keyword">for</span></span><br><span class="line">    memo = iteratee(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">3</span>;</span><br><span class="line">    memo = iteratee(<span class="number">3</span>, <span class="number">3</span>, <span class="number">2</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">6</span>;</span><br><span class="line">    memo = iteratee(<span class="number">6</span>, <span class="number">4</span>, <span class="number">3</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">10</span>;</span><br><span class="line">    memo = iteratee(<span class="number">10</span>, <span class="number">5</span>, <span class="number">4</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">15</span>;</span><br><span class="line">endfor</span><br><span class="line"><span class="keyword">return</span> memo = <span class="number">15</span>;</span><br></pre></td></tr></table></figure></p>
-<p>额，我也不知道写的是什么东西，只是描述下过程而已，你懂的。<br>剩下的集合部分感觉也没啥好说的了，花点时间看下就可以看懂了=.=。</p>
+        <hr>
+<p>title: Underscore 源码学习(六)<br>date: 2016-08-05 13:59:06<br>categories: Underscore<br>tags:</p>
+<ul>
+<li>Underscore</li>
+<li>JavaScript<br>关于 Underscore 的 mixin 方法。<br>首先先看个例子：<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Panel</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  consoe.log(<span class="keyword">this</span>, <span class="keyword">this</span> <span class="keyword">instanceof</span> Panel);</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">this</span> <span class="keyword">instanceof</span> Panel) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Panel();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">a = Panel();        <span class="comment">// Window   false</span></span><br><span class="line">b = <span class="keyword">new</span> Panel();    <span class="comment">// Panel&#123;&#125;  true</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>当函数作为构造器使用时，函数内的 <code>this</code> 执行被新建的对象。当函数被调用时，函数内的 <code>this</code> 则为被调用的对象，在这里是 <code>Window</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _ = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> _) <span class="keyword">return</span> obj;</span><br><span class="line">  <span class="keyword">if</span> (!(<span class="keyword">this</span> <span class="keyword">instanceof</span> _)) <span class="keyword">return</span> <span class="keyword">new</span> _(obj);</span><br><span class="line">  <span class="keyword">this</span>._wrapped = obj;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>同样的，如果我们使用下面方法调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> under = _();</span><br></pre></td></tr></table></figure></p>
+<p>第二个条件成立，所以新建一个 <code>_</code> 对象后返回，注意这里是再次调用这个函数。<br>如果我们这样调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> under = <span class="keyword">new</span> _();</span><br></pre></td></tr></table></figure></p>
+<p>就好像上面第二次调用一样，这时候就构造了 <code>under</code> 这个对象，如果传入了参数 <code>obj</code>，则把 <code>obj</code> 存入 <code>under</code> 这个对象的 <code>_wrapped</code> 属性中。<br><code>Underscore</code> 提供了一个 OO 的调用方法，即:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> chainResult = <span class="function"><span class="keyword">function</span>(<span class="params">instance, obj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> instance._chain ? _(obj).chain() : obj;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">_.mixin = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 遍历obj中的函数</span></span><br><span class="line">    _.each(_.functions(obj), <span class="function"><span class="keyword">function</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">        <span class="comment">// 避免原型链查找，提升性能</span></span><br><span class="line">        <span class="keyword">var</span> func = _[name] = obj[name];</span><br><span class="line">        _.prototype[name] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="comment">// 把自己(context)作为数组第一个参数，其余传参push到这个数组中</span></span><br><span class="line">            <span class="keyword">var</span> args = [<span class="keyword">this</span>._wrapped];</span><br><span class="line">            push.apply(args, <span class="built_in">arguments</span>);</span><br><span class="line">            <span class="comment">// 如果this是一个_实例，则使用func调用的结果来新建_实例后返回以供继续链式调用</span></span><br><span class="line">            <span class="comment">// 如果this不是一个_实例，则直接返回func调用的结果</span></span><br><span class="line">            <span class="keyword">return</span> chainResult(<span class="keyword">this</span>, func.apply(_, args));</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> _;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 把Underscore对象mixin化，这样就可以直接在_上调用方法</span></span><br><span class="line">_.mixin(_);</span><br></pre></td></tr></table></figure></p>
+<p>当然我们还可以把自己写的方法通过 <code>mixin</code> 加入到 <code>Underscore</code> 对象中。<br><a id="more"></a><br>在这段代码后面还把原生的一些操作方法也添加到这个 <code>_</code> 上面，这样我们就可以直接在 <code>_</code> 上调用这些方法。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Add all mutator Array functions to the wrapper.</span></span><br><span class="line">_.each([<span class="string">'pop'</span>, <span class="string">'push'</span>, <span class="string">'reverse'</span>, <span class="string">'shift'</span>, <span class="string">'sort'</span>, <span class="string">'splice'</span>, <span class="string">'unshift'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> method = ArrayProto[name];</span><br><span class="line">    _.prototype[name] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> obj = <span class="keyword">this</span>._wrapped;</span><br><span class="line">        method.apply(obj, <span class="built_in">arguments</span>);</span><br><span class="line">        <span class="keyword">if</span> ((name === <span class="string">'shift'</span> || name === <span class="string">'splice'</span>) &amp;&amp; obj.length === <span class="number">0</span>) <span class="keyword">delete</span> obj[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">return</span> chainResult(<span class="keyword">this</span>, obj);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>上面这些方法并不是 Underscore 新建的，不存在于 Underscore 对象的原型链上，所以我们要把他们加进去。和上面 <code>mixin</code> 方法类似，下面这段代码是为了兼容 IE 而采取的操作：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((name === <span class="string">'shift'</span> || name === <span class="string">'splice'</span>) &amp;&amp; obj.length === <span class="number">0</span>) <span class="keyword">delete</span> obj[<span class="number">0</span>];</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>jdalton commented on 6 Dec 2011<br>IE bugs with splice() and shift(), failing to remove the 0 indexed value, when using an array-like-object with _(…).<br>IE compatibility mode and IE &lt; 9 have buggy Array shift() and splice() functions that fail to remove the last element, object[0], of array-like-objects even though the length property is set to 0.</p>
+</blockquote>
+<p>通过上面这些方法把 Underscore 转化为可面向对象编程，调用更加优雅，我们可以有以下两种使用方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.map([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], <span class="function"><span class="keyword">function</span>(<span class="params">n</span>)</span>&#123; <span class="keyword">return</span> n * <span class="number">2</span>; &#125;);</span><br><span class="line">_([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]).map(<span class="function"><span class="keyword">function</span>(<span class="params">n</span>)</span>&#123; <span class="keyword">return</span> n * <span class="number">2</span>; &#125;);</span><br></pre></td></tr></table></figure></p>
+<p>至于选择哪一种就看你的喜好了～</p>
 
       
     </div>
@@ -365,30 +365,18 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
-          
-            <a href="/tags/Underscore/" rel="tag">#Underscore</a>
-          
-        </div>
-      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/31/Underscore源码学习(三)/" rel="next" title="Underscore 源码学习(三)">
-                <i class="fa fa-chevron-left"></i> Underscore 源码学习(三)
+              <a href="/2016/08/04/Underscore源码学习(五)/" rel="next" title="Underscore 源码学习(五)">
+                <i class="fa fa-chevron-left"></i> Underscore 源码学习(五)
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/08/01/谈谈React和Redux/" rel="prev" title="谈谈 React 和 Redux">
-                谈谈 React 和 Redux <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -414,8 +402,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/08/01/Underscore源码学习(四)/"
-           data-title="Underscore 源码学习(四)" data-url="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/">
+      <div class="ds-thread" data-thread-key="2016/08/05/Underscore源码学习(六)/"
+           data-title="" data-url="https://ruiming.github.io/2016/08/05/Underscore源码学习(六)/">
       </div>
     
   </div>
