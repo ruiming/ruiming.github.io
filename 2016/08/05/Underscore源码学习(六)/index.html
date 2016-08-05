@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="blog, NexT, ruiming, angular, front-end" />
+  <meta name="keywords" content="JavaScript,Underscore," />
 
 
 
@@ -84,25 +84,16 @@
 
 
 
-<meta name="description" content="title: Underscore 源码学习(六)date: 2016-08-05 13:59:06categories: Underscoretags:
-
-Underscore
-JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instance">
+<meta name="description" content="关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instanceof Panel);  if(this instanceof Panel) &amp;#123;    return this;  &amp;#125; else &amp;#123;    return new Panel(">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Ruiming's Blog">
+<meta property="og:title" content="Underscore 源码学习(六)">
 <meta property="og:url" content="https://ruiming.github.io/2016/08/05/Underscore源码学习(六)/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="title: Underscore 源码学习(六)date: 2016-08-05 13:59:06categories: Underscoretags:
-
-Underscore
-JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instance">
-<meta property="og:updated_time" content="2016-08-05T06:01:49.401Z">
+<meta property="og:description" content="关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instanceof Panel);  if(this instanceof Panel) &amp;#123;    return this;  &amp;#125; else &amp;#123;    return new Panel(">
+<meta property="og:updated_time" content="2016-08-05T06:03:32.188Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ruiming's Blog">
-<meta name="twitter:description" content="title: Underscore 源码学习(六)date: 2016-08-05 13:59:06categories: Underscoretags:
-
-Underscore
-JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instance">
+<meta name="twitter:title" content="Underscore 源码学习(六)">
+<meta name="twitter:description" content="关于 Underscore 的 mixin 方法。首先先看个例子：12345678910function Panel() &amp;#123;  consoe.log(this, this instanceof Panel);  if(this instanceof Panel) &amp;#123;    return this;  &amp;#125; else &amp;#123;    return new Panel(">
 
 
 
@@ -125,7 +116,7 @@ JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：123456789
 
   <link rel="canonical" href="https://ruiming.github.io/2016/08/05/Underscore源码学习(六)/"/>
 
-  <title>  | Ruiming's Blog </title>
+  <title> Underscore 源码学习(六) | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -272,7 +263,7 @@ JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：123456789
             
             
               
-                
+                Underscore 源码学习(六)
               
             
           </h1>
@@ -284,11 +275,30 @@ JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：123456789
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-05T14:01:49+08:00" content="2016-08-05">
+            <time itemprop="dateCreated" datetime="2016-08-05T13:59:06+08:00" content="2016-08-05">
               2016-08-05
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Underscore/" itemprop="url" rel="index">
+                    <span itemprop="name">Underscore</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
@@ -306,7 +316,7 @@ JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：123456789
 
           
           
-             <span id="/2016/08/05/Underscore源码学习(六)/" class="leancloud_visitors" data-flag-title="">
+             <span id="/2016/08/05/Underscore源码学习(六)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(六)">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -328,13 +338,7 @@ JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：123456789
       
 
       
-        <hr>
-<p>title: Underscore 源码学习(六)<br>date: 2016-08-05 13:59:06<br>categories: Underscore<br>tags:</p>
-<ul>
-<li>Underscore</li>
-<li>JavaScript<br>关于 Underscore 的 mixin 方法。<br>首先先看个例子：<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Panel</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  consoe.log(<span class="keyword">this</span>, <span class="keyword">this</span> <span class="keyword">instanceof</span> Panel);</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">this</span> <span class="keyword">instanceof</span> Panel) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Panel();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">a = Panel();        <span class="comment">// Window   false</span></span><br><span class="line">b = <span class="keyword">new</span> Panel();    <span class="comment">// Panel&#123;&#125;  true</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
+        <p>关于 Underscore 的 mixin 方法。<br>首先先看个例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Panel</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  consoe.log(<span class="keyword">this</span>, <span class="keyword">this</span> <span class="keyword">instanceof</span> Panel);</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">this</span> <span class="keyword">instanceof</span> Panel) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Panel();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">a = Panel();        <span class="comment">// Window   false</span></span><br><span class="line">b = <span class="keyword">new</span> Panel();    <span class="comment">// Panel&#123;&#125;  true</span></span><br></pre></td></tr></table></figure></p>
 <p>当函数作为构造器使用时，函数内的 <code>this</code> 执行被新建的对象。当函数被调用时，函数内的 <code>this</code> 则为被调用的对象，在这里是 <code>Window</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _ = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> _) <span class="keyword">return</span> obj;</span><br><span class="line">  <span class="keyword">if</span> (!(<span class="keyword">this</span> <span class="keyword">instanceof</span> _)) <span class="keyword">return</span> <span class="keyword">new</span> _(obj);</span><br><span class="line">  <span class="keyword">this</span>._wrapped = obj;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>同样的，如果我们使用下面方法调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> under = _();</span><br></pre></td></tr></table></figure></p>
 <p>第二个条件成立，所以新建一个 <code>_</code> 对象后返回，注意这里是再次调用这个函数。<br>如果我们这样调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> under = <span class="keyword">new</span> _();</span><br></pre></td></tr></table></figure></p>
@@ -364,6 +368,14 @@ JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：123456789
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+            <a href="/tags/Underscore/" rel="tag">#Underscore</a>
+          
+        </div>
       
 
       
@@ -403,7 +415,7 @@ JavaScript关于 Underscore 的 mixin 方法。首先先看个例子：123456789
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/08/05/Underscore源码学习(六)/"
-           data-title="" data-url="https://ruiming.github.io/2016/08/05/Underscore源码学习(六)/">
+           data-title="Underscore 源码学习(六)" data-url="https://ruiming.github.io/2016/08/05/Underscore源码学习(六)/">
       </div>
     
   </div>
