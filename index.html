@@ -266,7 +266,7 @@
               
                 
                 <a class="post-title-link" href="/2016/08/06/浅谈JavaScript模块定义规范/" itemprop="url">
-                  浅谈JavaScript模块定义规范
+                  浅谈 JavaScript 模块定义规范
                 </a>
               
             
@@ -320,7 +320,7 @@
 
           
           
-             <span id="/2016/08/06/浅谈JavaScript模块定义规范/" class="leancloud_visitors" data-flag-title="浅谈JavaScript模块定义规范">
+             <span id="/2016/08/06/浅谈JavaScript模块定义规范/" class="leancloud_visitors" data-flag-title="浅谈 JavaScript 模块定义规范">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -343,24 +343,21 @@
 
       
         
-          
-            <p>JS 模块定义常见的有三种方式，即 AMD, CMD 和 CommonJS。其实还有一个 UMD，他是 CommonJS 和 AMD 揉和在一起而已。不过这些都 out 了，拥抱 ES6 吧。话虽这么说，你让那些不用 ES6 不用 babel 的怎么活，所以还是要了解下滴。</p>
+          <p>JS 模块定义常见的有三种方式，即 AMD, CMD 和 CommonJS。其实还有一个 UMD，他是 CommonJS 和 AMD 揉和在一起而已。不过这些都 out 了，拥抱 ES6 吧。话虽这么说，你让那些不用 ES6 不用 babel 的怎么活，所以还是要了解下滴。</p>
 <h2 id="CommonJS"><a href="#CommonJS" class="headerlink" title="CommonJS"></a>CommonJS</h2><p>CommonJS 是服务端即 Node.js 采用的模块化方案，我们应该都很熟悉了。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line">fs.readFileSync();</span><br></pre></td></tr></table></figure></p>
 <p>这个过程是同步的，只有成功加载 <code>fs</code> 后才能执行后面的步骤。但在服务器文件都在本地，所以这个问题不大。但这个在浏览器就不合适了，如果文件加载耗时很长，将导致一直等待。</p>
 <h2 id="AMD"><a href="#AMD" class="headerlink" title="AMD"></a>AMD</h2><p>AMD 全称 Asynchronous Module Definition，意思就是异步模块定义。<br>用法如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'math'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">math</span>) </span>&#123;</span><br><span class="line">    math.add(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>math 模块的加载和 <code>math.add()</code> 方法的执行不是同步的，这样浏览器就不会假死。<br>RequireJs 和 CurlJs 实现了 AMD 规范，将他们嵌入网页，就可以在浏览器端进行模块化编程了。<br>关于 AMD 的详细模块定义可以参考<a href="https://github.com/amdjs/amdjs-api/wiki/AMD-(%E4%B8%AD%E6%96%87%E7%89%88" target="_blank" rel="external">wiki</a>)。这里给出 Underscore 的 AMD 定义方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> define == <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</span><br><span class="line">    define(<span class="string">'underscore'</span>, [], <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>math 模块的加载和 <code>math.add()</code> 方法的执行不是同步的，这样浏览器就不会假死。<br>RequireJs 和 CurlJs 实现了 AMD 规范，将他们嵌入网页，就可以在浏览器端进行模块化编程了。<br>关于 AMD 的详细模块定义可以参考<a href="https://github.com/amdjs/amdjs-api/wiki/AMD-(%E4%B8%AD%E6%96%87%E7%89%88">wiki</a>)。这里给出 Underscore 的 AMD 定义方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> define == <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</span><br><span class="line">    define(<span class="string">'underscore'</span>, [], <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h2 id="CMD"><a href="#CMD" class="headerlink" title="CMD"></a>CMD</h2><p>CMD 全称 Common Module Definition，意思就是通用模块定义。。<br>对于依赖的模块，AMD 是提前执行，而 CMD 是延迟执行。AMD 推崇依赖前置，而 CMD 则推崇依赖就近。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params">require, exports, module</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> math = <span class="built_in">require</span>(<span class="string">'./math'</span>);</span><br><span class="line">    math.add(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
 <p>CMD 的主要实现是 SeaJS<br>AMD 预先加载所有依赖，使用的时候才去执行，速度快，可以并行加载多个模块。但这就需要开发的时候把全部依赖都提前定义，不便于开发和阅读，而且部分依赖（弱依赖）可能只在少数情况下使用。<br>CMD 只有在真正需要的时候才去加载依赖，使用的时候才去定义执行，但这个加载逻辑偏重，耗性能。</p>
 <h2 id="UMD"><a href="#UMD" class="headerlink" title="UMD"></a>UMD</h2><p>UMD 全称 Universal Module Definition。<br>UMD 是 AMD 和 CommonJS 的揉和，他优先使用 CommonJS 的加载方式，其次才使用 AMD 的加载方式。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">window, factory</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> exports === <span class="string">'object'</span>) &#123;</span><br><span class="line">     </span><br><span class="line">        <span class="built_in">module</span>.exports = factory();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</span><br><span class="line">     </span><br><span class="line">        define(factory);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     </span><br><span class="line">        <span class="built_in">window</span>.eventUtil = factory();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//module ...</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
 <p>其实就是一个服务端和浏览端通用的模块解决方案。</p>
-<h2 id="ES6-Module"><a href="#ES6-Module" class="headerlink" title="ES6 Module"></a>ES6 Module</h2><p>ES6 在语言规格的层面上实现了模块功能，并且实现非常简单，完全可以替代现有的模块加载方案，成为浏览器和服务端都通用的模块解决方案。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;stat, exists, readFile&#125; <span class="keyword">from</span> <span class="string">'fs'</span>;</span><br></pre></td></tr></table></figure></p>
-<p>这种做法将只在 fs 模块加载3个方法，其他方法不会进行加载。ES6 可以在编译时就完成模块加载，效率比 CommonJS 的加载方式高。<br>在浏览器中使用 ES6 模块的语法：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"module"</span> <span class="attr">src</span>=<span class="string">"foo.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>目前 Node 默认模块格式是 CommonJS，ES6 的模块方案还不支持，但可以通过 babel 来使用。</p>
-<p>现在推荐做法是广泛使用 ES6 甚至 ES7 来书写 JavaScript 以提高开发效率，再使用 babel 转码就好了。所以前后端我们也都可以使用 ES6 的 Module 来进行。其他的模块加载方案应该会渐渐退出历史舞台。</p>
-<hr>
-<p><a href="http://es6.ruanyifeng.com/#docs/module" target="_blank" rel="external">ECMAScript6 入门 Module</a></p>
-
-          
+<h2 id="ES6-Module"><a href="#ES6-Module" class="headerlink" title="ES6 Module"></a>ES6 Module</h2><p>ES6 在语言规格的层面上实现了模块功能，并且实现非常简单，完全可以替代现有的模块加载方案，成为浏览器和服务端都通用的模块解决方案。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/08/06/浅谈JavaScript模块定义规范/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>

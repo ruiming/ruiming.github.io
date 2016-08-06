@@ -87,14 +87,14 @@
 <meta name="description" content="JS 模块定义常见的有三种方式，即 AMD, CMD 和 CommonJS。其实还有一个 UMD，他是 CommonJS 和 AMD 揉和在一起而已。不过这些都 out 了，拥抱 ES6 吧。话虽这么说，你让那些不用 ES6 不用 babel 的怎么活，所以还是要了解下滴。
 CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该都很熟悉了。例如：12const f">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈JavaScript模块定义规范">
+<meta property="og:title" content="浅谈 JavaScript 模块定义规范">
 <meta property="og:url" content="https://ruiming.github.io/2016/08/06/浅谈JavaScript模块定义规范/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="JS 模块定义常见的有三种方式，即 AMD, CMD 和 CommonJS。其实还有一个 UMD，他是 CommonJS 和 AMD 揉和在一起而已。不过这些都 out 了，拥抱 ES6 吧。话虽这么说，你让那些不用 ES6 不用 babel 的怎么活，所以还是要了解下滴。
 CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该都很熟悉了。例如：12const f">
-<meta property="og:updated_time" content="2016-08-06T14:29:28.205Z">
+<meta property="og:updated_time" content="2016-08-06T14:31:33.112Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈JavaScript模块定义规范">
+<meta name="twitter:title" content="浅谈 JavaScript 模块定义规范">
 <meta name="twitter:description" content="JS 模块定义常见的有三种方式，即 AMD, CMD 和 CommonJS。其实还有一个 UMD，他是 CommonJS 和 AMD 揉和在一起而已。不过这些都 out 了，拥抱 ES6 吧。话虽这么说，你让那些不用 ES6 不用 babel 的怎么活，所以还是要了解下滴。
 CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该都很熟悉了。例如：12const f">
 
@@ -119,7 +119,7 @@ CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该
 
   <link rel="canonical" href="https://ruiming.github.io/2016/08/06/浅谈JavaScript模块定义规范/"/>
 
-  <title> 浅谈JavaScript模块定义规范 | Ruiming's Blog </title>
+  <title> 浅谈 JavaScript 模块定义规范 | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -266,7 +266,7 @@ CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该
             
             
               
-                浅谈JavaScript模块定义规范
+                浅谈 JavaScript 模块定义规范
               
             
           </h1>
@@ -319,7 +319,7 @@ CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该
 
           
           
-             <span id="/2016/08/06/浅谈JavaScript模块定义规范/" class="leancloud_visitors" data-flag-title="浅谈JavaScript模块定义规范">
+             <span id="/2016/08/06/浅谈JavaScript模块定义规范/" class="leancloud_visitors" data-flag-title="浅谈 JavaScript 模块定义规范">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -350,7 +350,7 @@ CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该
 <p>CMD 的主要实现是 SeaJS<br>AMD 预先加载所有依赖，使用的时候才去执行，速度快，可以并行加载多个模块。但这就需要开发的时候把全部依赖都提前定义，不便于开发和阅读，而且部分依赖（弱依赖）可能只在少数情况下使用。<br>CMD 只有在真正需要的时候才去加载依赖，使用的时候才去定义执行，但这个加载逻辑偏重，耗性能。</p>
 <h2 id="UMD"><a href="#UMD" class="headerlink" title="UMD"></a>UMD</h2><p>UMD 全称 Universal Module Definition。<br>UMD 是 AMD 和 CommonJS 的揉和，他优先使用 CommonJS 的加载方式，其次才使用 AMD 的加载方式。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">window, factory</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> exports === <span class="string">'object'</span>) &#123;</span><br><span class="line">     </span><br><span class="line">        <span class="built_in">module</span>.exports = factory();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</span><br><span class="line">     </span><br><span class="line">        define(factory);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     </span><br><span class="line">        <span class="built_in">window</span>.eventUtil = factory();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//module ...</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
 <p>其实就是一个服务端和浏览端通用的模块解决方案。</p>
-<h2 id="ES6-Module"><a href="#ES6-Module" class="headerlink" title="ES6 Module"></a>ES6 Module</h2><p>ES6 在语言规格的层面上实现了模块功能，并且实现非常简单，完全可以替代现有的模块加载方案，成为浏览器和服务端都通用的模块解决方案。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;stat, exists, readFile&#125; <span class="keyword">from</span> <span class="string">'fs'</span>;</span><br></pre></td></tr></table></figure></p>
+<h2 id="ES6-Module"><a href="#ES6-Module" class="headerlink" title="ES6 Module"></a>ES6 Module</h2><p>ES6 在语言规格的层面上实现了模块功能，并且实现非常简单，完全可以替代现有的模块加载方案，成为浏览器和服务端都通用的模块解决方案。<br><a id="more"></a><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;stat, exists, readFile&#125; <span class="keyword">from</span> <span class="string">'fs'</span>;</span><br></pre></td></tr></table></figure></p>
 <p>这种做法将只在 fs 模块加载3个方法，其他方法不会进行加载。ES6 可以在编译时就完成模块加载，效率比 CommonJS 的加载方式高。<br>在浏览器中使用 ES6 模块的语法：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"module"</span> <span class="attr">src</span>=<span class="string">"foo.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p>目前 Node 默认模块格式是 CommonJS，ES6 的模块方案还不支持，但可以通过 babel 来使用。</p>
 <p>现在推荐做法是广泛使用 ES6 甚至 ES7 来书写 JavaScript 以提高开发效率，再使用 babel 转码就好了。所以前后端我们也都可以使用 ES6 的 Module 来进行。其他的模块加载方案应该会渐渐退出历史舞台。</p>
@@ -419,7 +419,7 @@ CommonJSCommonJS 是服务端即 Node.js 采用的模块化方案，我们应该
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/08/06/浅谈JavaScript模块定义规范/"
-           data-title="浅谈JavaScript模块定义规范" data-url="https://ruiming.github.io/2016/08/06/浅谈JavaScript模块定义规范/">
+           data-title="浅谈 JavaScript 模块定义规范" data-url="https://ruiming.github.io/2016/08/06/浅谈JavaScript模块定义规范/">
       </div>
     
   </div>
