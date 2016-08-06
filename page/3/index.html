@@ -265,6 +265,157 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/20/Underscore源码学习(一)/" itemprop="url">
+                  Underscore 源码学习(一)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-20T15:52:11+08:00" content="2016-07-20">
+              2016-07-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Underscore/" itemprop="url" rel="index">
+                    <span itemprop="name">Underscore</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/20/Underscore源码学习(一)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/20/Underscore源码学习(一)/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/20/Underscore源码学习(一)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(一)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>暑假打算研究一下 Underscore 源码，我会对一些我觉得比较有意思的点拿出来讨论下，不过我不会过多介绍，也不会去分析 Underscore 的各个方法，但我会附上一些相关的不错的参考资料。由于我也是初学阶段，所以如果有说的不正确的地方望指出。</p>
+<h2 id="要点1：立即执行函数"><a href="#要点1：立即执行函数" class="headerlink" title="要点1：立即执行函数"></a>要点1：立即执行函数</h2><p>Underscore 的内容都用这么一个东西包装起来了。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;..&#125;());</span><br></pre></td></tr></table></figure></p>
+<p>其实也可以这样写<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;)();</span><br></pre></td></tr></table></figure></p>
+<p>Underscore 把全部内容封装在立即执行函数里面，就形成了一个独立的作用域，与外部隔离，并且这样做还形成了闭包，可以模拟私有方法。<br>推荐阅读：</p>
+<ul>
+<li><a href="http://benalman.com/news/2010/11/immediately-invoked-function-expression/">immediately-invoked-function-expression(英)</a></li>
+<li><a href="http://www.cnblogs.com/tomxu/archive/2011/12/31/2289423.html">immediately-invoked-function-expression(中)</a></li>
+<li><a href="https://segmentfault.com/a/1190000003902899">JavaScript中的立即执行函数</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Closures">Closures</a></li>
+</ul>
+<h2 id="要点2：兼容浏览器和-Node-环境"><a href="#要点2：兼容浏览器和-Node-环境" class="headerlink" title="要点2：兼容浏览器和 Node 环境"></a>要点2：兼容浏览器和 Node 环境</h2><p>浏览器和服务端的一个主要区别是全局对象命名的不同，在浏览器全局变量是 window，在服务端即 Node 环境则是 global。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> root = <span class="keyword">typeof</span> self == <span class="string">'object'</span> &amp;&amp; self.self === self &amp;&amp; self ||</span><br><span class="line">           <span class="keyword">typeof</span> global == <span class="string">'object'</span> &amp;&amp; global.global === global &amp;&amp; global ||</span><br><span class="line">           <span class="keyword">this</span>;</span><br></pre></td></tr></table></figure></p>
+<p>这个地方之前的写法是这样的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> root = <span class="keyword">this</span>;</span><br></pre></td></tr></table></figure></p>
+<p>我认为之所以改成前面那种写法，可能是为了确保 root 指向 global 或者 window(self) 。大部分框架和库都采用这种做法，这种做法更加安全。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这一步确保self是一个object，这样self.self才不会出错</span></span><br><span class="line"><span class="keyword">typeof</span> self == <span class="string">'object'</span></span><br><span class="line"><span class="comment">// 这一步确保self.self严格等于自身，貌似只有window具备这个特性</span></span><br><span class="line"><span class="comment">// 即window === window.window.window</span></span><br><span class="line">self.self === self</span><br><span class="line"><span class="comment">// 为什么还要进行这一步？</span></span><br><span class="line">self</span><br></pre></td></tr></table></figure></p>
+<p>推荐阅读：</p>
+<ul>
+<li><a href="https://zzz.buzz/2016/06/30/the-global-object-in-various-javascript-environments/">The Global Object in Various JavaScript Environments</a></li>
+</ul>
+<h2 id="要点3：提供命名冲突解决方法"><a href="#要点3：提供命名冲突解决方法" class="headerlink" title="要点3：提供命名冲突解决方法"></a>要点3：提供命名冲突解决方法</h2><p>Underscore 在给 root 赋值前，先保存了原先 root 的 <code>_</code> 对象。之所以这样做，是因为可能我们用的其他库也使用了 <code>_</code> 这个作为命名空间。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> previousUnderscore = root._;</span><br></pre></td></tr></table></figure></p>
+<p>我们结合 Underscore 最下面的这个方法来看。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_.noConflict = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    root._ = previousUnderscore;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>如果 <code>_</code> 出现了冲突，可以使用下面方法<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _new = _.noConflict();</span><br></pre></td></tr></table></figure></p>
+<p>这样一来应该很明显了，<code>noConflict</code> 将 <code>previousUnderscore</code> 即原先的 <code>root._</code> 重新放回去，然后重新定义 Underscore 命名给 <code>_new</code>，这样就解决了 <code>_</code> 冲突问题。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/20/Underscore源码学习(一)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/14/ARP攻击和无线网卡混杂模式/" itemprop="url">
                   ARP 攻击和无线网卡混杂模式
                 </a>
@@ -916,7 +1067,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">14</span>
+              <span class="site-state-item-count">15</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
