@@ -265,6 +265,141 @@
             
               
                 
+                <a class="post-title-link" href="/2016/08/06/Underscore源码学习(七)/" itemprop="url">
+                  Underscore源码学习(七)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-06T15:53:18+08:00" content="2016-08-06">
+              2016-08-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Underscore/" itemprop="url" rel="index">
+                    <span itemprop="name">Underscore</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/06/Underscore源码学习(七)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/06/Underscore源码学习(七)/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/08/06/Underscore源码学习(七)/" class="leancloud_visitors" data-flag-title="Underscore源码学习(七)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Underscore 中间 flatten 相关的方法之前一直不是很理解，现在完全搞懂了，稍微说一下。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> flatten = <span class="function"><span class="keyword">function</span>(<span class="params">input, shallow, strict, output</span>) </span>&#123;</span><br><span class="line">    output = output || [];</span><br><span class="line">    <span class="keyword">var</span> idx = output.length;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, length = getLength(input); i &lt; length; i++) &#123;</span><br><span class="line">        <span class="keyword">var</span> value = input[i];</span><br><span class="line">        <span class="comment">// 若value为数组，把里面东西去出来赋值给output</span></span><br><span class="line">        <span class="comment">// 否则直接赋值给output</span></span><br><span class="line">        <span class="comment">// isArrayLike的判断可以去掉，保留的原因是因为他用来判断value是否为数组很快，可以迅速筛选掉非数组</span></span><br><span class="line">        <span class="keyword">if</span> (isArrayLike(value) &amp;&amp; (_.isArray(value) || _.isArguments(value))) &#123;</span><br><span class="line">        <span class="comment">// Flatten current level of array or arguments object.</span></span><br><span class="line">        <span class="keyword">if</span> (shallow) &#123;</span><br><span class="line">            <span class="comment">// 如果给了shallow参数，只只遍历一层</span></span><br><span class="line">            <span class="keyword">var</span> j = <span class="number">0</span>, len = value.length;</span><br><span class="line">            <span class="keyword">while</span> (j &lt; len) output[idx++] = value[j++];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 一直遍历下去，如果是元素则按下面赋值，如果是数组则继续遍历</span></span><br><span class="line">            flatten(value, shallow, strict, output);</span><br><span class="line">            idx = output.length;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!strict) &#123;</span><br><span class="line">        output[idx++] = value;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>这个方法不难看懂，作用是将input平铺展开，如果 <code>shallow</code> 为 <code>true</code>，则只展开一层。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>], [[<span class="number">4</span>, [<span class="number">5</span>]]]])              <span class="comment">// [1, 2, 3, 4, 5]</span></span><br><span class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>], [[<span class="number">4</span>, [<span class="number">5</span>]]]], <span class="literal">true</span>)        <span class="comment">// [1, 2, 3, [4, [5]]]</span></span><br></pre></td></tr></table></figure></p>
+<p>这里的 <code>strict</code> 参数就是之前一直卡住的原因，就是下面这个地方：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">_.without = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">array, otherArrays</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _.difference(array, otherArrays);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">_.difference = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">array, rest</span>) </span>&#123;</span><br><span class="line">    rest = flatten(rest, <span class="literal">true</span>, <span class="literal">true</span>);</span><br><span class="line">    <span class="comment">// 遍历array，如果array中一个元素包含在rest中，则去掉该元素</span></span><br><span class="line">    <span class="keyword">return</span> _.filter(array, <span class="function"><span class="keyword">function</span>(<span class="params">value</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !_.contains(rest, value);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>这是两个方法，那时候想 <code>without</code> 方法调用的时候, <code>otherArrays</code>是一个数组了，到 <code>difference</code> 方法的时候，这个数组去调用 <code>flatten</code> 方法的时候不是会出问题吗？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], <span class="literal">true</span>, <span class="literal">true</span>)        <span class="comment">// []</span></span><br></pre></td></tr></table></figure></p>
+<p>脑子里面就这样想…卡了好久，等我基本看了全部源码才会过来看才理解了<br><code>difference</code> 方法的 <code>restArgs</code> 很重要，他们两个是各自独立的方法，但是 <code>without</code> 可以共用 <code>difference</code> 的逻辑。<br>上面那样子理解是有问题的，因为在 <code>without</code> 方法中 <code>otherArrays</code> 如果是[1, 2, 3]，到了 <code>flatten</code> 调用的时候因为 <code>restArgs</code> 的关系他变成了 [[1, 2, 3]]，调用最后返回结果[1, 2, 3]。然后我就纳闷了，加了一层又解除这是和解…<br>不过抛开 <code>without</code> 方法去看 <code>difference</code> 方法就能理解了。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/08/06/Underscore源码学习(七)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/05/Underscore源码学习(六)/" itemprop="url">
                   Underscore 源码学习(六)
                 </a>
@@ -815,143 +950,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/Underscore源码学习(三)/" itemprop="url">
-                  Underscore 源码学习(三)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T14:37:31+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/07/31/Underscore源码学习(三)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/31/Underscore源码学习(三)/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/07/31/Underscore源码学习(三)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(三)">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>这次主要说剩余参数。<br>在 ES5 中，如果想要函数接收任意数量的参数，必须使用特殊变量 <code>arguments</code>，举个例子，我们要实现一个加法函数，要求第一个数乘2，然后与其他数相加。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum = <span class="built_in">arguments</span>[<span class="number">0</span>] * <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">        sum += <span class="built_in">arguments</span>[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>在 ES6 中，我们可以使用 <code>...</code> 操作符，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">first, ...args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum = first*<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> arg <span class="keyword">of</span> args) &#123;</span><br><span class="line">        sum += arg;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>使用 ES5 我们无法给函数定义参数，而只能通过 <code>arguments</code> 来获取参数，这样写明显带来了可读性的降低。而 ES6 我们就可以在函数声明里面写明参数，对于不定长的参数，则可以使用 <code>...</code> 操作符。<br><code>...</code> 还有另一个常用的应用场景，比如下面例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span> <span class="keyword">instanceof</span> <span class="built_in">Array</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>);</span><br><span class="line">&#125;</span><br><span class="line">test(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// Result:</span></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="literal">false</span></span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
-<p>如果细看输出的[1, 2, 3]会发现他是这样的：<br><img src="/2016/07/31/Underscore源码学习(三)/result1.png" alt="result1.png" title="result1.png"><br>我们再试试下面的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="built_in">console</span>.log(arr);</span><br><span class="line"><span class="built_in">console</span>.log(arr <span class="keyword">instanceof</span> <span class="built_in">Array</span>);</span><br><span class="line"><span class="built_in">console</span>.log(arr <span class="keyword">instanceof</span> <span class="built_in">Object</span>);</span><br><span class="line"><span class="comment">// Result:</span></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="literal">true</span></span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
-<p>再看下[1, 2, 3]这行输出里面是什么：<br><img src="/2016/07/31/Underscore源码学习(三)/result2.png" alt="result2.png" title="result2.png"><br>从 <code>instanceof</code> 我们就知道了 <code>arguments</code> 并不是真正的数组。伪数组实质是一个对象。<br>要把一个伪数组转为数组，可以这样用<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>);</span><br></pre></td></tr></table></figure></p>
-<p>上面这种做法在很多地方都可以看到。除了上面这样做之外，我们还可以使用 ES6 的 <code>Array.from</code> 来处理，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = <span class="built_in">Array</span>.from(<span class="built_in">arguments</span>);</span><br></pre></td></tr></table></figure></p>
-<p>但在 ES6 中，我们使用 <code>...</code> 运算符并不存在这个问题，比如上面第二个例子，<code>args</code> 是一个数组。<br>鉴于此，我们应该尽量使用 ES6 剩余参数写法和 <code>Array.from</code> 的写法，因为这样更容易理解，而且写起来更简洁。<br>另外，我们还可以使用 <code>...</code> 操作符来复制数组，如下：<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/07/31/Underscore源码学习(三)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -997,7 +995,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

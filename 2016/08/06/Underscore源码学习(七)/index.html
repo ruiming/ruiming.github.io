@@ -84,16 +84,16 @@
 
 
 
-<meta name="description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
+<meta name="description" content="Underscore 中间 flatten 相关的方法之前一直不是很理解，现在完全搞懂了，稍微说一下。12345678910111213141516171819202122232425var flatten = function(input, shallow, strict, output) &amp;#123;    output = output || [];    var idx = output.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Underscore 源码学习(四)">
-<meta property="og:url" content="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/index.html">
+<meta property="og:title" content="Underscore源码学习(七)">
+<meta property="og:url" content="https://ruiming.github.io/2016/08/06/Underscore源码学习(七)/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
-<meta property="og:updated_time" content="2016-08-04T08:33:06.281Z">
+<meta property="og:description" content="Underscore 中间 flatten 相关的方法之前一直不是很理解，现在完全搞懂了，稍微说一下。12345678910111213141516171819202122232425var flatten = function(input, shallow, strict, output) &amp;#123;    output = output || [];    var idx = output.">
+<meta property="og:updated_time" content="2016-08-06T07:55:18.371Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Underscore 源码学习(四)">
-<meta name="twitter:description" content="终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。先看源码123456789101112131415161718192021var createReduce = function(di">
+<meta name="twitter:title" content="Underscore源码学习(七)">
+<meta name="twitter:description" content="Underscore 中间 flatten 相关的方法之前一直不是很理解，现在完全搞懂了，稍微说一下。12345678910111213141516171819202122232425var flatten = function(input, shallow, strict, output) &amp;#123;    output = output || [];    var idx = output.">
 
 
 
@@ -114,9 +114,9 @@
 
 
 
-  <link rel="canonical" href="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/"/>
+  <link rel="canonical" href="https://ruiming.github.io/2016/08/06/Underscore源码学习(七)/"/>
 
-  <title> Underscore 源码学习(四) | Ruiming's Blog </title>
+  <title> Underscore源码学习(七) | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -263,7 +263,7 @@
             
             
               
-                Underscore 源码学习(四)
+                Underscore源码学习(七)
               
             
           </h1>
@@ -275,8 +275,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-01T15:37:14+08:00" content="2016-08-01">
-              2016-08-01
+            <time itemprop="dateCreated" datetime="2016-08-06T15:53:18+08:00" content="2016-08-06">
+              2016-08-06
             </time>
           </span>
 
@@ -305,8 +305,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/01/Underscore源码学习(四)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/01/Underscore源码学习(四)/" itemprop="commentsCount"></span>
+                <a href="/2016/08/06/Underscore源码学习(七)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/06/Underscore源码学习(七)/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -316,7 +316,7 @@
 
           
           
-             <span id="/2016/08/01/Underscore源码学习(四)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(四)">
+             <span id="/2016/08/06/Underscore源码学习(七)/" class="leancloud_visitors" data-flag-title="Underscore源码学习(七)">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -338,14 +338,13 @@
       
 
       
-        <p>终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。<br>但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。<br>先看源码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> createReduce = <span class="function"><span class="keyword">function</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> reducer = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, initial</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),</span><br><span class="line">        length = (keys || obj).length,</span><br><span class="line">        index = dir &gt; <span class="number">0</span> ? <span class="number">0</span> : length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(!initial) &#123;</span><br><span class="line">      memo = obj[keys ? keys[index] : index];</span><br><span class="line">      index += dir;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(; index &gt;= <span class="number">0</span> &amp;&amp; index &lt; length; index += dir) &#123;</span><br><span class="line">      <span class="keyword">var</span> currentKey = keys ? keys[index] : index;</span><br><span class="line">      memo = iteratee(memo, obj[currentKey], currentKey, obj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> memo;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>这是 reduce 函数的工厂函数，用于生成一个 reducer ，dir 是决定方向用的。<br>我们从最后一个 return 开始看起，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>我们使用 reduce 的时候，如果没有指定 memo 值，这时候参数个数只有两个即 obj 和 iteratee，所以 initial 为 false 表示没有初始化。对于没初始的情况，就是增加了一个 if 语句里面的内容而已，作用是把第一个元素作为 memo 值。<br>接着就是有没有初始化都共用的部分了，通过一个 for 循环把 keys 遍历，并把相应的信息交给 iteratee 去处理，参数 memo 是上一次处理结果。遍历完后把最后的处理结果 memo 返回就完了。<br>这个函数派生了两个方法，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.reduce = _.foldl = _.inject = createReduce(<span class="number">1</span>);</span><br><span class="line">_.reduceRight = _.foldr = createReduce(<span class="number">-1</span>);</span><br></pre></td></tr></table></figure></p>
-<p>只是方向不同而已。<br>举个例子方便理解些，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sum = _.reduce([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> accmulator + value;</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
-<p>结果为 15 这个应该很明显，js 原生也有 reduce 方法，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">left, right</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> left + right;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<a id="more"></a>
-<p>我们看下 Underscore 的例子，主要想说明下他的运行过程，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!initial)</span><br><span class="line">    memo = <span class="number">1</span>; index = <span class="number">1</span>;</span><br><span class="line">endif</span><br><span class="line"><span class="keyword">for</span></span><br><span class="line">    memo = iteratee(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">3</span>;</span><br><span class="line">    memo = iteratee(<span class="number">3</span>, <span class="number">3</span>, <span class="number">2</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">6</span>;</span><br><span class="line">    memo = iteratee(<span class="number">6</span>, <span class="number">4</span>, <span class="number">3</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">10</span>;</span><br><span class="line">    memo = iteratee(<span class="number">10</span>, <span class="number">5</span>, <span class="number">4</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]) = <span class="number">15</span>;</span><br><span class="line">endfor</span><br><span class="line"><span class="keyword">return</span> memo = <span class="number">15</span>;</span><br></pre></td></tr></table></figure></p>
-<p>额，我也不知道写的是什么东西，只是描述下过程而已，你懂的。<br>剩下的集合部分感觉也没啥好说的了，花点时间看下就可以看懂了=.=。</p>
+        <p>Underscore 中间 flatten 相关的方法之前一直不是很理解，现在完全搞懂了，稍微说一下。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> flatten = <span class="function"><span class="keyword">function</span>(<span class="params">input, shallow, strict, output</span>) </span>&#123;</span><br><span class="line">    output = output || [];</span><br><span class="line">    <span class="keyword">var</span> idx = output.length;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, length = getLength(input); i &lt; length; i++) &#123;</span><br><span class="line">        <span class="keyword">var</span> value = input[i];</span><br><span class="line">        <span class="comment">// 若value为数组，把里面东西去出来赋值给output</span></span><br><span class="line">        <span class="comment">// 否则直接赋值给output</span></span><br><span class="line">        <span class="comment">// isArrayLike的判断可以去掉，保留的原因是因为他用来判断value是否为数组很快，可以迅速筛选掉非数组</span></span><br><span class="line">        <span class="keyword">if</span> (isArrayLike(value) &amp;&amp; (_.isArray(value) || _.isArguments(value))) &#123;</span><br><span class="line">        <span class="comment">// Flatten current level of array or arguments object.</span></span><br><span class="line">        <span class="keyword">if</span> (shallow) &#123;</span><br><span class="line">            <span class="comment">// 如果给了shallow参数，只只遍历一层</span></span><br><span class="line">            <span class="keyword">var</span> j = <span class="number">0</span>, len = value.length;</span><br><span class="line">            <span class="keyword">while</span> (j &lt; len) output[idx++] = value[j++];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 一直遍历下去，如果是元素则按下面赋值，如果是数组则继续遍历</span></span><br><span class="line">            flatten(value, shallow, strict, output);</span><br><span class="line">            idx = output.length;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!strict) &#123;</span><br><span class="line">        output[idx++] = value;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>这个方法不难看懂，作用是将input平铺展开，如果 <code>shallow</code> 为 <code>true</code>，则只展开一层。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>], [[<span class="number">4</span>, [<span class="number">5</span>]]]])              <span class="comment">// [1, 2, 3, 4, 5]</span></span><br><span class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>], [[<span class="number">4</span>, [<span class="number">5</span>]]]], <span class="literal">true</span>)        <span class="comment">// [1, 2, 3, [4, [5]]]</span></span><br></pre></td></tr></table></figure></p>
+<p>这里的 <code>strict</code> 参数就是之前一直卡住的原因，就是下面这个地方：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">_.without = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">array, otherArrays</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _.difference(array, otherArrays);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">_.difference = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">array, rest</span>) </span>&#123;</span><br><span class="line">    rest = flatten(rest, <span class="literal">true</span>, <span class="literal">true</span>);</span><br><span class="line">    <span class="comment">// 遍历array，如果array中一个元素包含在rest中，则去掉该元素</span></span><br><span class="line">    <span class="keyword">return</span> _.filter(array, <span class="function"><span class="keyword">function</span>(<span class="params">value</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !_.contains(rest, value);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>这是两个方法，那时候想 <code>without</code> 方法调用的时候, <code>otherArrays</code>是一个数组了，到 <code>difference</code> 方法的时候，这个数组去调用 <code>flatten</code> 方法的时候不是会出问题吗？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], <span class="literal">true</span>, <span class="literal">true</span>)        <span class="comment">// []</span></span><br></pre></td></tr></table></figure></p>
+<p>脑子里面就这样想…卡了好久，等我基本看了全部源码才会过来看才理解了<br><code>difference</code> 方法的 <code>restArgs</code> 很重要，他们两个是各自独立的方法，但是 <code>without</code> 可以共用 <code>difference</code> 的逻辑。<br>上面那样子理解是有问题的，因为在 <code>without</code> 方法中 <code>otherArrays</code> 如果是[1, 2, 3]，到了 <code>flatten</code> 调用的时候因为 <code>restArgs</code> 的关系他变成了 [[1, 2, 3]]，调用最后返回结果[1, 2, 3]。然后我就纳闷了，加了一层又解除这是和解…<br>不过抛开 <code>without</code> 方法去看 <code>difference</code> 方法就能理解了。<br><a id="more"></a><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">_.without([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 1, 2, 3通过restArgs变为[1, 2, 3]，传入difference方法</span></span><br><span class="line"><span class="comment">// [1, 2, 3]通过restArgs变为[[1, 2, 3]]，传入flatten方法</span></span><br><span class="line"><span class="comment">// 返回[1, 2, 3]，剩下的可以看懂了不解释</span></span><br><span class="line"><span class="comment">// 之所以shallow和strict都为true，是因为不需要两个数组即使内容一样他们也是不想等的，</span></span><br><span class="line"><span class="comment">// 不需要进行处理，所以没必要展开</span></span><br><span class="line">_.difference([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>]);</span><br><span class="line"><span class="comment">// [1, 2], [3]通过restArgs变为[1, 2, 3]，传入difference方法，其余同</span></span><br></pre></td></tr></table></figure></p>
+<p>所以其实 <code>difference</code> 方法的 <code>restArgs</code> 虽然对与 <code>without</code> 方法中的调用是多余的，但是作为一个独立的方法，他还是有必要的。<br>上面注释应该说的很清楚了，完。</p>
+<p>其实只是我自己没看清楚而已，也不难。这个地方的很多方法比如 <code>union</code>, <code>intersection</code>等等都是集合的相关操作。比如 <code>difference</code> 就是差集，<code>union</code> 就是并集，而<code>intersection</code> 就是交集。<br>到这里 Underscore 就差三个地方没看了，一个是最后 AMD 的模块化方案，虽然只有短短几行，但是有很多相似的方案，我要专门挑出来搞清楚。另一个是深度复制，看到代码好长我就留到最后在研究下好了。最后一个是模板处理，这个涉及很多正则，我还不是太了解，放在最后在来处理。</p>
 
       
     </div>
@@ -378,17 +377,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/31/Underscore源码学习(三)/" rel="next" title="Underscore 源码学习(三)">
-                <i class="fa fa-chevron-left"></i> Underscore 源码学习(三)
+              <a href="/2016/08/05/Underscore源码学习(六)/" rel="next" title="Underscore 源码学习(六)">
+                <i class="fa fa-chevron-left"></i> Underscore 源码学习(六)
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/08/01/谈谈React和Redux/" rel="prev" title="谈谈 React 和 Redux">
-                谈谈 React 和 Redux <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -414,8 +409,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/08/01/Underscore源码学习(四)/"
-           data-title="Underscore 源码学习(四)" data-url="https://ruiming.github.io/2016/08/01/Underscore源码学习(四)/">
+      <div class="ds-thread" data-thread-key="2016/08/06/Underscore源码学习(七)/"
+           data-title="Underscore源码学习(七)" data-url="https://ruiming.github.io/2016/08/06/Underscore源码学习(七)/">
       </div>
     
   </div>
