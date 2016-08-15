@@ -1,0 +1,859 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Angular,JavaScript," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/avatar.jpg?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="有段时间没写博客了，前段时间在看 Underscore 源码所以写的多了点，这段时间还是在忙自己的其他项目去了，还是有不少收获的。
+Angular 视图过渡动画之前使用 angular-promise-button 这个模块实现了按钮的自动变化，以前自己是用很多标志位来判断特别二。不仅如此，页面切换动画也是用标志位判断，这样就特别不好维护特别不优雅，上次重构的时候就把这些全部去掉了。但是问题来了，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目采坑笔记">
+<meta property="og:url" content="https://ruiming.github.io/2016/08/15/项目采坑笔记/index.html">
+<meta property="og:site_name" content="Ruiming's Blog">
+<meta property="og:description" content="有段时间没写博客了，前段时间在看 Underscore 源码所以写的多了点，这段时间还是在忙自己的其他项目去了，还是有不少收获的。
+Angular 视图过渡动画之前使用 angular-promise-button 这个模块实现了按钮的自动变化，以前自己是用很多标志位来判断特别二。不仅如此，页面切换动画也是用标志位判断，这样就特别不好维护特别不优雅，上次重构的时候就把这些全部去掉了。但是问题来了，">
+<meta property="og:updated_time" content="2016-08-15T08:41:22.655Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="项目采坑笔记">
+<meta name="twitter:description" content="有段时间没写博客了，前段时间在看 Underscore 源码所以写的多了点，这段时间还是在忙自己的其他项目去了，还是有不少收获的。
+Angular 视图过渡动画之前使用 angular-promise-button 这个模块实现了按钮的自动变化，以前自己是用很多标志位来判断特别二。不仅如此，页面切换动画也是用标志位判断，这样就特别不好维护特别不优雅，上次重构的时候就把这些全部去掉了。但是问题来了，">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6247361191572669000,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://ruiming.github.io/2016/08/15/项目采坑笔记/"/>
+
+  <title> 项目采坑笔记 | Ruiming's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81637252-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Ruiming's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                项目采坑笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-15T16:37:19+08:00" content="2016-08-15">
+              2016-08-15
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/15/项目采坑笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/15/项目采坑笔记/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/08/15/项目采坑笔记/" class="leancloud_visitors" data-flag-title="项目采坑笔记">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>有段时间没写博客了，前段时间在看 Underscore 源码所以写的多了点，这段时间还是在忙自己的其他项目去了，还是有不少收获的。</p>
+<h2 id="Angular-视图过渡动画"><a href="#Angular-视图过渡动画" class="headerlink" title="Angular 视图过渡动画"></a>Angular 视图过渡动画</h2><p>之前使用 <code>angular-promise-button</code> 这个模块实现了按钮的自动变化，以前自己是用很多标志位来判断特别二。不仅如此，页面切换动画也是用标志位判断，这样就特别不好维护特别不优雅，上次重构的时候就把这些全部去掉了。但是问题来了，页面数据未到达时候页面就渲染肯定会造成视觉上的问题，怎么解决呢。<br>我们都想写一些应用很广的代码，比如指令，比如上面这个 <code>angular-promise-button</code> 模块等等。其实要解决上面的问题，也是几行代码就可以解决的事情了。<br>我所使用的是 Angular 的 ui-router。ngRoute 应该也差不多。<br>在 ui-router 中可以使用 resolve 达到在控制器初始化以及视图加载前确保数据到达。比如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider</span><br><span class="line">    .state(<span class="string">'me'</span>,&#123;</span><br><span class="line">        url: <span class="string">'/me'</span>,</span><br><span class="line">        controller: <span class="string">'MeCtrl'</span>,</span><br><span class="line">        templateUrl: <span class="string">'me/me_tpl.html'</span>,</span><br><span class="line">        controllerAs: <span class="string">'vm'</span>,</span><br><span class="line">        nav: <span class="literal">true</span>,</span><br><span class="line">        resolve: &#123;</span><br><span class="line">            me: <span class="function"><span class="keyword">function</span>(<span class="params">userservice</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> userservice.getUserInfo()</span><br><span class="line">                    .then(response =&gt; response);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>只有 resolve 中的全部方法执行完后，才会开始初始化控制和加载视图。这个数据如果在控制器或者视图中要使用，可以在控制器中进行依赖注入。例如上面这个我的控制器是这样写的：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"><span class="meta">    'use strict'</span>;</span><br><span class="line">    </span><br><span class="line">    angular</span><br><span class="line">        .module(<span class="string">'index'</span>)</span><br><span class="line">        .controller(<span class="string">'MeCtrl'</span>, MeCtrl);</span><br><span class="line">        </span><br><span class="line">    MeCtrl.$inject = [<span class="string">'me'</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">MeCtrl</span>(<span class="params">me</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> vm = <span class="keyword">this</span>;</span><br><span class="line">        vm.user = me;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;());</span><br></pre></td></tr></table></figure></p>
+<p>resolve中的方法是阻塞页面进行的，这样就会带来问题了，如果数据请求比较久将导致网站停滞，我们这时候就希望可以有过渡动画出来。要达到全局过渡效果的作用，可以直接监听 <code>$rootScope</code> 中的三个状态即 <code>$stateChangeStart</code> 和 <code>$stateChangeSuccess</code> 以及 <code>$stateChangeError</code> 事件。例如上面这个例子中，当我们触发 <code>me</code> 这个 state 时，也就触发了 $rootScope 上的 <code>$stateChangeStart</code> 事件，当处理结束后将出发 <code>$stateChangeSuccess</code> 并加载视图， 处理失败就会触发 <code>$stateChangeError</code> 事件。代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">angular</span><br><span class="line">    .module(<span class="string">'index'</span>, [</span><br><span class="line">        <span class="string">'ui.router'</span>,</span><br><span class="line">        <span class="string">'ui.bootstrap'</span>,</span><br><span class="line">        <span class="string">'ngAnimate'</span>,</span><br><span class="line">        <span class="string">'ngSanitize'</span>,</span><br><span class="line">        <span class="string">'ngTouch'</span>,</span><br><span class="line">        <span class="string">'infinite-scroll'</span>,</span><br><span class="line">        <span class="string">'angularPromiseButtons'</span></span><br><span class="line">    ])</span><br><span class="line">    .config(config)</span><br><span class="line">    .run(<span class="function"><span class="keyword">function</span> (<span class="params">$state,$rootScope</span>) </span>&#123;</span><br><span class="line">        $rootScope.$state = $state;</span><br><span class="line">        $rootScope.$on(<span class="string">"$stateChangeStart"</span>, <span class="function"><span class="keyword">function</span> (<span class="params">event, toState, toStateParams, fromState, fromStateParams</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> isLoading = toState.resolve;</span><br><span class="line">            <span class="keyword">if</span>(!isLoading) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">var</span> prop <span class="keyword">in</span> toState.views) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (toState.views.hasOwnProperty(prop)) &#123;</span><br><span class="line">                        <span class="keyword">if</span>(toState.views[prop].resolve) &#123;</span><br><span class="line">                            isLoading = <span class="literal">true</span>;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (isLoading) &#123;</span><br><span class="line">                $rootScope.loading = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        $rootScope.$on(<span class="string">"$stateChangeSuccess"</span>, <span class="function"><span class="keyword">function</span> (<span class="params">event, toState, toParams, fromState, fromParams</span>) </span>&#123;</span><br><span class="line">            $rootScope.loading = <span class="literal">false</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        $rootScope.$on(<span class="string">"$stateChangeError"</span>, <span class="function"><span class="keyword">function</span> (<span class="params">event, toState, toParams, fromState, fromParams, error</span>) </span>&#123;</span><br><span class="line">            $rootScope.loading = <span class="literal">false</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure></p>
+<p>入口页面，省去了其他代码，这里第一行就是视图，第二行是加载动画，通过ng-show来控制显示。第三行是引入导航栏，这个在后面会说下。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ui-view</span> <span class="attr">class</span>=<span class="string">"uiview"</span> <span class="attr">ng-show</span>=<span class="string">"!$root.loading"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"cssload-thecube"</span> <span class="attr">ng-show</span>=<span class="string">"$root.loading"</span>&gt;</span> loading... <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-show</span>=<span class="string">"$state.current.nav"</span> <span class="attr">ng-include</span>=<span class="string">"'navbar/navbar_tpl.html'"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到上面的代码中是监听了 <code>$stateChangeStart</code> 事件，然后获取目标 state 上的 resolve 方法，当 state 上的 resolve 方法全部结束后，<code>$rootScope.loading</code> 设置为 false，否则保持为 true。<br>当监听到 <code>$stateChangeSuccess</code> 或者 <code>$stateChangeError</code> 事件时，置 <code>$rootScope.loading</code> 为 false，退出过渡动画。在视图中可以使用 <code>$root</code> 得到 <code>$rootScope</code>。<br>可以看到这里有很多参数，可见其功能是很强大的。<br><a id="more"></a><br>再看下上面这个第三行<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-show</span>=<span class="string">"$state.current.nav"</span> <span class="attr">ng-include</span>=<span class="string">"'navbar/navbar_tpl.html'"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>结合上面的 JS 代码来看，我已经把 <code>$state</code> 注入到了 <code>$rootScope</code> 中了，之后我就可以使用 <code>$state.current</code> 来获取当前的视图状态和信息。我需要实现导航栏仅仅出现在我指定的页面中，下方按钮可以根据当前视图来激活。第一点可以通过给路由 state 补充变量比如我这里的 <code>nav</code> 来实现，需要导航栏的地方就设置 <code>nav</code> 为 true, 否则就不设置。第二点则可以利用 <code>ui-sref-active</code> 来实现。如下：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- navbar/navbar_tpl.html --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">class</span>=<span class="string">"bookist-nav navbar navbar-default"</span> <span class="attr">role</span>=<span class="string">"navigation"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"nav navbar-nav"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">ui-sref-active</span>=<span class="string">"active"</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">ui-sref</span>=<span class="string">"index"</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-home fa-lg"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>首页<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">ui-sref-active</span>=<span class="string">"active"</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">ui-sref</span>=<span class="string">"booklists"</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-th-large fa-lg"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>书单<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">ui-sref-active</span>=<span class="string">"active"</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">ui-sref</span>=<span class="string">"cart"</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-shopping-cart fa-lg"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>购物车<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">ui-sref-active</span>=<span class="string">"active"</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">ui-sref</span>=<span class="string">"me"</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-user fa-lg"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>我的<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nav</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>最后还有一个地方就是，下面这个代码<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ui-view</span> <span class="attr">class</span>=<span class="string">"uiview"</span> <span class="attr">ng-show</span>=<span class="string">"!$root.loading"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>ui-view 的用法其实还不少，如果你有去注意的话，会看到这个视图在变化的时候其类名会变化，依次我们可以结合 angular-animate 来实现切换动画。注意这个切换动画是在视图加载后才开始的，和上面的不一样，如果同时使用，则会在上方过渡效果结束后触发。例如，我们可以实现淡入淡出：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.uiview &#123;</span><br><span class="line">  &amp;.ng-enter &#123;</span><br><span class="line">    transition: .5s;</span><br><span class="line">    opacity: 0;</span><br><span class="line">  &#125;</span><br><span class="line">  &amp;.ng-enter-active &#123;</span><br><span class="line">    opacity: 1;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>所以上面其实说了好几点：</p>
+<ul>
+<li>使用路由上的 resolve 来实现在控制器初始化前获取到需要的数据</li>
+<li>监听 $rootScope 上的事件来实现 resolve 等待动画</li>
+<li>在 ui-view 上通过使用 angular-animate 来实现视图的切换动画</li>
+<li>通过 ui-sref-active 在当 ui-sref 和当前 state 一致时激活 active 类名</li>
+<li>把 $state 注入到 $rootScope 达到在视图中获取 $state 用途</li>
+<li>使用 $root 得到 $rootScope，利用 $root 获取 $rootScope 上的对象</li>
+</ul>
+<h2 id="静态资源自动发布七牛云"><a href="#静态资源自动发布七牛云" class="headerlink" title="静态资源自动发布七牛云"></a>静态资源自动发布七牛云</h2><p>这个很简单啦，我使用了 gulp-qiniu 这个模块来实现，很简单，结合前面说的 gulp-usemin 就更完美了。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- build:js //cdn.bookist.org/bookist.min.js --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/bookist.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/templates.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- endbuild --&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>例如对上面 index.html 中的这一片段，我们要在开发环境中使用本地资源，而在线上环境则使用 CDN 资源。我们可以这样配置 gulpfile。<br><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">gulp</span><span class="selector-class">.task</span>(<span class="string">'cdn'</span>, function() &#123;</span><br><span class="line">    gulp<span class="selector-class">.src</span>(<span class="string">'index.html'</span>)</span><br><span class="line">        <span class="selector-class">.pipe</span>(usemin())</span><br><span class="line">        <span class="selector-class">.pipe</span>(gulp.dest(<span class="string">'backend/app/templates'</span>));</span><br><span class="line">    <span class="selector-tag">gulp</span><span class="selector-class">.src</span>([<span class="string">'./src/js/bookist.js'</span>, <span class="string">'./src/js/templates.js'</span>])</span><br><span class="line">        <span class="selector-class">.pipe</span>(plumber())</span><br><span class="line">        <span class="selector-class">.pipe</span>(uglify())</span><br><span class="line">        <span class="selector-class">.pipe</span>(babel())</span><br><span class="line">        <span class="selector-class">.pipe</span>(concat(<span class="string">'bookist.min.js'</span>))</span><br><span class="line">        <span class="selector-class">.pipe</span>(qiniu(&#123;</span><br><span class="line">            <span class="attribute">accessKey</span>: <span class="string">"xxx"</span>,</span><br><span class="line">            <span class="attribute">secretKey</span>: <span class="string">"xxx"</span>,</span><br><span class="line">            <span class="attribute">bucket</span>: <span class="string">"bookist"</span>,</span><br><span class="line">            <span class="attribute">private</span>: false</span><br><span class="line">        &#125;));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行上面的任务后就会在 <code>backend/app/templates</code> 生成一个修改过的 index.html。对于上面的片段，处理之后是这样的：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"//cdn.bookist.org/bookist.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>前面的注释是给 usemin 使用的，所以要按照规范书写。<br>同时上面的任务也会把资源发布到七牛云上面，如果你还想指定文件头或者版本号之类的信息，可以参考 gulp-qiniu 的文档进行配置。<br>上面的方法有一个小问题就是还会在 <code>backend/app/templates</code> 生成一个 <code>cdn.bookist.org</code> 的文件夹，不过无所谓咯，放到 .gitignore 就好了。<br>至于图片和 css 都差不多吧，就不多说了。</p>
+<h2 id="微信坑逼"><a href="#微信坑逼" class="headerlink" title="微信坑逼"></a>微信坑逼</h2><p>有段时间我的网站在微信显示部分地方是有问题的，但在手机浏览器和电脑都没任何问题，一开始以为是样式的问题。等到自己要去解决这个问题了，才知道是 js 的问题。<br>由于微信开发工具不支持 linux，然后我虚拟机的 win10 有不知道什么原因一直连接不到手机。所以就手动调试了，这边改一点，发布上去，然后等微信缓存没了看效果(微信恶心的缓存…我都叫用苹果的人帮我看，因为苹果可以刷新..)。就这样一步步看，最后定位了问题代码。中间过程就不描述了，直接看：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> book <span class="keyword">of</span> books) &#123;</span><br><span class="line">    <span class="keyword">if</span>(book.rate)   book.star = <span class="built_in">Math</span>.ceil(book.rate/<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(book.star)   book.star = <span class="built_in">Math</span>.ceil(book.star/<span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>省略了无关代码，这是一个方法里面的部分代码，如果一个对象传入这个方法中，在微信会得不到返回值，在手机浏览器和电脑上都正常。<br>虽然这里使用了 ES6 的语法，但是我其实已经大量使用 let…of…　语句，项目并没有出现太大问题，就只是上面描述的一些地方异常而已。再者我使用了 babel 转码了。越想越觉得没道理啊。。。<br>最后虚拟机换了 win7 然后手机连接上了，打开了微信开发工具，调试微信 webview，报错 <code>Symbol is not defined</code>。<br>果断控制台敲 Symbol，结果 <code>Symbol is not defined</code>。<br>好吧，问题出来了，微信这个辣鸡不支持 Symbol…<br>但问题是我没有用 Symbol 这个东西啊，我瞄了 babel 一眼。<br>看下上面那段代码转码的结果：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _iteratorNormalCompletion5 = <span class="literal">true</span>;</span><br><span class="line"><span class="keyword">var</span> _didIteratorError5 = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">var</span> _iteratorError5 = <span class="literal">undefined</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> _iterator5 = books[<span class="built_in">Symbol</span>.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = <span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> book = _step5.value;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (book.rate) book.star = <span class="built_in">Math</span>.ceil(book.rate / <span class="number">2</span>);<span class="keyword">else</span> <span class="keyword">if</span> (book.star) book.star = <span class="built_in">Math</span>.ceil(book.star / <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    _didIteratorError5 = <span class="literal">true</span>;</span><br><span class="line">    _iteratorError5 = err;</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!_iteratorNormalCompletion5 &amp;&amp; _iterator5.return) &#123;</span><br><span class="line">            _iterator5.return();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (_didIteratorError5) &#123;</span><br><span class="line">            <span class="keyword">throw</span> _iteratorError5;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>什么鬼…算了，不看了，但是确定了是 babel 转码导致的。然后查了下资料：</p>
+<blockquote>
+<p>Babel默认只转换新的JavaScript句法(syntax)，而不转换新的API，比如Iterator, Generator, Set, Maps, Proxy, Reflect, Symbol, Promise等全局对象，以及一些定义在全局对象上的方法(比如Object.assign)都不会转码。</p>
+</blockquote>
+<p>其实早有耳闻 polyfill 这个东西，但我想他一般是用在 IE 这种辣鸡浏览器上的，没想到微信 webview 这么不争气。<br>多打包一个 babel-polyfill 解决了这个问题。<br>坑比微信…</p>
+<p>故事还没结束…<br>昨天发现网站并没有使用 http2，但是已经进行了设置了，最后查了很多资料原因好像是 openssl 的问题，但由于使用的是 docker，貌似不太好搞，但其实更换 nginx 版本就好了，原先是1.9版本，换成1.11-alpine 版就解决了，用 docker 更换 nginx 版本非常方便。额，具体原因不深究了，可能跟 alpine 这个字眼有关？不清楚…<br>http2 具备多路复用的特点，在 http1.1 中，并行传输文件是有限制的，因为用户端和服务端的最大连接数是有限制的，而连接的建立和销毁又会带来开销，所以在 http1.1 中对文件进行压缩合并是很有必要的。不过在 http2 就不需要这样做了，http2 可以在一条通道上传输多个文件，如果合并剩几个，就没法发挥并行传输的优势，而且文件太大，还会降低运输层的效率，即丢包或者乱序到达的影响。<br>我把网站改到了 http2 后，就不再进行文件合并了，转而可以大量使用 bootcss 的 CDN，bootcss 的 CDN 支持 http2，传输很快。至于上面没有的和自己写的，就发布到七牛云上面。恩，电脑上加载是变快了很多。<br>但是感觉不到微信加载变快…最后发现是微信不支持 http2…<br>好伤心…<br>最后我的方案是产生两个 css 文件和两个 js 文件，之所以是两个，因为一个是自己写的，经常变，另一个是用别人的，几乎不会变。</p>
+<p>最后又发现微信好像支持 spdy… 心好累，算了，降了 nginx 版本开启 spdy 不理了。</p>
+<hr>
+<p>总结：</p>
+<ul>
+<li>Angular 是一个大而全的框架，我觉得很强大很牛逼，越来越喜欢 Angular 了</li>
+<li>使用 CDN 可以大大的加速，尽量使用 CDN</li>
+<li>微信这个坑比我就不说了，不支持 Symbol 不支持 http2</li>
+<li>能用 http2 就尽量用 http2</li>
+<li>考虑浏览器兼容性，根据需要引入 babel-polyfill</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
+          
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/06/浅谈JavaScript模块定义规范/" rel="next" title="浅谈 JavaScript 模块定义规范">
+                <i class="fa fa-chevron-left"></i> 浅谈 JavaScript 模块定义规范
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/15/项目采坑笔记/"
+           data-title="项目采坑笔记" data-url="https://ruiming.github.io/2016/08/15/项目采坑笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Ruiming" />
+          <p class="site-author-name" itemprop="name">Ruiming</p>
+          <p class="site-description motion-element" itemprop="description">Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Ruiming" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/zhuang-rui-ming" target="_blank" title="Zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Zhihu
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/zhuangruiming" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://plus.google.com/115149019958723046324" target="_blank" title="Google+">
+                  
+                    <i class="fa fa-fw fa-google-plus"></i>
+                  
+                  Google+
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Angular-视图过渡动画"><span class="nav-number">1.</span> <span class="nav-text">Angular 视图过渡动画</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态资源自动发布七牛云"><span class="nav-number">2.</span> <span class="nav-text">静态资源自动发布七牛云</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#微信坑逼"><span class="nav-number">3.</span> <span class="nav-text">微信坑逼</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ruiming</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">你是本站的第<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>个小伙伴</span>
+  
+
+  
+    <span class="site-pv">Total<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>views</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ruiming"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("zubvLPlu4282neSFuGISU0Cj-gzGzoHsz", "nWvzBqYiScjyD8wQa4BXQH8f");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
