@@ -265,6 +265,162 @@
             
               
                 
+                <a class="post-title-link" href="/2016/06/18/Angular学习总结/" itemprop="url">
+                  Angular 学习总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-18T20:20:38+08:00" content="2016-06-18">
+              2016-06-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/18/Angular学习总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/18/Angular学习总结/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/06/18/Angular学习总结/" class="leancloud_visitors" data-flag-title="Angular 学习总结">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。</p>
+<h2 id="Angular作用域"><a href="#Angular作用域" class="headerlink" title="Angular作用域"></a>Angular作用域</h2><p>​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switch 和 ng-include 也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为 Angular 的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性， Angular 会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。</p>
+<blockquote>
+<p>读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    </p>
+<p>写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</p>
+</blockquote>
+<p>​    关于原型链继承这个可以参考此处<a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482">JavaScript Prototypal Inheritance</a>，或者<a href="https://www.zybuluo.com/lxjwlt/note/107324">[译文] 深入浅出 AngularJS 作用域</a></p>
+<p>​    使用上述的 ng-if ,  ng-repeat ,  ng-switch ,  ng-include 都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用 $parent 。</p>
+<p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外， textarea 也会自己创建一级作用域。所以你可能会发现你在 textarea 写的内容获取不到，但是却发现 textarea 总能取到第一次分配的初值。比如</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>​    我们在控制器里面定义</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$scope.content = <span class="string">"测试"</span></div></pre></td></tr></table></figure>
+<p>​    然后我们就会看到 textarea 的初值为”测试”，但是当我们更改其中的内容之后， $scope.content 却一直保持不变。</p>
+<p>​    同样，我们可以使用 $parent 的方式来解决这个问题。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"$parent.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>​    那如果不想使用 $parent 的话，可以给 content 分配一个类名，比如</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"comment.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>​    这样我们就可以通过 $scope.comment.content 来取值。</p>
+<h2 id="Angular-track-by"><a href="#Angular-track-by" class="headerlink" title="Angular track by"></a>Angular track by</h2><p>​    在使用 Angular 的 ng-repeat 迭代数组时，有时候会出现 Duplicates in a repeater are not allowed 的提示。</p>
+<p>​     track by 是用来建立 $watchCollection 和 DOM 之间的联系。建议自己加上 track by 后面带的值可以自己写，但要确保每个 ngRepeat 的值唯一，比如可以写 track by $index 。</p>
+<p>​    之所以要这么做，是因为，如果不使用 track by ，那么每个 ng-repeat 都会添加一个 $$hashkey 来对的 DOM 进行跟踪，这样会导致不能存在相同的 DOM ，使用 track by 的意义是避免不必要的渲染。</p>
+<p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="https://docs.angularjs.org/api/ng/directive/ngRepeat">AngularJS: API: ngRepeat</a></p>
+<blockquote>
+<p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later,  ngRepeat  will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier,  track by $index  can also provide a performance boost.</p>
+</blockquote>
+<h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​     Angular 拦截器是 Angular 的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/06/18/Angular学习总结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/06/18/谈谈前端自动构建工具gulp/" itemprop="url">
                   谈谈前端自动构建工具 Gulp
                 </a>
@@ -345,7 +501,7 @@
         
           <p>​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。</p>
 <p>​Gulp 上面优秀的插件特别多，我使用的有这些： </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gulp <span class="keyword">from</span> <span class="string">'gulp'</span></span><br><span class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">'gulp-babel'</span></span><br><span class="line"><span class="keyword">import</span> uglify <span class="keyword">from</span> <span class="string">'gulp-uglify'</span></span><br><span class="line"><span class="keyword">import</span> ngAnnotate <span class="keyword">from</span> <span class="string">'gulp-ng-annotate'</span></span><br><span class="line"><span class="keyword">import</span> concat <span class="keyword">from</span> <span class="string">'gulp-concat'</span></span><br><span class="line"><span class="keyword">import</span> cleanCSS <span class="keyword">from</span> <span class="string">'gulp-clean-css'</span></span><br><span class="line"><span class="keyword">import</span> imagemin <span class="keyword">from</span> <span class="string">'gulp-imagemin'</span></span><br><span class="line"><span class="keyword">import</span> minifyHtml <span class="keyword">from</span> <span class="string">'gulp-minify-html'</span></span><br><span class="line"><span class="keyword">import</span> ngTemplate <span class="keyword">from</span> <span class="string">'gulp-ng-template'</span></span><br><span class="line"><span class="keyword">import</span> plumber <span class="keyword">from</span> <span class="string">'gulp-plumber'</span></span><br><span class="line"><span class="keyword">import</span> sass <span class="keyword">from</span> <span class="string">'gulp-sass'</span></span><br><span class="line"><span class="keyword">import</span> usemin <span class="keyword">from</span> <span class="string">'gulp-usemin'</span></span><br><span class="line"><span class="keyword">import</span> runSequence <span class="keyword">from</span> <span class="string">'gulp-run-sequence'</span></span><br><span class="line"><span class="keyword">import</span> eslint <span class="keyword">from</span> <span class="string">'gulp-eslint'</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> gulp <span class="keyword">from</span> <span class="string">'gulp'</span></div><div class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">'gulp-babel'</span></div><div class="line"><span class="keyword">import</span> uglify <span class="keyword">from</span> <span class="string">'gulp-uglify'</span></div><div class="line"><span class="keyword">import</span> ngAnnotate <span class="keyword">from</span> <span class="string">'gulp-ng-annotate'</span></div><div class="line"><span class="keyword">import</span> concat <span class="keyword">from</span> <span class="string">'gulp-concat'</span></div><div class="line"><span class="keyword">import</span> cleanCSS <span class="keyword">from</span> <span class="string">'gulp-clean-css'</span></div><div class="line"><span class="keyword">import</span> imagemin <span class="keyword">from</span> <span class="string">'gulp-imagemin'</span></div><div class="line"><span class="keyword">import</span> minifyHtml <span class="keyword">from</span> <span class="string">'gulp-minify-html'</span></div><div class="line"><span class="keyword">import</span> ngTemplate <span class="keyword">from</span> <span class="string">'gulp-ng-template'</span></div><div class="line"><span class="keyword">import</span> plumber <span class="keyword">from</span> <span class="string">'gulp-plumber'</span></div><div class="line"><span class="keyword">import</span> sass <span class="keyword">from</span> <span class="string">'gulp-sass'</span></div><div class="line"><span class="keyword">import</span> usemin <span class="keyword">from</span> <span class="string">'gulp-usemin'</span></div><div class="line"><span class="keyword">import</span> runSequence <span class="keyword">from</span> <span class="string">'gulp-run-sequence'</span></div><div class="line"><span class="keyword">import</span> eslint <span class="keyword">from</span> <span class="string">'gulp-eslint'</span></div></pre></td></tr></table></figure>
 <ul>
 <li><p>gulp-uglify</p>
 <p>对 JavaScript 进行压缩的插件，可以有效减少 JavaScript 的文件大小。</p>
@@ -460,7 +616,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">17</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

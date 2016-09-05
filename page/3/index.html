@@ -265,6 +265,161 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/26/一次项目重构/" itemprop="url">
+                  一次项目重构
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-26T19:57:36+08:00" content="2016-07-26">
+              2016-07-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/26/一次项目重构/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/26/一次项目重构/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/26/一次项目重构/" class="leancloud_visitors" data-flag-title="一次项目重构">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>上学期由于期末停工的项目又要继续开展了，然而停了一个多月的时间，我已经看不下去他的代码了，简直惨不忍睹，花了我将近40个小时的时间去做了重构。虽然重构说明有进步了，但是一改就要改几十个页面啊…累觉不爱..说一说这次将近40小时的重构吧。<br><img src="/2016/07/26/一次项目重构/git-diff.jpg" alt="git-diff" title="git-diff"></p>
+<h2 id="Angular-重构"><a href="#Angular-重构" class="headerlink" title="Angular 重构"></a>Angular 重构</h2><p>项目是基于 Angular 的 SPA，项目参考<a href="https://github.com/johnpapa/angular-styleguide/blob/master/a1/i18n/zh-CN.md">Angular规范</a>进行重构，主要是以下几点：</p>
+<ul>
+<li>把控制器的业务逻辑(主要是 HTTP 请求)分离到 Factory</li>
+<li>Controller 和 Directive 以及 Factory 全部用立即函数包装</li>
+<li>Controller 和 Directive 以及 Factory 内部书写格式</li>
+<li>使用 controllerAs 代替 $scope </li>
+<li>全部 JavaScript 文件使用 use strict 严格模式</li>
+<li>利用单体做部分数据的缓存</li>
+<li>提取大部分可复用模块到 directive</li>
+<li>全部 ng-repeat 加上 track by</li>
+<li>过大的试图使用 ng-include 进行分离</li>
+<li>去掉全部辅助变量，用 angular-promise-buttons 来达到按钮状态变化</li>
+<li>去掉全部页面切换动画</li>
+<li>手动进行依赖注入</li>
+<li>使用 ES6 语法，用 babel 转为 ES5</li>
+<li>使用 eslint 来做代码格式检查</li>
+</ul>
+<p>之前我几乎没有使用 Factory 这一层，全部业务逻辑都在 Controller 里面做，随着项目越来越大(有26个页面)，页面之间函数重复的情况很多，而且控制器太厚，可读性差，给维护带来了巨大的困难。在这次重构之中，我把全部的 HTTP 请求全部放在 Factory 实现，从而做到了以下几点：</p>
+<ul>
+<li>函数复用，多个控制器用一个 Factory，避免同个函数多次书写</li>
+<li>HTTP 请求返回 promise，结合 angular-promise-buttons 做到了按钮状态的自动变化以及过渡效果，去掉了先前实现同样目的的全部辅助变量</li>
+<li>对部分相对不变的数据，在第一次缓存后直接在该 Factory 进行缓存，第二次获取的时候直接返回内存中的数据，加快了部分页面的二次加载速度，对跨页面你的同个请求同样有效</li>
+<li>容易做单元测试和更改逻辑，因为全部 HTTP 请求都放在 Factory 实现，对后期修改以及代码测试都带来了很大的方便</li>
+</ul>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/26/一次项目重构/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/22/JavaScript闭包，继承与原型链/" itemprop="url">
                   JavaScript 闭包，继承与原型链
                 </a>
@@ -344,9 +499,9 @@
       
         
           <p> JavaScript 闭包和原型链学习心得，如果有不对的地方望指出。</p>
-<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>什么是闭包，有很多说法，我的理解是一个函数可以记住和使用外部变量，保存这个变量的引用在自己的一个环境之中。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeAdder</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x + y;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> add5 = makeAdder(<span class="number">5</span>);</span><br><span class="line"><span class="keyword">var</span> add10 = makeAdder(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(add5(<span class="number">2</span>));  <span class="comment">// 7</span></span><br><span class="line"><span class="built_in">console</span>.log(add10(<span class="number">2</span>)); <span class="comment">// 12</span></span><br></pre></td></tr></table></figure></p>
-<p>这个例子中， makeAdder 是一个函数工厂，add5 和 add10 就是闭包，他们记住了外部变量 x。通常一个函数执行完毕后其运行期上下文会被释放，但由于闭包的属性包含了与运行期上下文作用域链相同的对象引用，导致这个激活对象无法销毁，这就会导致内存消耗，另外，闭包内部的作用域链并不处在闭包作用域链的前端，并且闭包经常使用外部变量的话，导致对象属性的遍历经常到其原型上面去（一个解决方法是把他赋值到闭包自身的作用域上面），从而增加性能消耗。<br>既然闭包会导致内存增加和性能消耗，那为什么那么多人还使用它呢？上面的例子可能不太能说明问题，我们看下其他例子。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Counter = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> privateCounter = <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">changeBy</span>(<span class="params">val</span>) </span>&#123;</span><br><span class="line">    privateCounter += val;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    increment: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      changeBy(<span class="number">1</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    decrement: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      changeBy(<span class="number">-1</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    value: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> privateCounter;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;   </span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 0 */</span></span><br><span class="line">Counter.increment();</span><br><span class="line">Counter.increment();</span><br><span class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 2 */</span></span><br><span class="line">Counter.decrement();</span><br><span class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 1 */</span></span><br></pre></td></tr></table></figure></p>
-<p>这个例子中外部只能通过 value 方法获取 privateCounter 的值，只能通过 increment 和 decrement 方法来改变 privateCounter 的值，无法直接获取到 priavateCounter 和调用 changeBy 函数。这种模式叫 module模式，因为大部分模块都是这样写的，包括 Underscore 也是这样。上篇中就说道了 Underscore 使用了立即执行函数，其用途其一是为了不污染外部变量，因为 JavaScript 是函数作用域，其次它利用了闭包的特性又可以保持函数内部闭包的可调用和被闭包所引用变量在闭包环境中的存在，同时函数内部可以定义一些私有变量和私有方法。我们无需担心这些变量和函数在外部函数执行完毕结束后的失效。<br>当你看到函数里面又 return 函数时，同时该函数又使用了外部变量，则该函数就是一个闭包。<br>关于闭包还有一个很容易犯错的地方，比如你想实现第一秒输出1,第二秒输出2,以此类推。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(i);</span><br><span class="line">    &#125;, i*<span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>什么是闭包，有很多说法，我的理解是一个函数可以记住和使用外部变量，保存这个变量的引用在自己的一个环境之中。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeAdder</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">y</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x + y;</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> add5 = makeAdder(<span class="number">5</span>);</div><div class="line"><span class="keyword">var</span> add10 = makeAdder(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(add5(<span class="number">2</span>));  <span class="comment">// 7</span></div><div class="line"><span class="built_in">console</span>.log(add10(<span class="number">2</span>)); <span class="comment">// 12</span></div></pre></td></tr></table></figure></p>
+<p>这个例子中， makeAdder 是一个函数工厂，add5 和 add10 就是闭包，他们记住了外部变量 x。通常一个函数执行完毕后其运行期上下文会被释放，但由于闭包的属性包含了与运行期上下文作用域链相同的对象引用，导致这个激活对象无法销毁，这就会导致内存消耗，另外，闭包内部的作用域链并不处在闭包作用域链的前端，并且闭包经常使用外部变量的话，导致对象属性的遍历经常到其原型上面去（一个解决方法是把他赋值到闭包自身的作用域上面），从而增加性能消耗。<br>既然闭包会导致内存增加和性能消耗，那为什么那么多人还使用它呢？上面的例子可能不太能说明问题，我们看下其他例子。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Counter = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> privateCounter = <span class="number">0</span>;</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">changeBy</span>(<span class="params">val</span>) </span>&#123;</div><div class="line">    privateCounter += val;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    increment: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      changeBy(<span class="number">1</span>);</div><div class="line">    &#125;,</div><div class="line">    decrement: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      changeBy(<span class="number">-1</span>);</div><div class="line">    &#125;,</div><div class="line">    value: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> privateCounter;</div><div class="line">    &#125;</div><div class="line">  &#125;   </div><div class="line">&#125;)();</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 0 */</span></div><div class="line">Counter.increment();</div><div class="line">Counter.increment();</div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 2 */</span></div><div class="line">Counter.decrement();</div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 1 */</span></div></pre></td></tr></table></figure></p>
+<p>这个例子中外部只能通过 value 方法获取 privateCounter 的值，只能通过 increment 和 decrement 方法来改变 privateCounter 的值，无法直接获取到 priavateCounter 和调用 changeBy 函数。这种模式叫 module模式，因为大部分模块都是这样写的，包括 Underscore 也是这样。上篇中就说道了 Underscore 使用了立即执行函数，其用途其一是为了不污染外部变量，因为 JavaScript 是函数作用域，其次它利用了闭包的特性又可以保持函数内部闭包的可调用和被闭包所引用变量在闭包环境中的存在，同时函数内部可以定义一些私有变量和私有方法。我们无需担心这些变量和函数在外部函数执行完毕结束后的失效。<br>当你看到函数里面又 return 函数时，同时该函数又使用了外部变量，则该函数就是一个闭包。<br>关于闭包还有一个很容易犯错的地方，比如你想实现第一秒输出1,第二秒输出2,以此类推。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(i);</div><div class="line">    &#125;, i*<span class="number">1000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>但是实际运行结果是第一秒输出6,第二秒输出6…<br>闭包是记住了外部变量的引用，每次循环都建立了一个 timer 函数，但 console 并还没有被执行，当循环结束后确实是建立了5个计时器或者说5个闭包，但当开始执行 console 的时候，由于这些闭包所引用的 i 此时结果为6，所以会输出5次 6。<br>更能说明问题些，我们稍作修改下：<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/07/22/JavaScript闭包，继承与原型链/#more" rel="contents">
@@ -479,8 +634,8 @@
       
         
           <p>暑假打算研究一下 Underscore 源码，我会对一些我觉得比较有意思的点拿出来讨论下，不过我不会过多介绍，也不会去分析 Underscore 的各个方法，但我会附上一些相关的不错的参考资料。由于我也是初学阶段，所以如果有说的不正确的地方望指出。</p>
-<h2 id="要点1：立即执行函数"><a href="#要点1：立即执行函数" class="headerlink" title="要点1：立即执行函数"></a>要点1：立即执行函数</h2><p>Underscore 的内容都用这么一个东西包装起来了。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;..&#125;());</span><br></pre></td></tr></table></figure></p>
-<p>其实也可以这样写<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;)();</span><br></pre></td></tr></table></figure></p>
+<h2 id="要点1：立即执行函数"><a href="#要点1：立即执行函数" class="headerlink" title="要点1：立即执行函数"></a>要点1：立即执行函数</h2><p>Underscore 的内容都用这么一个东西包装起来了。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;..&#125;());</div></pre></td></tr></table></figure></p>
+<p>其实也可以这样写<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;)();</div></pre></td></tr></table></figure></p>
 <p>Underscore 把全部内容封装在立即执行函数里面，就形成了一个独立的作用域，与外部隔离，并且这样做还形成了闭包，可以模拟私有方法。<br>推荐阅读：</p>
 <ul>
 <li><a href="http://benalman.com/news/2010/11/immediately-invoked-function-expression/">immediately-invoked-function-expression(英)</a></li>
@@ -488,16 +643,16 @@
 <li><a href="https://segmentfault.com/a/1190000003902899">JavaScript中的立即执行函数</a></li>
 <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Closures">Closures</a></li>
 </ul>
-<h2 id="要点2：兼容浏览器和-Node-环境"><a href="#要点2：兼容浏览器和-Node-环境" class="headerlink" title="要点2：兼容浏览器和 Node 环境"></a>要点2：兼容浏览器和 Node 环境</h2><p>浏览器和服务端的一个主要区别是全局对象命名的不同，在浏览器全局变量是 window，在服务端即 Node 环境则是 global。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> root = <span class="keyword">typeof</span> self == <span class="string">'object'</span> &amp;&amp; self.self === self &amp;&amp; self ||</span><br><span class="line">           <span class="keyword">typeof</span> global == <span class="string">'object'</span> &amp;&amp; global.global === global &amp;&amp; global ||</span><br><span class="line">           <span class="keyword">this</span>;</span><br></pre></td></tr></table></figure></p>
-<p>这个地方之前的写法是这样的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> root = <span class="keyword">this</span>;</span><br></pre></td></tr></table></figure></p>
-<p>我认为之所以改成前面那种写法，可能是为了确保 root 指向 global 或者 window(self) 。大部分框架和库都采用这种做法，这种做法更加安全。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这一步确保self是一个object，这样self.self才不会出错</span></span><br><span class="line"><span class="keyword">typeof</span> self == <span class="string">'object'</span></span><br><span class="line"><span class="comment">// 这一步确保self.self严格等于自身，貌似只有window具备这个特性</span></span><br><span class="line"><span class="comment">// 即window === window.window.window</span></span><br><span class="line">self.self === self</span><br><span class="line"><span class="comment">// 为什么还要进行这一步？</span></span><br><span class="line">self</span><br></pre></td></tr></table></figure></p>
+<h2 id="要点2：兼容浏览器和-Node-环境"><a href="#要点2：兼容浏览器和-Node-环境" class="headerlink" title="要点2：兼容浏览器和 Node 环境"></a>要点2：兼容浏览器和 Node 环境</h2><p>浏览器和服务端的一个主要区别是全局对象命名的不同，在浏览器全局变量是 window，在服务端即 Node 环境则是 global。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> root = <span class="keyword">typeof</span> self == <span class="string">'object'</span> &amp;&amp; self.self === self &amp;&amp; self ||</div><div class="line">           <span class="keyword">typeof</span> global == <span class="string">'object'</span> &amp;&amp; global.global === global &amp;&amp; global ||</div><div class="line">           <span class="keyword">this</span>;</div></pre></td></tr></table></figure></p>
+<p>这个地方之前的写法是这样的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> root = <span class="keyword">this</span>;</div></pre></td></tr></table></figure></p>
+<p>我认为之所以改成前面那种写法，可能是为了确保 root 指向 global 或者 window(self) 。大部分框架和库都采用这种做法，这种做法更加安全。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 这一步确保self是一个object，这样self.self才不会出错</span></div><div class="line"><span class="keyword">typeof</span> self == <span class="string">'object'</span></div><div class="line"><span class="comment">// 这一步确保self.self严格等于自身，貌似只有window具备这个特性</span></div><div class="line"><span class="comment">// 即window === window.window.window</span></div><div class="line">self.self === self</div><div class="line"><span class="comment">// 为什么还要进行这一步？</span></div><div class="line">self</div></pre></td></tr></table></figure></p>
 <p>推荐阅读：</p>
 <ul>
 <li><a href="https://zzz.buzz/2016/06/30/the-global-object-in-various-javascript-environments/">The Global Object in Various JavaScript Environments</a></li>
 </ul>
-<h2 id="要点3：提供命名冲突解决方法"><a href="#要点3：提供命名冲突解决方法" class="headerlink" title="要点3：提供命名冲突解决方法"></a>要点3：提供命名冲突解决方法</h2><p>Underscore 在给 root 赋值前，先保存了原先 root 的 <code>_</code> 对象。之所以这样做，是因为可能我们用的其他库也使用了 <code>_</code> 这个作为命名空间。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> previousUnderscore = root._;</span><br></pre></td></tr></table></figure></p>
-<p>我们结合 Underscore 最下面的这个方法来看。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_.noConflict = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    root._ = previousUnderscore;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>如果 <code>_</code> 出现了冲突，可以使用下面方法<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _new = _.noConflict();</span><br></pre></td></tr></table></figure></p>
+<h2 id="要点3：提供命名冲突解决方法"><a href="#要点3：提供命名冲突解决方法" class="headerlink" title="要点3：提供命名冲突解决方法"></a>要点3：提供命名冲突解决方法</h2><p>Underscore 在给 root 赋值前，先保存了原先 root 的 <code>_</code> 对象。之所以这样做，是因为可能我们用的其他库也使用了 <code>_</code> 这个作为命名空间。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> previousUnderscore = root._;</div></pre></td></tr></table></figure></p>
+<p>我们结合 Underscore 最下面的这个方法来看。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">_.noConflict = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    root._ = previousUnderscore;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>如果 <code>_</code> 出现了冲突，可以使用下面方法<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> _new = _.noConflict();</div></pre></td></tr></table></figure></p>
 <p>这样一来应该很明显了，<code>noConflict</code> 将 <code>previousUnderscore</code> 即原先的 <code>root._</code> 重新放回去，然后重新定义 Underscore 命名给 <code>_new</code>，这样就解决了 <code>_</code> 冲突问题。</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/07/20/Underscore源码学习(一)/#more" rel="contents">
@@ -631,12 +786,12 @@
         
           <p>一次小小的 Hack 尝试…<br>前段时间换上了 Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词， monitor 和 ARP 。</p>
 <h2 id="ARP-攻击"><a href="#ARP-攻击" class="headerlink" title="ARP 攻击"></a>ARP 攻击</h2><p>学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。</p>
-<h3 id="主机发现和端口扫描"><a href="#主机发现和端口扫描" class="headerlink" title="主机发现和端口扫描"></a>主机发现和端口扫描</h3><p>进行攻击第一步当然就是找目标了。可以使用 nmap 这个工具来进行，这东西简直渗透利器。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -<span class="built_in">sP</span> <span class="number">192.168</span><span class="meta">.1</span><span class="meta">.0</span>/<span class="number">24</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="主机发现和端口扫描"><a href="#主机发现和端口扫描" class="headerlink" title="主机发现和端口扫描"></a>主机发现和端口扫描</h3><p>进行攻击第一步当然就是找目标了。可以使用 nmap 这个工具来进行，这东西简直渗透利器。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nmap -sP <span class="number">192.168</span><span class="number">.1</span><span class="number">.0</span>/<span class="number">24</span></div></pre></td></tr></table></figure></p>
 <p> 这样就可以扫描192.168.1.0这个网段里面的所有主机了，以 ping 方式扫描，当然他有很多参数很多用法，网上很多这方面的资料我就不叙述了。<br><img src="/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png" alt="Nmap扫描" title="Nmap扫描"></p>
-<h3 id="发起攻击"><a href="#发起攻击" class="headerlink" title="发起攻击"></a>发起攻击</h3><p>如果是进行ARP攻击，那也是加多三条命令就搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt;&gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line">arpspoof -i wlp3s0 -t 192.168.1.110 192.168.1.1</span><br><span class="line">arpspoof -i wlp3s0 -t 192.168.1.1   192.168.1.110</span><br></pre></td></tr></table></figure></p>
+<h3 id="发起攻击"><a href="#发起攻击" class="headerlink" title="发起攻击"></a>发起攻击</h3><p>如果是进行ARP攻击，那也是加多三条命令就搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">echo</span> 1 &gt;&gt; /proc/sys/net/ipv4/ip_forward</div><div class="line">arpspoof -i wlp3s0 -t 192.168.1.110 192.168.1.1</div><div class="line">arpspoof -i wlp3s0 -t 192.168.1.1   192.168.1.110</div></pre></td></tr></table></figure></p>
 <p>第一条是开启转发，不然会受害者流量到我们这里出不去就断网了。<br>第二条是告诉受害者说我是网管。<br>第三条是告诉网管我是受害者。<br>这样就完成了 ARP 欺骗，图片以后再补。这之后对方的网络就完全在你的监控之下了。这告诉我们使用 https 和不连接免费 wifi 的重要性!</p>
 <h3 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h3><p>抓包推荐使用 wireshark 。具体就不介绍了=.=。你还可以使用 Driftnet 这东西来将对方访问的图片在你这边显示出来～</p>
-<h2 id="监听空气包"><a href="#监听空气包" class="headerlink" title="监听空气包"></a>监听空气包</h2><p>大部分无线网卡都可以设置 monitor 模式，即无线网卡默认接受下全部经过他的以太网帧而不丢弃，这种方式可以抓到附近范围里面的所以以太网帧。在 Arch 下也是三条命令搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ifconfig wlp3s0 down</span><br><span class="line">iwconfig wlp3s0 mode monitor</span><br><span class="line">ifconfig wlp3s0 up</span><br></pre></td></tr></table></figure></p>
+<h2 id="监听空气包"><a href="#监听空气包" class="headerlink" title="监听空气包"></a>监听空气包</h2><p>大部分无线网卡都可以设置 monitor 模式，即无线网卡默认接受下全部经过他的以太网帧而不丢弃，这种方式可以抓到附近范围里面的所以以太网帧。在 Arch 下也是三条命令搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ifconfig wlp3s0 down</div><div class="line">iwconfig wlp3s0 mode monitor</div><div class="line">ifconfig wlp3s0 up</div></pre></td></tr></table></figure></p>
 <p>接着同样开启 wireshark 抓包，你会发现很多802.11帧，不过这个并没有什么卵用，理论上应该对于没有加密的帧应该可以直接得到应用层报文才对，但是很奇怪我一直抓不到，即使是对于有加密的 Wifi，我填入 WAPKEY 解密也不行。这个有待继续研究。。。<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/07/14/ARP攻击和无线网卡混杂模式/#more" rel="contents">
@@ -830,162 +985,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/06/18/Angular学习总结/" itemprop="url">
-                  Angular 学习总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-06-18T20:20:38+08:00" content="2016-06-18">
-              2016-06-18
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Angular/" itemprop="url" rel="index">
-                    <span itemprop="name">Angular</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/06/18/Angular学习总结/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/18/Angular学习总结/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/06/18/Angular学习总结/" class="leancloud_visitors" data-flag-title="Angular 学习总结">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。</p>
-<h2 id="Angular作用域"><a href="#Angular作用域" class="headerlink" title="Angular作用域"></a>Angular作用域</h2><p>​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switch 和 ng-include 也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为 Angular 的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性， Angular 会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。</p>
-<blockquote>
-<p>读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    </p>
-<p>写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</p>
-</blockquote>
-<p>​    关于原型链继承这个可以参考此处<a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482">JavaScript Prototypal Inheritance</a>，或者<a href="https://www.zybuluo.com/lxjwlt/note/107324">[译文] 深入浅出 AngularJS 作用域</a></p>
-<p>​    使用上述的 ng-if ,  ng-repeat ,  ng-switch ,  ng-include 都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用 $parent 。</p>
-<p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外， textarea 也会自己创建一级作用域。所以你可能会发现你在 textarea 写的内容获取不到，但是却发现 textarea 总能取到第一次分配的初值。比如</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>​    我们在控制器里面定义</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$scope.content = <span class="string">"测试"</span></span><br></pre></td></tr></table></figure>
-<p>​    然后我们就会看到 textarea 的初值为”测试”，但是当我们更改其中的内容之后， $scope.content 却一直保持不变。</p>
-<p>​    同样，我们可以使用 $parent 的方式来解决这个问题。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"$parent.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>​    那如果不想使用 $parent 的话，可以给 content 分配一个类名，比如</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"comment.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>​    这样我们就可以通过 $scope.comment.content 来取值。</p>
-<h2 id="Angular-track-by"><a href="#Angular-track-by" class="headerlink" title="Angular track by"></a>Angular track by</h2><p>​    在使用 Angular 的 ng-repeat 迭代数组时，有时候会出现 Duplicates in a repeater are not allowed 的提示。</p>
-<p>​     track by 是用来建立 $watchCollection 和 DOM 之间的联系。建议自己加上 track by 后面带的值可以自己写，但要确保每个 ngRepeat 的值唯一，比如可以写 track by $index 。</p>
-<p>​    之所以要这么做，是因为，如果不使用 track by ，那么每个 ng-repeat 都会添加一个 $$hashkey 来对的 DOM 进行跟踪，这样会导致不能存在相同的 DOM ，使用 track by 的意义是避免不必要的渲染。</p>
-<p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="https://docs.angularjs.org/api/ng/directive/ngRepeat">AngularJS: API: ngRepeat</a></p>
-<blockquote>
-<p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later,  ngRepeat  will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier,  track by $index  can also provide a performance boost.</p>
-</blockquote>
-<h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​     Angular 拦截器是 Angular 的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/06/18/Angular学习总结/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1031,7 +1030,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">17</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
