@@ -96,7 +96,7 @@
 <meta property="og:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
 减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
 优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
-<meta property="og:updated_time" content="2016-09-11T07:08:23.880Z">
+<meta property="og:updated_time" content="2016-09-11T07:11:23.920Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Web 优化总结">
 <meta name="twitter:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
@@ -366,7 +366,7 @@
 </li>
 <li>集中加载资源<br> 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。</li>
 </ol>
-<p>待续…</p>
+<p>待续…<br><a id="more"></a></p>
 
       
     </div>
