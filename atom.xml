@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-09-11T07:44:06.953Z</updated>
+  <updated>2016-09-11T12:33:46.094Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,70 +20,92 @@
     <link href="https://ruiming.github.io/2016/09/11/Web%20%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/"/>
     <id>https://ruiming.github.io/2016/09/11/Web 优化总结/</id>
     <published>2016-09-11T05:53:33.000Z</published>
-    <updated>2016-09-11T07:44:06.953Z</updated>
+    <updated>2016-09-11T12:33:46.094Z</updated>
     
-    <content type="html"><![CDATA[<p>Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。</p>
-<h2 id="减少文件请求数量"><a href="#减少文件请求数量" class="headerlink" title="减少文件请求数量"></a>减少文件请求数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。这里主要说一说减少文件数量和减少同一时间文件请求数的方法。<br>注意以下对 HTTP2 和 SPDY 不完全适用。</p>
-<h3 id="优化起源"><a href="#优化起源" class="headerlink" title="优化起源"></a>优化起源</h3><p>浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。</p>
-<h3 id="优化手段"><a href="#优化手段" class="headerlink" title="优化手段"></a>优化手段</h3><p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
+    <content type="html"><![CDATA[<p>Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。以下针对 HTTP1 和 HTTP1.1，在 HTTP2 中，很多最佳实践都适得其反了。</p>
+<h2 id="减少文件传输数量"><a href="#减少文件传输数量" class="headerlink" title="减少文件传输数量"></a>减少文件传输数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。</p>
+<p>浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。</p>
+<p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
 <ol>
-<li><p>合并文件以减少并发请求数量<br> 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。</p>
-</li>
-<li><p>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。</p>
- <img src="/2016/09/11/Web%20优化总结/async-defer.jpg" alt="async-defer" title="async-defer">
-<p> 使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。<br> 使用 defer，会立即开始并行加载，但会延迟到最后才执行。</p>
-</li>
-<li><p>分散资源到不同域名<br> 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。</p>
-</li>
-<li><p>使用雪碧图(css sprites)来合并小图片<br> 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。</p>
-</li>
-<li><p>利用 200 缓存<br> 这是一个比较极端的缓存方式，200 缓存时浏览器不发出网络请求，直接调用本地缓存，这需要强制浏览器使用本地缓存。我们可以使用 Expires 标志。即给出日期时间，超出该时间后则认为是过时，浏览器才会重新发起请求。这个具体细节我还不太了解。过后补充。</p>
-</li>
-<li><p>使用懒加载(lazy load)<br> 很多网站特别是有大量图片的网站都会使用该技术。当用户下滑页面时，才开始加载下面的图片。一来减少了页面加载的请求数和加载时间，二来也减少用户流量。不过可能有人会说这样体验不太好，好在业内有人把这个技术做到了堪称极致的地步，就是预先加载一个高度压缩的原图，然后淡出原图。大家应该有体验到类似的技术，就不多说了。</p>
-</li>
+<li>合并文件以减少并发请求数量<br> 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。</li>
+<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 
+ 使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。<br> 使用 defer，会立即开始并行加载，但会延迟到最后才执行。</li>
+<li>分散资源到不同域名<br> 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。</li>
+<li>使用雪碧图(css sprites)来合并小图片<br> 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。</li>
+<li>利用 200 缓存<br> 这是一个比较极端的缓存方式，200 缓存时浏览器不发出网络请求，直接调用本地缓存，这需要强制浏览器使用本地缓存。我们可以使用 Expires 标志。即给出日期时间，超出该时间后则认为是过时，浏览器才会重新发起请求。这个具体细节我还不太了解。过后补充。</li>
+<li>使用懒加载(lazy load)<br> 很多网站特别是有大量图片的网站都会使用该技术。当用户下滑页面时，才开始加载下面的图片。一来减少了页面加载的请求数和加载时间，二来也减少用户流量。不过可能有人会说这样体验不太好，好在业内有人把这个技术做到了堪称极致的地步，就是预先加载一个高度压缩的原图，然后淡出原图。大家应该有体验到类似的技术，就不多说了。</li>
 <li><p>使用预加载技术(prefetch)<br> 这个技术知道的人可能不多，MDN 上面是这样解释的：</p>
 <blockquote>
 <p>页面资源预加载(Link prefetch)是浏览器提供的一个技巧，目的是让浏览器在空闲时间下载或预读取一些文档资源，用户在将来将会访问这些资源。一个Web页面可以对浏览器设置一系列的预加载指示，当浏览器加载完当前页面后，它会在后台静悄悄的加载指定的文档，并把它们存储在缓存里。当用户访问到这些预加载的文档后，浏览器能快速的从缓存里提取给用户。</p>
 </blockquote>
 <p> 不过资源预加载其实使用的并不多，可能是因为技术本身不成熟，浏览器支持不够等原因。目前没有发现有哪个网站使用了这个技术。感兴趣的自己去了解下，这里不多阐述这个技术。</p>
 </li>
-<li><p>集中加载资源<br> 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。<br> 有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。</p>
+<li>集中加载资源<br> 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。</li>
+</ol>
+<h2 id="减少文件大小"><a href="#减少文件大小" class="headerlink" title="减少文件大小"></a>减少文件大小</h2><p>除了减少文件数量，减少文件大小也同样重要，不过比起合并文件这样简单的减少文件数量的操作，减少文件大小就没来的那么简单了。常用的方法如下：<br><a id="more"></a></p>
+<ol>
+<li><p>开启 GZIP 压缩<br> GZIP 压缩应用非常广泛，因其可以有效明显的减少文件的体积。在 Nginx 中，我们可以很简单的进行配置开启 GZIP 压缩。</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">gzip on;</div><div class="line">gzip_vary on;</div><div class="line">gzip_comp_level 4;</div><div class="line">gzip_buffers 16 8K;</div><div class="line">gzip_min_length 1k;</div><div class="line">gzip_proxied any;</div><div class="line">gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;</div><div class="line">gzip_<span class="built_in">disable</span> <span class="string">"MSIE [1-6]\."</span>;</div></pre></td></tr></table></figure>
+<p> 这是我项目服务器上面 Nginx 关于 gzip 的配置。我们关心的当然还是压缩前后文件大小的差异，找别人的一个图贴下：</p>
+ <img src="/2016/09/11/Web%20优化总结/gzip_comp_level.png" alt="gzip_comp_level" title="gzip_comp_level">
+<p> 可以看到效果还是很明显的，一般 GZIP 等级不宜高于 4 级。因为压缩意味着浏览器下载后还需要解压，所以压缩等级过高反而会带来性能问题（移动端耗电增加）甚至是降低页面渲染（解压占用CPU影响页面渲染且耗时）。<br> 另外，大文件压缩效果更明显，所以合并文件后再压缩会比分开压缩效果要好。</p>
+</li>
+<li><p>使用 WebP 格式图片<br> WebP 是 Google 推出的一种同时提供有损压缩与无损压缩的图片文件格式。根据 Google 较早的测试，无损压缩后的 WebP 比 PNG 文件少了45%的文件大小，即使这些 PNG 文件经过其他压缩工具压缩之后，WebP 还是可以减少28%的文件大小。</p>
+ <img src="/2016/09/11/Web%20优化总结/WebP.png" alt="WebP" title="WebP">
+<p> WebP 在互联网上已经非常流行，主流浏览器都已经支持，并且国内也有大量站点如淘宝网，腾讯网，QQ空间等等都使用了这一格式。另外，针对不支持的浏览器，也可以引入相应的 shim 解决。</p>
+ <img src="/2016/09/11/Web%20优化总结/WebP支持情况.png" alt="WebP支持情况" title="WebP支持情况">
+</li>
+<li><p>书写压缩友好的代码<br> 这个对开发人员就要较高的要求了，并且如果不是对文件体积有很大的要求一般都不会做到这一步。在代码压缩的过程有一步就是进行变量替换，举一个前面博客中的例子来说</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">	<span class="keyword">var</span> ArrayProto = <span class="built_in">Array</span>.prototype, ObjProto = <span class="built_in">Object</span>.prototype;</div><div class="line"><span class="keyword">var</span> SymbolProto = <span class="keyword">typeof</span> <span class="built_in">Symbol</span> !== <span class="string">'undefined'</span> ? <span class="built_in">Symbol</span>.prototype : <span class="literal">null</span>;</div><div class="line"><span class="keyword">var</span> push = ArrayProto.push,</div><div class="line">    slice = ArrayProto.slice,</div><div class="line">    toString = ObjProto.toString,</div><div class="line">    hasOwnProperty = ObjProto.hasOwnProperty;</div></pre></td></tr></table></figure>
+<p> <code>Array.prototype.push</code> 是无法压缩的，而如果我们赋值 <code>ArrayProto = Array.prototype</code> ，那么 <code>ArrayProto</code> 就可以被替换掉，同理，上面中的 <code>push</code>, <code>slice</code> 等都是对压缩友好的。除此之外，一般的压缩工具还会把 <code>undefined</code>  都替换为 <code>void 0</code>，一来可以避免 <code>underfined</code> 重写的问题，二来字符数少了。目前我比较清楚的就这两个，有兴趣的话可以去了解下压缩的过程，对比下压缩前后。</p>
+</li>
+<li><p>避免引入无用代码<br>有一种比较常见的场景是我们使用了 FontAweSome 等的文件后，虽然我们可以很方便的通过写 CSS 类名来添加修改图标，但我们用到的毕竟时少数图标，所以其他没有用到的图标的引入就是非必须的。这个我自己没有实践过，可以看看<a href="http://stackoverflow.com/questions/15331525/optimize-font-awesome-for-only-used-classes" target="_blank" rel="external">Optimize Font Awesome for only used classes</a>这里的讨论。<br>除了去做筛选之外，还有的办法就是我们不要引入整个图标文件，有些提供图标的网站可以让你自己选择需要的图标后以字体和 CSS 文件的形式下载下来。这样做就稍微麻烦一点，不过既然你要图文件小，那麻烦一点也没什么。<br>另外，在使用一些框架的时候，他们可能默认开启了调试模式。比如 Angular，在 Angular 的视图上面我们会经常看到视图上绑定的变量出现了 <code>ng-bind</code> 的 CSS 类名，以及出现再 <code>ng-if</code> 和 <code>ng-repeat</code> 上的注释。这些也是可以关掉的。Angular 只需要在 config 中添加下面这一句话即可。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$compileProvider.debugInfoEnabled(<span class="literal">false</span>);</div></pre></td></tr></table></figure>
 </li>
 </ol>
-<p>待续…<br><a id="more"></a></p>
+<h2 id="其他-Web-提速手段"><a href="#其他-Web-提速手段" class="headerlink" title="其他 Web 提速手段"></a>其他 Web 提速手段</h2><p>前面集中就文件请求数和文件体积开展讨论，其实还远远不止上面这些办法。常用的还有以下这些。</p>
+<ol>
+<li><p>dns-prefetch<br> 这个其实和前面说的资源预加载差不多，只是这个是 DNS 预解析。用户访问一个新的域名之前，会首先通过 DNS 解析得到他的 IP 地址，之后才开始建立连接。DNS 解析也是需要时间的，而这个技术的作用就是在用户页面空闲的时候去预获取 IP 地址并缓存，这样当访问该域名页面的时候，就不需要再解析域名，从而缩短了页面加载时间。</p>
+ <img src="/2016/09/11/Web%20优化总结/dns-prefetch.png" alt="淘宝网 dns-prefetch" title="淘宝网 dns-prefetch">
+</li>
+<li><p>Preconnect<br> 这个和上面差不多，但是不光会解析 DNS 还会建立 TCP 握手连接和 TLS 协议(如果需要的话)用法如下：</p>
+ <figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"preconnect"</span> <span class="attr">href</span>=<span class="string">"https://ruiming.github.io"</span>&gt;</span></div></pre></td></tr></table></figure>
+<p> 但是这个的支持还比较一般，我也没找到有谁使用了这个技术。</p>
+ <img src="/2016/09/11/Web%20优化总结/preconnect.png" alt="preconnect" title="preconnect">
+<p> 其实类似的预xx技术还挺多，还有预渲染等，感兴趣的可以参考<a href="http://www.alloyteam.com/2015/10/prefetching-preloading-prebrowsing/" target="_blank" rel="external">此处</a></p>
+</li>
+<li><p>使用第三方 CDN<br> 前面也有稍微提了下 CDN。对于 CDN 的使用应该根据实际情况来，如果整个页面就只引入了两三个第三方库，我们可以考虑使用公共 CDN 比如 Bootcss 的 CDN。其一是真的很快，比七牛什么都快好多，其二是用的人多，可能用户浏览器已经缓存了，另外 Bootcss 的 CDN 默认使用 HTTP2，在支持 HTTP2 的浏览器中，他也可以避免影响我们网站资源并发请求数量的问题，当然如果你也是用 HTTP2 这个问题就不大了。<br> 如果不使用公共 CDN，对于个人也可以使用七牛或者其他的提供的 CDN 存储。CDN 的好处在可以根据用户位置就近分配资源，同时也可以减轻服务器压力。</p>
+</li>
+</ol>
+<h2 id="提升-Web-运行性能"><a href="#提升-Web-运行性能" class="headerlink" title="提升 Web 运行性能"></a>提升 Web 运行性能</h2><p>上面说的大部分都是为了让页面加载的更快，当然我们的需求不仅仅在此，除了页面加载快，我们也需要页面运行快，不卡顿，这个也是包含在本文的范畴的。待续…</p>
+<p>另外，加深对浏览器渲染以及 TCP 连接的认识也可以帮助我们编写更快的网站。</p>
+<hr>
+<p>参考资料：<br>WebP 探寻之路: <a href="https://isux.tencent.com/introduction-of-webp.html" target="_blank" rel="external">https://isux.tencent.com/introduction-of-webp.html</a><br>一箩筐的预加载技术: <a href="http://www.alloyteam.com/2015/10/prefetching-preloading-prebrowsing" target="_blank" rel="external">http://www.alloyteam.com/2015/10/prefetching-preloading-prebrowsing</a></p>
 ]]></content>
     
     <summary type="html">
     
-      &lt;p&gt;Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。&lt;/p&gt;
-&lt;h2 id=&quot;减少文件请求数量&quot;&gt;&lt;a href=&quot;#减少文件请求数量&quot; class=&quot;headerlink&quot; title=&quot;减少文件请求数量&quot;&gt;&lt;/a&gt;减少文件请求数量&lt;/h2&gt;&lt;p&gt;现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。这里主要说一说减少文件数量和减少同一时间文件请求数的方法。&lt;br&gt;注意以下对 HTTP2 和 SPDY 不完全适用。&lt;/p&gt;
-&lt;h3 id=&quot;优化起源&quot;&gt;&lt;a href=&quot;#优化起源&quot; class=&quot;headerlink&quot; title=&quot;优化起源&quot;&gt;&lt;/a&gt;优化起源&lt;/h3&gt;&lt;p&gt;浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。&lt;/p&gt;
-&lt;h3 id=&quot;优化手段&quot;&gt;&lt;a href=&quot;#优化手段&quot; class=&quot;headerlink&quot; title=&quot;优化手段&quot;&gt;&lt;/a&gt;优化手段&lt;/h3&gt;&lt;p&gt;针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：&lt;/p&gt;
+      &lt;p&gt;Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。以下针对 HTTP1 和 HTTP1.1，在 HTTP2 中，很多最佳实践都适得其反了。&lt;/p&gt;
+&lt;h2 id=&quot;减少文件传输数量&quot;&gt;&lt;a href=&quot;#减少文件传输数量&quot; class=&quot;headerlink&quot; title=&quot;减少文件传输数量&quot;&gt;&lt;/a&gt;减少文件传输数量&lt;/h2&gt;&lt;p&gt;现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。&lt;/p&gt;
+&lt;p&gt;浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。&lt;/p&gt;
+&lt;p&gt;针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;合并文件以减少并发请求数量&lt;br&gt; 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;将次要文件延迟加载，比如 Google Analysis&lt;br&gt; 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。&lt;/p&gt;
- &lt;img src=&quot;/2016/09/11/Web%20优化总结/async-defer.jpg&quot; alt=&quot;async-defer&quot; title=&quot;async-defer&quot;&gt;
-&lt;p&gt; 使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。&lt;br&gt; 使用 defer，会立即开始并行加载，但会延迟到最后才执行。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;分散资源到不同域名&lt;br&gt; 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;使用雪碧图(css sprites)来合并小图片&lt;br&gt; 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;利用 200 缓存&lt;br&gt; 这是一个比较极端的缓存方式，200 缓存时浏览器不发出网络请求，直接调用本地缓存，这需要强制浏览器使用本地缓存。我们可以使用 Expires 标志。即给出日期时间，超出该时间后则认为是过时，浏览器才会重新发起请求。这个具体细节我还不太了解。过后补充。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;使用懒加载(lazy load)&lt;br&gt; 很多网站特别是有大量图片的网站都会使用该技术。当用户下滑页面时，才开始加载下面的图片。一来减少了页面加载的请求数和加载时间，二来也减少用户流量。不过可能有人会说这样体验不太好，好在业内有人把这个技术做到了堪称极致的地步，就是预先加载一个高度压缩的原图，然后淡出原图。大家应该有体验到类似的技术，就不多说了。&lt;/p&gt;
-&lt;/li&gt;
+&lt;li&gt;合并文件以减少并发请求数量&lt;br&gt; 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。&lt;/li&gt;
+&lt;li&gt;将次要文件延迟加载，比如 Google Analysis&lt;br&gt; 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 
+ 使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。&lt;br&gt; 使用 defer，会立即开始并行加载，但会延迟到最后才执行。&lt;/li&gt;
+&lt;li&gt;分散资源到不同域名&lt;br&gt; 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。&lt;/li&gt;
+&lt;li&gt;使用雪碧图(css sprites)来合并小图片&lt;br&gt; 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。&lt;/li&gt;
+&lt;li&gt;利用 200 缓存&lt;br&gt; 这是一个比较极端的缓存方式，200 缓存时浏览器不发出网络请求，直接调用本地缓存，这需要强制浏览器使用本地缓存。我们可以使用 Expires 标志。即给出日期时间，超出该时间后则认为是过时，浏览器才会重新发起请求。这个具体细节我还不太了解。过后补充。&lt;/li&gt;
+&lt;li&gt;使用懒加载(lazy load)&lt;br&gt; 很多网站特别是有大量图片的网站都会使用该技术。当用户下滑页面时，才开始加载下面的图片。一来减少了页面加载的请求数和加载时间，二来也减少用户流量。不过可能有人会说这样体验不太好，好在业内有人把这个技术做到了堪称极致的地步，就是预先加载一个高度压缩的原图，然后淡出原图。大家应该有体验到类似的技术，就不多说了。&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;使用预加载技术(prefetch)&lt;br&gt; 这个技术知道的人可能不多，MDN 上面是这样解释的：&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;页面资源预加载(Link prefetch)是浏览器提供的一个技巧，目的是让浏览器在空闲时间下载或预读取一些文档资源，用户在将来将会访问这些资源。一个Web页面可以对浏览器设置一系列的预加载指示，当浏览器加载完当前页面后，它会在后台静悄悄的加载指定的文档，并把它们存储在缓存里。当用户访问到这些预加载的文档后，浏览器能快速的从缓存里提取给用户。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt; 不过资源预加载其实使用的并不多，可能是因为技术本身不成熟，浏览器支持不够等原因。目前没有发现有哪个网站使用了这个技术。感兴趣的自己去了解下，这里不多阐述这个技术。&lt;/p&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;p&gt;集中加载资源&lt;br&gt; 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。&lt;br&gt; 有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。&lt;/p&gt;
-&lt;/li&gt;
+&lt;li&gt;集中加载资源&lt;br&gt; 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;待续…&lt;br&gt;
+&lt;h2 id=&quot;减少文件大小&quot;&gt;&lt;a href=&quot;#减少文件大小&quot; class=&quot;headerlink&quot; title=&quot;减少文件大小&quot;&gt;&lt;/a&gt;减少文件大小&lt;/h2&gt;&lt;p&gt;除了减少文件数量，减少文件大小也同样重要，不过比起合并文件这样简单的减少文件数量的操作，减少文件大小就没来的那么简单了。常用的方法如下：&lt;br&gt;
     
     </summary>
     
@@ -92,9 +114,9 @@
     
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
-      <category term="Web优化" scheme="https://ruiming.github.io/tags/Web%E4%BC%98%E5%8C%96/"/>
-    
       <category term="HTTP" scheme="https://ruiming.github.io/tags/HTTP/"/>
+    
+      <category term="Web 优化" scheme="https://ruiming.github.io/tags/Web-%E4%BC%98%E5%8C%96/"/>
     
   </entry>
   
