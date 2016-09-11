@@ -87,22 +87,22 @@
 
 
 <meta name="description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
-减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
-优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
+减少文件请求数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。这里主要说一说减少文件数量和减少同一时间文件请求数的方法。注意以下对 HTTP2 和 SPDY 不完全适用。
+优化起源浏览器">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Web 优化总结">
 <meta property="og:url" content="https://ruiming.github.io/2016/09/11/Web 优化总结/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
-减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
-优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
+减少文件请求数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。这里主要说一说减少文件数量和减少同一时间文件请求数的方法。注意以下对 HTTP2 和 SPDY 不完全适用。
+优化起源浏览器">
 <meta property="og:image" content="https://ruiming.github.io/2016/09/11/Web%20优化总结/async-defer.jpg">
-<meta property="og:updated_time" content="2016-09-11T07:19:40.170Z">
+<meta property="og:updated_time" content="2016-09-11T07:44:06.953Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Web 优化总结">
 <meta name="twitter:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
-减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
-优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
+减少文件请求数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。这里主要说一说减少文件数量和减少同一时间文件请求数的方法。注意以下对 HTTP2 和 SPDY 不完全适用。
+优化起源浏览器">
 <meta name="twitter:image" content="https://ruiming.github.io/2016/09/11/Web%20优化总结/async-defer.jpg">
 
 
@@ -349,7 +349,7 @@
 
       
         <p>Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。</p>
-<h2 id="减少文件传输数量"><a href="#减少文件传输数量" class="headerlink" title="减少文件传输数量"></a>减少文件传输数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。<br>注意以下对 HTTP2 和 SPDY 不完全适用。</p>
+<h2 id="减少文件请求数量"><a href="#减少文件请求数量" class="headerlink" title="减少文件请求数量"></a>减少文件请求数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。这里主要说一说减少文件数量和减少同一时间文件请求数的方法。<br>注意以下对 HTTP2 和 SPDY 不完全适用。</p>
 <h3 id="优化起源"><a href="#优化起源" class="headerlink" title="优化起源"></a>优化起源</h3><p>浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。</p>
 <h3 id="优化手段"><a href="#优化手段" class="headerlink" title="优化手段"></a>优化手段</h3><p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
 <ol>
@@ -586,7 +586,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#减少文件传输数量"><span class="nav-number">1.</span> <span class="nav-text">减少文件传输数量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化起源"><span class="nav-number">1.1.</span> <span class="nav-text">优化起源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化手段"><span class="nav-number">1.2.</span> <span class="nav-text">优化手段</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#减少文件请求数量"><span class="nav-number">1.</span> <span class="nav-text">减少文件请求数量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化起源"><span class="nav-number">1.1.</span> <span class="nav-text">优化起源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化手段"><span class="nav-number">1.2.</span> <span class="nav-text">优化手段</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
