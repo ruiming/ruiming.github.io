@@ -267,6 +267,142 @@
             
               
                 
+                <a class="post-title-link" href="/2016/08/05/Underscore源码学习(六)/" itemprop="url">
+                  Underscore 源码学习(六)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-05T13:59:06+08:00" content="2016-08-05">
+              2016-08-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Underscore/" itemprop="url" rel="index">
+                    <span itemprop="name">Underscore</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/05/Underscore源码学习(六)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/05/Underscore源码学习(六)/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/08/05/Underscore源码学习(六)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(六)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>关于 Underscore 的 mixin 方法。<br>首先先看个例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Panel</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  consoe.log(<span class="keyword">this</span>, <span class="keyword">this</span> <span class="keyword">instanceof</span> Panel);</div><div class="line">  <span class="keyword">if</span>(<span class="keyword">this</span> <span class="keyword">instanceof</span> Panel) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Panel();</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">a = Panel();        <span class="comment">// Window   false</span></div><div class="line">b = <span class="keyword">new</span> Panel();    <span class="comment">// Panel&#123;&#125;  true</span></div></pre></td></tr></table></figure></p>
+<p>当函数作为构造器使用时，函数内的 <code>this</code> 执行被新建的对象。当函数被调用时，函数内的 <code>this</code> 则为被调用的对象，在这里是 <code>Window</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> _ = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</div><div class="line">  <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> _) <span class="keyword">return</span> obj;</div><div class="line">  <span class="keyword">if</span> (!(<span class="keyword">this</span> <span class="keyword">instanceof</span> _)) <span class="keyword">return</span> <span class="keyword">new</span> _(obj);</div><div class="line">  <span class="keyword">this</span>._wrapped = obj;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>同样的，如果我们使用下面方法调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> under = _();</div></pre></td></tr></table></figure></p>
+<p>第二个条件成立，所以新建一个 <code>_</code> 对象后返回，注意这里是再次调用这个函数。<br>如果我们这样调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> under = <span class="keyword">new</span> _();</div></pre></td></tr></table></figure></p>
+<p>就好像上面第二次调用一样，这时候就构造了 <code>under</code> 这个对象，如果传入了参数 <code>obj</code>，则把 <code>obj</code> 存入 <code>under</code> 这个对象的 <code>_wrapped</code> 属性中。<br><code>Underscore</code> 提供了一个 OO 的调用方法，即:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> chainResult = <span class="function"><span class="keyword">function</span>(<span class="params">instance, obj</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> instance._chain ? _(obj).chain() : obj;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">_.mixin = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</div><div class="line">    <span class="comment">// 遍历obj中的函数</span></div><div class="line">    _.each(_.functions(obj), <span class="function"><span class="keyword">function</span>(<span class="params">name</span>) </span>&#123;</div><div class="line">        <span class="comment">// 避免原型链查找，提升性能</span></div><div class="line">        <span class="keyword">var</span> func = _[name] = obj[name];</div><div class="line">        _.prototype[name] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="comment">// 把wrapped作为数组第一个参数(context)，其余传参push到这个数组中</span></div><div class="line">            <span class="keyword">var</span> args = [<span class="keyword">this</span>._wrapped];</div><div class="line">            push.apply(args, <span class="built_in">arguments</span>);</div><div class="line">            <span class="comment">// 如果this是一个_实例，则使用func调用的结果来新建_实例后返回以供继续链式调用</span></div><div class="line">            <span class="comment">// 如果this不是一个_实例，则直接返回func调用的结果</span></div><div class="line">            <span class="keyword">return</span> chainResult(<span class="keyword">this</span>, func.apply(_, args));</div><div class="line">        &#125;;</div><div class="line">    &#125;);</div><div class="line">    <span class="keyword">return</span> _;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 把Underscore对象mixin化，这样就可以直接在_上调用方法</span></div><div class="line">_.mixin(_);</div></pre></td></tr></table></figure></p>
+<p>当然我们还可以把自己写的方法通过 <code>mixin</code> 加入到 <code>Underscore</code> 对象中。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/08/05/Underscore源码学习(六)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/04/Underscore源码学习(五)/" itemprop="url">
                   Underscore 源码学习(五)
                 </a>
@@ -818,141 +954,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/29/Underscore源码学习(二)/" itemprop="url">
-                  Underscore 源码学习(二)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-29T21:29:23+08:00" content="2016-07-29">
-              2016-07-29
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/07/29/Underscore源码学习(二)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/29/Underscore源码学习(二)/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/07/29/Underscore源码学习(二)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(二)">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Underscore 源码的学习落下了好几天，因为前几天一直正在重构项目和搞 React，不过这几天应该会花较多时间在 Underscore 上面了。<br>这次主要说下 Underscore 两个比较重要的函数吧，一个是<code>optimizeCb</code>，另一个是<code>cb</code>，这两个花了我挺长时间看的，而且是整个 Underscore 非常重要的函数，后面很多地方都使用到了它。</p>
-<h2 id="optimizeCb-函数"><a href="#optimizeCb-函数" class="headerlink" title="optimizeCb 函数"></a>optimizeCb 函数</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> optimizeCb = <span class="function"><span class="keyword">function</span>(<span class="params">func, context, argCount</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (context === <span class="keyword">void</span> <span class="number">0</span>) <span class="keyword">return</span> func;</div><div class="line">    <span class="keyword">switch</span> (argCount == <span class="literal">null</span> ? <span class="number">3</span> : argCount) &#123;</div><div class="line">      <span class="keyword">case</span> <span class="number">1</span>: <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> func.call(context, value);</div><div class="line">      &#125;;</div><div class="line">      <span class="keyword">case</span> <span class="number">3</span>: <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">value, index, collection</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> func.call(context, value, index, collection);</div><div class="line">      &#125;;</div><div class="line">      <span class="keyword">case</span> <span class="number">4</span>: <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> func.call(context, accumulator, value, index, collection);</div><div class="line">      &#125;;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> func.apply(context, <span class="built_in">arguments</span>);</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>这个地方 <code>switch</code> 只是一个性能的优化，其实简化来看就是这样的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> optimizeCb = <span class="function"><span class="keyword">function</span>(<span class="params">func, context, argCount</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (context === <span class="keyword">void</span> <span class="number">0</span>) <span class="keyword">return</span> func;</div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> func.apply(context, <span class="built_in">arguments</span>);</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>之所以有那段 <code>switch</code> 前面一篇已经有提到了，只是一个优化而已。使用 call 快于 apply。不过好像最新的 Chrome 已经可以自己优化这个过程，但为了提升性能，加上也无妨。<br>解释下段代码的意思，字如起名 optimizeCb 优化回调。这个函数传入三个参数依次是函数，上下文，参数个数。如果没有指定上下文则返回函数本身，如果有，则对该上下文绑定到传入的函数，根据传入的参数个数，在做一个性能优化。这个函数就是这个意思。我们看下他的使用。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">_.each = _.forEach = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, context</span>) </span>&#123;</div><div class="line">  iteratee = optimizeCb(iteratee, context);</div><div class="line">  <span class="keyword">var</span> i, length;</div><div class="line">  <span class="keyword">if</span> (isArrayLike(obj)) &#123;</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>, length = obj.length; i &lt; length; i++) &#123;</div><div class="line">      iteratee(obj[i], i, obj);</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">var</span> keys = _.keys(obj);</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>, length = keys.length; i &lt; length; i++) &#123;</div><div class="line">      iteratee(obj[keys[i]], keys[i], obj);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> obj;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>这个函数是用来实现数组或者对象的遍历的，他是怎么做到呢？<br>首先是<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iteratee = optimizeCb(iteratee, context);</div></pre></td></tr></table></figure></p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/07/29/Underscore源码学习(二)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -998,7 +999,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-count">18</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1006,7 +1007,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1015,7 +1016,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

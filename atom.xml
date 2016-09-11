@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-09-09T11:11:58.374Z</updated>
+  <updated>2016-09-11T07:08:23.880Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -14,6 +14,54 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Web 优化总结</title>
+    <link href="https://ruiming.github.io/2016/09/11/Web-%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/"/>
+    <id>https://ruiming.github.io/2016/09/11/Web-优化总结/</id>
+    <published>2016-09-11T05:53:33.000Z</published>
+    <updated>2016-09-11T07:08:23.880Z</updated>
+    
+    <content type="html"><![CDATA[<p>Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。</p>
+<h2 id="减少文件传输数量"><a href="#减少文件传输数量" class="headerlink" title="减少文件传输数量"></a>减少文件传输数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。<br>注意以下对 HTTP2 和 SPDY 不完全适用。</p>
+<h3 id="优化起源"><a href="#优化起源" class="headerlink" title="优化起源"></a>优化起源</h3><p>浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。</p>
+<h3 id="优化手段"><a href="#优化手段" class="headerlink" title="优化手段"></a>优化手段</h3><p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
+<ol>
+<li>合并文件以减少并发请求数量<br> 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。</li>
+<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 
+ 使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。<br> 使用 defer，会立即开始并行加载，但会延迟到最后才执行。</li>
+<li>分散资源到不同域名<br> 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。</li>
+<li>使用雪碧图(css sprites)来合并小图片<br> 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。</li>
+<li>利用 200 缓存<br> 这是一个比较极端的缓存方式，200 缓存时浏览器不发出网络请求，直接调用本地缓存，这需要强制浏览器使用本地缓存。我们可以使用 Expires 标志。即给出日期时间，超出该时间后则认为是过时，浏览器才会重新发起请求。这个具体细节我还不太了解。过后补充。</li>
+<li>使用懒加载(lazy load)<br> 很多网站特别是有大量图片的网站都会使用该技术。当用户下滑页面时，才开始加载下面的图片。一来减少了页面加载的请求数和加载时间，二来也减少用户流量。不过可能有人会说这样体验不太好，好在业内有人把这个技术做到了堪称极致的地步，就是预先加载一个高度压缩的原图，然后淡出原图。大家应该有体验到类似的技术，就不多说了。</li>
+<li><p>使用预加载技术(prefetch)<br> 这个技术知道的人可能不多，MDN 上面是这样解释的：</p>
+<blockquote>
+<p>页面资源预加载(Link prefetch)是浏览器提供的一个技巧，目的是让浏览器在空闲时间下载或预读取一些文档资源，用户在将来将会访问这些资源。一个Web页面可以对浏览器设置一系列的预加载指示，当浏览器加载完当前页面后，它会在后台静悄悄的加载指定的文档，并把它们存储在缓存里。当用户访问到这些预加载的文档后，浏览器能快速的从缓存里提取给用户。</p>
+</blockquote>
+<p> 不过资源预加载其实使用的并不多，可能是因为技术本身不成熟，浏览器支持不够等原因。目前没有发现有哪个网站使用了这个技术。感兴趣的自己去了解下，这里不多阐述这个技术。</p>
+</li>
+<li>集中加载资源<br> 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。</li>
+</ol>
+<p>待续…</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。&lt;/p&gt;
+&lt;h2 id=&quot;减少文件传输数量&quot;&gt;&lt;a href=&quot;#减少文件传输数量&quot; class=&quot;headerlink&quot; title=
+    
+    </summary>
+    
+      <category term="还不知道分什么类好" scheme="https://ruiming.github.io/categories/%E8%BF%98%E4%B8%8D%E7%9F%A5%E9%81%93%E5%88%86%E4%BB%80%E4%B9%88%E7%B1%BB%E5%A5%BD/"/>
+    
+    
+      <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Web优化" scheme="https://ruiming.github.io/tags/Web%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="HTTP" scheme="https://ruiming.github.io/tags/HTTP/"/>
+    
+  </entry>
   
   <entry>
     <title>浅谈 Angular 脏检查</title>
@@ -1056,11 +1104,11 @@
       <category term="HTTP" scheme="https://ruiming.github.io/categories/HTTP/"/>
     
     
+      <category term="HTTP" scheme="https://ruiming.github.io/tags/HTTP/"/>
+    
       <category term="DNS" scheme="https://ruiming.github.io/tags/DNS/"/>
     
       <category term="HTTPS" scheme="https://ruiming.github.io/tags/HTTPS/"/>
-    
-      <category term="HTTP" scheme="https://ruiming.github.io/tags/HTTP/"/>
     
       <category term="TCP/IP" scheme="https://ruiming.github.io/tags/TCP-IP/"/>
     

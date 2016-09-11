@@ -267,6 +267,141 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/29/Underscore源码学习(二)/" itemprop="url">
+                  Underscore 源码学习(二)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-29T21:29:23+08:00" content="2016-07-29">
+              2016-07-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Underscore/" itemprop="url" rel="index">
+                    <span itemprop="name">Underscore</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/29/Underscore源码学习(二)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/29/Underscore源码学习(二)/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/29/Underscore源码学习(二)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(二)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Underscore 源码的学习落下了好几天，因为前几天一直正在重构项目和搞 React，不过这几天应该会花较多时间在 Underscore 上面了。<br>这次主要说下 Underscore 两个比较重要的函数吧，一个是<code>optimizeCb</code>，另一个是<code>cb</code>，这两个花了我挺长时间看的，而且是整个 Underscore 非常重要的函数，后面很多地方都使用到了它。</p>
+<h2 id="optimizeCb-函数"><a href="#optimizeCb-函数" class="headerlink" title="optimizeCb 函数"></a>optimizeCb 函数</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> optimizeCb = <span class="function"><span class="keyword">function</span>(<span class="params">func, context, argCount</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (context === <span class="keyword">void</span> <span class="number">0</span>) <span class="keyword">return</span> func;</div><div class="line">    <span class="keyword">switch</span> (argCount == <span class="literal">null</span> ? <span class="number">3</span> : argCount) &#123;</div><div class="line">      <span class="keyword">case</span> <span class="number">1</span>: <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> func.call(context, value);</div><div class="line">      &#125;;</div><div class="line">      <span class="keyword">case</span> <span class="number">3</span>: <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">value, index, collection</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> func.call(context, value, index, collection);</div><div class="line">      &#125;;</div><div class="line">      <span class="keyword">case</span> <span class="number">4</span>: <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> func.call(context, accumulator, value, index, collection);</div><div class="line">      &#125;;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> func.apply(context, <span class="built_in">arguments</span>);</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>这个地方 <code>switch</code> 只是一个性能的优化，其实简化来看就是这样的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> optimizeCb = <span class="function"><span class="keyword">function</span>(<span class="params">func, context, argCount</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (context === <span class="keyword">void</span> <span class="number">0</span>) <span class="keyword">return</span> func;</div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> func.apply(context, <span class="built_in">arguments</span>);</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>之所以有那段 <code>switch</code> 前面一篇已经有提到了，只是一个优化而已。使用 call 快于 apply。不过好像最新的 Chrome 已经可以自己优化这个过程，但为了提升性能，加上也无妨。<br>解释下段代码的意思，字如起名 optimizeCb 优化回调。这个函数传入三个参数依次是函数，上下文，参数个数。如果没有指定上下文则返回函数本身，如果有，则对该上下文绑定到传入的函数，根据传入的参数个数，在做一个性能优化。这个函数就是这个意思。我们看下他的使用。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">_.each = _.forEach = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, context</span>) </span>&#123;</div><div class="line">  iteratee = optimizeCb(iteratee, context);</div><div class="line">  <span class="keyword">var</span> i, length;</div><div class="line">  <span class="keyword">if</span> (isArrayLike(obj)) &#123;</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>, length = obj.length; i &lt; length; i++) &#123;</div><div class="line">      iteratee(obj[i], i, obj);</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">var</span> keys = _.keys(obj);</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>, length = keys.length; i &lt; length; i++) &#123;</div><div class="line">      iteratee(obj[keys[i]], keys[i], obj);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> obj;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>这个函数是用来实现数组或者对象的遍历的，他是怎么做到呢？<br>首先是<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iteratee = optimizeCb(iteratee, context);</div></pre></td></tr></table></figure></p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/29/Underscore源码学习(二)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/26/一次项目重构/" itemprop="url">
                   一次项目重构
                 </a>
@@ -826,167 +961,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/06/24/从输入URL到页面展示/" itemprop="url">
-                  从输入 URL 到页面展示
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-06-24T15:43:38+08:00" content="2016-06-24">
-              2016-06-24
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/HTTP/" itemprop="url" rel="index">
-                    <span itemprop="name">HTTP</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/06/24/从输入URL到页面展示/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/24/从输入URL到页面展示/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/06/24/从输入URL到页面展示/" class="leancloud_visitors" data-flag-title="从输入 URL 到页面展示">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>本文从网络层以上讨论从浏览器输入 HTTPS 协议的 URL 到页面展现的全过程。由于不同浏览器之间也存在差异，这里以 Chrome 浏览器为例。</p>
-<h2 id="1-DNS查询"><a href="#1-DNS查询" class="headerlink" title="1. DNS查询"></a>1. <a name='DNS-0'></a>DNS查询</h2><p>DNS 缓存有好几个环节，浏览器缓存，系统缓存，路由器缓存，ISP 缓存。</p>
-<ul>
-<li><p>浏览器首先会查看自身是否已经有进行 DNS 缓存。Chrome 可以通过 <code>chrome://net-internals/#dns</code> 查看缓存的 DNS，浏览器的 DNS 缓存可以加快 DNS 解析速度，但缓存时间不会太长。</p>
-<img src="/2016/06/24/从输入URL到页面展示/chrome-dns-cache.png" alt="Chrome 的 DNS 缓存" title="Chrome 的 DNS 缓存">
-</li>
-<li><p>如果浏览器没有相应的缓存，则查找系统缓存，浏览器会向系统发送一个查询请求，如果系统存在缓存或者设置了 host ，则返回相应的 ip 地址给浏览器。</p>
-</li>
-<li><p>如果系统没有缓存，那么它会发出一个 DNS 查询请求给路由器。</p>
-<p>如果路由器有 DNS 缓存，他会提取出 IP 地址返回。否则，他会向本地域名服务器发出查询，从请求主机到本地域名服务器的请求一般是递归查询，而其他的查询一般是迭代查询。</p>
-<img src="/2016/06/24/从输入URL到页面展示/client-to-server-query.gif" alt="DNS 请求主机到本地域名服务器的查询" title="DNS 请求主机到本地域名服务器的查询">
-<img src="/2016/06/24/从输入URL到页面展示/server-to-server-query.gif" alt="DNS 域名服务器之间的查询" title="DNS 域名服务器之间的查询">
-<p>请求报文如下</p>
-<img src="/2016/06/24/从输入URL到页面展示/dns-request-1.png" alt="DNS 请求报文" title="DNS 请求报文">
-<p>我们先简单分析下请求报文。</p>
-<ol>
-<li>DNS 使用 UDP 协议，端口号53。</li>
-<li>在 DNS 报文的 Flags 中的 RD=1。表示它建议域名服务器以递归方式查询。</li>
-<li>Question section format 需要给出 <code>QNAME</code>, <code>QTYPE</code>, <code>QCLASS</code>。即查询的域名，查询的类型以及查询的类。</li>
-</ol>
-<p>有关<code>DNS</code>报文的更多信息可以参考<a href="https://www.ietf.org/rfc/rfc1035">RFC1035</a></p>
-<p>响应报文如下</p>
-<img src="/2016/06/24/从输入URL到页面展示/dns-response-1.png" alt="DNS 响应报文" title="DNS 响应报文">
-<p>我们也简单分析下，如果想详细了解，可以查看上面的 <code>RFC1035</code> 标准。</p>
-<ol>
-<li>与请求报文相比，对比 Flags 可以发现，QR=1 表示这是一个响应报文。RA=1 表示递归查询可用。</li>
-<li>ARecord 记录了DNS请求获得的一个或多个IP地址。一般还会得到 CNAME 记录和存活时间等信息。</li>
-<li>这里对 Rcode 也稍加说明下，Rcode=0 表示成功，他还有好几种状态码，比如1表示 <code>Format error</code>，2表示 <code>Server failure</code>，3表示 <code>Name error</code>，4表示 <code>Not lmplemented</code>，5表示 <code>Refused</code>，具体信息可以参考 <code>RFC1035</code>。</li>
-</ol>
-</li>
-</ul>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/06/24/从输入URL到页面展示/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1032,7 +1006,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-count">18</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1040,7 +1014,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1049,7 +1023,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

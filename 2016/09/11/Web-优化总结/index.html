@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hack," />
+  <meta name="keywords" content="JavaScript,Web优化,HTTP," />
 
 
 
@@ -86,24 +86,22 @@
 
 
 
-<meta name="description" content="一次小小的 Hack 尝试…前段时间换上了 Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词， monitor 和 ARP 。
-ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。
-主机发现和端口扫描进行攻击第一步当然就是找目标了。可以使用 nmap 这个工具来进行，这">
+<meta name="description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
+减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
+优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ARP 攻击和无线网卡混杂模式">
-<meta property="og:url" content="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/index.html">
+<meta property="og:title" content="Web 优化总结">
+<meta property="og:url" content="https://ruiming.github.io/2016/09/11/Web-优化总结/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
-<meta property="og:description" content="一次小小的 Hack 尝试…前段时间换上了 Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词， monitor 和 ARP 。
-ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。
-主机发现和端口扫描进行攻击第一步当然就是找目标了。可以使用 nmap 这个工具来进行，这">
-<meta property="og:image" content="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png">
-<meta property="og:updated_time" content="2016-08-04T09:05:54.000Z">
+<meta property="og:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
+减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
+优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
+<meta property="og:updated_time" content="2016-09-11T07:08:23.880Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ARP 攻击和无线网卡混杂模式">
-<meta name="twitter:description" content="一次小小的 Hack 尝试…前段时间换上了 Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词， monitor 和 ARP 。
-ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。
-主机发现和端口扫描进行攻击第一步当然就是找目标了。可以使用 nmap 这个工具来进行，这">
-<meta name="twitter:image" content="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png">
+<meta name="twitter:title" content="Web 优化总结">
+<meta name="twitter:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
+减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
+优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
 
 
 
@@ -124,9 +122,9 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
 
 
 
-  <link rel="canonical" href="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/"/>
+  <link rel="canonical" href="https://ruiming.github.io/2016/09/11/Web-优化总结/"/>
 
-  <title> ARP 攻击和无线网卡混杂模式 | Ruiming's Blog </title>
+  <title> Web 优化总结 | Ruiming's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -273,7 +271,7 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
             
             
               
-                ARP 攻击和无线网卡混杂模式
+                Web 优化总结
               
             
           </h1>
@@ -285,8 +283,8 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-14T12:32:41+08:00" content="2016-07-14">
-              2016-07-14
+            <time itemprop="dateCreated" datetime="2016-09-11T13:53:33+08:00" content="2016-09-11">
+              2016-09-11
             </time>
           </span>
 
@@ -299,8 +297,8 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/网络安全/" itemprop="url" rel="index">
-                    <span itemprop="name">网络安全</span>
+                  <a href="/categories/还不知道分什么类好/" itemprop="url" rel="index">
+                    <span itemprop="name">还不知道分什么类好</span>
                   </a>
                 </span>
 
@@ -315,8 +313,8 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/07/14/ARP攻击和无线网卡混杂模式/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/14/ARP攻击和无线网卡混杂模式/" itemprop="commentsCount"></span>
+                <a href="/2016/09/11/Web-优化总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/Web-优化总结/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -326,7 +324,7 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
 
           
           
-             <span id="/2016/07/14/ARP攻击和无线网卡混杂模式/" class="leancloud_visitors" data-flag-title="ARP 攻击和无线网卡混杂模式">
+             <span id="/2016/09/11/Web-优化总结/" class="leancloud_visitors" data-flag-title="Web 优化总结">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -348,15 +346,27 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
       
 
       
-        <p>一次小小的 Hack 尝试…<br>前段时间换上了 Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词， monitor 和 ARP 。</p>
-<h2 id="ARP-攻击"><a href="#ARP-攻击" class="headerlink" title="ARP 攻击"></a>ARP 攻击</h2><p>学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。</p>
-<h3 id="主机发现和端口扫描"><a href="#主机发现和端口扫描" class="headerlink" title="主机发现和端口扫描"></a>主机发现和端口扫描</h3><p>进行攻击第一步当然就是找目标了。可以使用 nmap 这个工具来进行，这东西简直渗透利器。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nmap -sP <span class="number">192.168</span><span class="number">.1</span><span class="number">.0</span>/<span class="number">24</span></div></pre></td></tr></table></figure></p>
-<p> 这样就可以扫描192.168.1.0这个网段里面的所有主机了，以 ping 方式扫描，当然他有很多参数很多用法，网上很多这方面的资料我就不叙述了。<br><img src="/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png" alt="Nmap扫描" title="Nmap扫描"></p>
-<h3 id="发起攻击"><a href="#发起攻击" class="headerlink" title="发起攻击"></a>发起攻击</h3><p>如果是进行ARP攻击，那也是加多三条命令就搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">echo</span> 1 &gt;&gt; /proc/sys/net/ipv4/ip_forward</div><div class="line">arpspoof -i wlp3s0 -t 192.168.1.110 192.168.1.1</div><div class="line">arpspoof -i wlp3s0 -t 192.168.1.1   192.168.1.110</div></pre></td></tr></table></figure></p>
-<p>第一条是开启转发，不然会受害者流量到我们这里出不去就断网了。<br>第二条是告诉受害者说我是网管。<br>第三条是告诉网管我是受害者。<br>这样就完成了 ARP 欺骗，图片以后再补。这之后对方的网络就完全在你的监控之下了。这告诉我们使用 https 和不连接免费 wifi 的重要性!</p>
-<h3 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h3><p>抓包推荐使用 wireshark 。具体就不介绍了=.=。你还可以使用 Driftnet 这东西来将对方访问的图片在你这边显示出来～</p>
-<h2 id="监听空气包"><a href="#监听空气包" class="headerlink" title="监听空气包"></a>监听空气包</h2><p>大部分无线网卡都可以设置 monitor 模式，即无线网卡默认接受下全部经过他的以太网帧而不丢弃，这种方式可以抓到附近范围里面的所以以太网帧。在 Arch 下也是三条命令搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ifconfig wlp3s0 down</div><div class="line">iwconfig wlp3s0 mode monitor</div><div class="line">ifconfig wlp3s0 up</div></pre></td></tr></table></figure></p>
-<p>接着同样开启 wireshark 抓包，你会发现很多802.11帧，不过这个并没有什么卵用，理论上应该对于没有加密的帧应该可以直接得到应用层报文才对，但是很奇怪我一直抓不到，即使是对于有加密的 Wifi，我填入 WAPKEY 解密也不行。这个有待继续研究。。。<br><a id="more"></a></p>
+        <p>Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。</p>
+<h2 id="减少文件传输数量"><a href="#减少文件传输数量" class="headerlink" title="减少文件传输数量"></a>减少文件传输数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。<br>注意以下对 HTTP2 和 SPDY 不完全适用。</p>
+<h3 id="优化起源"><a href="#优化起源" class="headerlink" title="优化起源"></a>优化起源</h3><p>浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。</p>
+<h3 id="优化手段"><a href="#优化手段" class="headerlink" title="优化手段"></a>优化手段</h3><p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
+<ol>
+<li>合并文件以减少并发请求数量<br> 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。</li>
+<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 
+ 使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。<br> 使用 defer，会立即开始并行加载，但会延迟到最后才执行。</li>
+<li>分散资源到不同域名<br> 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。</li>
+<li>使用雪碧图(css sprites)来合并小图片<br> 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。</li>
+<li>利用 200 缓存<br> 这是一个比较极端的缓存方式，200 缓存时浏览器不发出网络请求，直接调用本地缓存，这需要强制浏览器使用本地缓存。我们可以使用 Expires 标志。即给出日期时间，超出该时间后则认为是过时，浏览器才会重新发起请求。这个具体细节我还不太了解。过后补充。</li>
+<li>使用懒加载(lazy load)<br> 很多网站特别是有大量图片的网站都会使用该技术。当用户下滑页面时，才开始加载下面的图片。一来减少了页面加载的请求数和加载时间，二来也减少用户流量。不过可能有人会说这样体验不太好，好在业内有人把这个技术做到了堪称极致的地步，就是预先加载一个高度压缩的原图，然后淡出原图。大家应该有体验到类似的技术，就不多说了。</li>
+<li><p>使用预加载技术(prefetch)<br> 这个技术知道的人可能不多，MDN 上面是这样解释的：</p>
+<blockquote>
+<p>页面资源预加载(Link prefetch)是浏览器提供的一个技巧，目的是让浏览器在空闲时间下载或预读取一些文档资源，用户在将来将会访问这些资源。一个Web页面可以对浏览器设置一系列的预加载指示，当浏览器加载完当前页面后，它会在后台静悄悄的加载指定的文档，并把它们存储在缓存里。当用户访问到这些预加载的文档后，浏览器能快速的从缓存里提取给用户。</p>
+</blockquote>
+<p> 不过资源预加载其实使用的并不多，可能是因为技术本身不成熟，浏览器支持不够等原因。目前没有发现有哪个网站使用了这个技术。感兴趣的自己去了解下，这里不多阐述这个技术。</p>
+</li>
+<li>集中加载资源<br> 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。</li>
+</ol>
+<p>待续…</p>
 
       
     </div>
@@ -378,7 +388,11 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
       
         <div class="post-tags">
           
-            <a href="/tags/Hack/" rel="tag">#Hack</a>
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+            <a href="/tags/Web优化/" rel="tag">#Web优化</a>
+          
+            <a href="/tags/HTTP/" rel="tag">#HTTP</a>
           
         </div>
       
@@ -387,17 +401,13 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/06/24/从输入URL到页面展示/" rel="next" title="从输入 URL 到页面展示">
-                <i class="fa fa-chevron-left"></i> 从输入 URL 到页面展示
+              <a href="/2016/09/04/浅谈 Angular 脏检查/" rel="next" title="浅谈 Angular 脏检查">
+                <i class="fa fa-chevron-left"></i> 浅谈 Angular 脏检查
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/20/Underscore源码学习(一)/" rel="prev" title="Underscore 源码学习(一)">
-                Underscore 源码学习(一) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -423,8 +433,8 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/07/14/ARP攻击和无线网卡混杂模式/"
-           data-title="ARP 攻击和无线网卡混杂模式" data-url="https://ruiming.github.io/2016/07/14/ARP攻击和无线网卡混杂模式/">
+      <div class="ds-thread" data-thread-key="2016/09/11/Web-优化总结/"
+           data-title="Web 优化总结" data-url="https://ruiming.github.io/2016/09/11/Web-优化总结/">
       </div>
     
   </div>
@@ -566,7 +576,7 @@ ARP 攻击学过计算机网络了，大概了解ARP攻击这么一回事，但�
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ARP-攻击"><span class="nav-number">1.</span> <span class="nav-text">ARP 攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现和端口扫描"><span class="nav-number">1.1.</span> <span class="nav-text">主机发现和端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发起攻击"><span class="nav-number">1.2.</span> <span class="nav-text">发起攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抓包"><span class="nav-number">1.3.</span> <span class="nav-text">抓包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监听空气包"><span class="nav-number">2.</span> <span class="nav-text">监听空气包</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#减少文件传输数量"><span class="nav-number">1.</span> <span class="nav-text">减少文件传输数量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化起源"><span class="nav-number">1.1.</span> <span class="nav-text">优化起源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化手段"><span class="nav-number">1.2.</span> <span class="nav-text">优化手段</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
