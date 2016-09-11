@@ -91,17 +91,19 @@
 优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Web 优化总结">
-<meta property="og:url" content="https://ruiming.github.io/2016/09/11/Web-优化总结/index.html">
+<meta property="og:url" content="https://ruiming.github.io/2016/09/11/Web 优化总结/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
 减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
 优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
-<meta property="og:updated_time" content="2016-09-11T07:11:23.920Z">
+<meta property="og:image" content="https://ruiming.github.io/2016/09/11/Web%20优化总结/async-defer.jpg">
+<meta property="og:updated_time" content="2016-09-11T07:17:37.776Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Web 优化总结">
 <meta name="twitter:description" content="Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。
 减少文件传输数量现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。注意以下对 HTTP2 和 SPDY 不完全适用。
 优化起源浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和">
+<meta name="twitter:image" content="https://ruiming.github.io/2016/09/11/Web%20优化总结/async-defer.jpg">
 
 
 
@@ -122,7 +124,7 @@
 
 
 
-  <link rel="canonical" href="https://ruiming.github.io/2016/09/11/Web-优化总结/"/>
+  <link rel="canonical" href="https://ruiming.github.io/2016/09/11/Web 优化总结/"/>
 
   <title> Web 优化总结 | Ruiming's Blog </title>
 </head>
@@ -313,8 +315,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/11/Web-优化总结/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/Web-优化总结/" itemprop="commentsCount"></span>
+                <a href="/2016/09/11/Web 优化总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/Web 优化总结/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -324,7 +326,7 @@
 
           
           
-             <span id="/2016/09/11/Web-优化总结/" class="leancloud_visitors" data-flag-title="Web 优化总结">
+             <span id="/2016/09/11/Web 优化总结/" class="leancloud_visitors" data-flag-title="Web 优化总结">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -352,7 +354,7 @@
 <h3 id="优化手段"><a href="#优化手段" class="headerlink" title="优化手段"></a>优化手段</h3><p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
 <ol>
 <li>合并文件以减少并发请求数量<br> 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。</li>
-<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 
+<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 <img src="/2016/09/11/Web%20优化总结/async-defer.jpg" alt="async-defer" title="async-defer">
  使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。<br> 使用 defer，会立即开始并行加载，但会延迟到最后才执行。</li>
 <li>分散资源到不同域名<br> 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。</li>
 <li>使用雪碧图(css sprites)来合并小图片<br> 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。</li>
@@ -433,8 +435,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/09/11/Web-优化总结/"
-           data-title="Web 优化总结" data-url="https://ruiming.github.io/2016/09/11/Web-优化总结/">
+      <div class="ds-thread" data-thread-key="2016/09/11/Web 优化总结/"
+           data-title="Web 优化总结" data-url="https://ruiming.github.io/2016/09/11/Web 优化总结/">
       </div>
     
   </div>
