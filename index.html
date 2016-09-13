@@ -267,8 +267,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/09/11/Web 优化总结/" itemprop="url">
-                  Web 优化总结
+                <a class="post-title-link" href="/2016/09/11/提升网站加载速度的 N 个方法/" itemprop="url">
+                  提升网站加载速度的 N 个方法
                 </a>
               
             
@@ -311,8 +311,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/11/Web 优化总结/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/11/Web 优化总结/" itemprop="commentsCount"></span>
+                <a href="/2016/09/11/提升网站加载速度的 N 个方法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/11/提升网站加载速度的 N 个方法/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -322,7 +322,7 @@
 
           
           
-             <span id="/2016/09/11/Web 优化总结/" class="leancloud_visitors" data-flag-title="Web 优化总结">
+             <span id="/2016/09/11/提升网站加载速度的 N 个方法/" class="leancloud_visitors" data-flag-title="提升网站加载速度的 N 个方法">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -351,7 +351,7 @@
 <p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
 <ol>
 <li>合并文件以减少并发请求数量<br> 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。</li>
-<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 <img src="/2016/09/11/Web%20优化总结/async-defer.jpg" alt="async-defer" title="async-defer">
+<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 <img src="/2016/09/11/提升网站加载速度的%20N%20个方法/async-defer.jpg" alt="async-defer" title="async-defer">
  使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。<br> 使用 defer，会立即开始并行加载，但会延迟到最后才执行。</li>
 <li>分散资源到不同域名<br> 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。</li>
 <li>使用雪碧图(css sprites)来合并小图片<br> 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。</li>
@@ -367,7 +367,7 @@
 </ol>
 <h2 id="减少文件大小"><a href="#减少文件大小" class="headerlink" title="减少文件大小"></a>减少文件大小</h2><p>除了减少文件数量，减少文件大小也同样重要，不过比起合并文件这样简单的减少文件数量的操作，减少文件大小就没来的那么简单了。常用的方法如下：<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/09/11/Web 优化总结/#more" rel="contents">
+            <a class="btn" href="/2016/09/11/提升网站加载速度的 N 个方法/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
