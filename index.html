@@ -267,6 +267,159 @@
             
               
                 
+                <a class="post-title-link" href="/2016/09/13/从Timeline看HTTP1与HTTP2/" itemprop="url">
+                  关于 Chrome 的 Timeline
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-13T18:22:20+08:00" content="2016-09-13">
+              2016-09-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/HTTP/" itemprop="url" rel="index">
+                    <span itemprop="name">HTTP</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/13/从Timeline看HTTP1与HTTP2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/13/从Timeline看HTTP1与HTTP2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/09/13/从Timeline看HTTP1与HTTP2/" class="leancloud_visitors" data-flag-title="关于 Chrome 的 Timeline">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近把博客迁移到了香港的服务器上面，开启了 HTTP2 以及 HSTS，于是活生生的成了本博客的素材。HTTP1 与 HTTP2 是有挺大差别的，首先我注意到的就是 Timeline 的不同。</p>
+<img src="/2016/09/13/从Timeline看HTTP1与HTTP2/http1.png" alt="http1" title="http1">
+<img src="/2016/09/13/从Timeline看HTTP1与HTTP2/http2.png" alt="http2" title="http2">
+<p>应该接触过 Web 开发的都知道这个，其实就下面这个东西。<br><img src="/2016/09/13/从Timeline看HTTP1与HTTP2/timeline.png" alt="timeline" title="timeline"><br>官方似乎并没有解释清楚 Queuing 和 Stalled。在<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=476749#c11" target="_blank" rel="external">这里</a>有这样提到：</p>
+<blockquote>
+<p>Currently, if we’re waiting for a socket to become available:</p>
+<ul>
+<li>we’ll call it stalled if some proxy negotiation happened</li>
+<li>we’ll call it queuing if no proxy/ssl work was required. </li>
+</ul>
+</blockquote>
+<p>所以，我这里就把两个笼统起来说。官方列了几点引起 Queuing 的原因，同时 Stalled 也会因为这些原因而等待(黑人问号???求知道的人解释…)</p>
+<ul>
+<li>请求属于低优先级而阻塞<br>这点应该适用于 SPDY 和 HTTP2 上面，HTTP1 貌似并没有给资源划分优先级的功能，SPDY 的一个新特性就是优先级机制，客户端会给每个请求分配一个优先级，低优先级的，一般也是非关键的，可能会阻塞通道的的请求，会被延后请求。</li>
+<li>等待不可用的 TCP 连接释放而阻塞<br>TODO</li>
+<li>当前域的连接数已达到6条(HTTP1)而阻塞<br>在 HTTP1.1 中，每一个请求和响应都要占用一个 TCP 连接，基于此，一般浏览器都会增加多几条连接出来，现代浏览器一般允许6-8的同域的并发请求连接。如果连接过多，会给服务器造成较大压力。Chromium 在 HTTP1.1 中对同一个域的最大并发请求数量为6，超出会导致阻塞，所以才会有了子域名，独立域名等方式来分散请求，从而加速网站加载，但这又会导致 DNS 耗时增加。同时要注意，这个在 SPDY 和 HTTP2 并不适用，反而适得其反，HTTP2 实现了多路复用和服务端推送，在一条连接上完成所有事情，同一个域的所有 HTTP2 的请求都在一个 TCP 连接上完成，所以包括分散域名，资源合并什么的都不再适用。</li>
+<li>处理磁盘缓存而阻塞<br>TODO</li>
+</ul>
+<p>其他的应该都好理解了。<code>Proxy Negotiation</code>是与代理协商的时间，<code>DNS Lookup</code> 是 DNS 查询的时间，<code>Initial Connection</code> 是建立连接包括 TCP 握手和 SSL 协商需要的时间，<code>SSL</code> 是完成 SSL 握手需要的时间， <code>Request sent</code> 是请求从第一个字节发出到全部发完消耗的时间，<code>Waiting(TTFB)</code> 是请求发送结束后到得到响应花费的时间，TFFB 即 Time to First Byte，最后的 <code>Content Download</code> 就是响应从第一个字节到全部接收消耗的时间。 </p>
+<p>这里讲的很笼统的，并且其实我自己查了很多资料，依然不是很了解，如果有错误的地方还望赐教，以后再继续填坑。</p>
+<hr>
+<ul>
+<li>understanding-resource-timing:<br><a href="https://developers.google.com/web/tools/chrome-devtools/profile/network-performance/understanding-resource-timing" target="_blank" rel="external">https://developers.google.com/web/tools/chrome-devtools/profile/network-performance/understanding-resource-timing</a></li>
+<li>explain empty bars preceeding request:<br><a href="https://bugs.chromium.org/p/chromium/issues/detail?id=476749" target="_blank" rel="external">https://bugs.chromium.org/p/chromium/issues/detail?id=476749</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/09/11/提升网站加载速度的 N 个方法/" itemprop="url">
                   提升网站加载速度的 N 个方法
                 </a>
@@ -808,141 +961,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/06/Underscore源码学习(七)/" itemprop="url">
-                  Underscore 源码学习(七)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-06T15:53:18+08:00" content="2016-08-06">
-              2016-08-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/06/Underscore源码学习(七)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/06/Underscore源码学习(七)/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/08/06/Underscore源码学习(七)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(七)">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Underscore 中间 flatten 相关的方法之前一直不是很理解，现在完全搞懂了，稍微说一下。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> flatten = <span class="function"><span class="keyword">function</span>(<span class="params">input, shallow, strict, output</span>) </span>&#123;</div><div class="line">    output = output || [];</div><div class="line">    <span class="keyword">var</span> idx = output.length;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, length = getLength(input); i &lt; length; i++) &#123;</div><div class="line">        <span class="keyword">var</span> value = input[i];</div><div class="line">        <span class="comment">// 若value为数组，把里面东西去出来赋值给output</span></div><div class="line">        <span class="comment">// 否则直接赋值给output</span></div><div class="line">        <span class="comment">// isArrayLike的判断可以去掉，保留的原因是因为他用来判断value是否为数组很快，可以迅速筛选掉非数组</span></div><div class="line">        <span class="keyword">if</span> (isArrayLike(value) &amp;&amp; (_.isArray(value) || _.isArguments(value))) &#123;</div><div class="line">        <span class="comment">// Flatten current level of array or arguments object.</span></div><div class="line">        <span class="keyword">if</span> (shallow) &#123;</div><div class="line">            <span class="comment">// 如果给了shallow参数，只只遍历一层</span></div><div class="line">            <span class="keyword">var</span> j = <span class="number">0</span>, len = value.length;</div><div class="line">            <span class="keyword">while</span> (j &lt; len) output[idx++] = value[j++];</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// 一直遍历下去，如果是元素则按下面赋值，如果是数组则继续遍历</span></div><div class="line">            flatten(value, shallow, strict, output);</div><div class="line">            idx = output.length;</div><div class="line">        &#125;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!strict) &#123;</div><div class="line">        output[idx++] = value;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> output;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>这个方法不难看懂，作用是将input平铺展开，如果 <code>shallow</code> 为 <code>true</code>，则只展开一层。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>], [[<span class="number">4</span>, [<span class="number">5</span>]]]])              <span class="comment">// [1, 2, 3, 4, 5]</span></div><div class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>], [[<span class="number">4</span>, [<span class="number">5</span>]]]], <span class="literal">true</span>)        <span class="comment">// [1, 2, 3, [4, [5]]]</span></div></pre></td></tr></table></figure></p>
-<p>这里的 <code>strict</code> 参数就是之前一直卡住的原因，就是下面这个地方：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">_.without = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">array, otherArrays</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> _.difference(array, otherArrays);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">_.difference = restArgs(<span class="function"><span class="keyword">function</span>(<span class="params">array, rest</span>) </span>&#123;</div><div class="line">    rest = flatten(rest, <span class="literal">true</span>, <span class="literal">true</span>);</div><div class="line">    <span class="comment">// 遍历array，如果array中一个元素包含在rest中，则去掉该元素</span></div><div class="line">    <span class="keyword">return</span> _.filter(array, <span class="function"><span class="keyword">function</span>(<span class="params">value</span>)</span>&#123;</div><div class="line">        <span class="keyword">return</span> !_.contains(rest, value);</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>这是两个方法，那时候想 <code>without</code> 方法调用的时候, <code>otherArrays</code>是一个数组了，到 <code>difference</code> 方法的时候，这个数组去调用 <code>flatten</code> 方法的时候不是会出问题吗？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">_.flatten([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], <span class="literal">true</span>, <span class="literal">true</span>)        <span class="comment">// []</span></div></pre></td></tr></table></figure></p>
-<p>脑子里面就这样想…卡了好久，等我基本看了全部源码才会过来看才理解了。<br><code>difference</code> 方法的 <code>restArgs</code> 很重要，他们两个是各自独立的方法，但是 <code>without</code> 可以共用 <code>difference</code> 的逻辑。<br>上面那样子理解是有问题的，因为在 <code>without</code> 方法中 <code>otherArrays</code> 如果是[1, 2, 3]，到了 <code>flatten</code> 调用的时候因为 <code>restArgs</code> 的关系他变成了 [[1, 2, 3]]，调用最后返回结果[1, 2, 3]。然后我就纳闷了，加了一层又解除这是何解…<br>不过抛开 <code>without</code> 方法去看 <code>difference</code> 方法就能理解了。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/06/Underscore源码学习(七)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -988,7 +1006,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-count">19</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
