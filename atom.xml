@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-09-14T02:59:54.610Z</updated>
+  <updated>2016-09-14T09:58:22.253Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://ruiming.github.io/2016/09/13/%E4%BB%8ETimeline%E7%9C%8BHTTP1%E4%B8%8EHTTP2/"/>
     <id>https://ruiming.github.io/2016/09/13/从Timeline看HTTP1与HTTP2/</id>
     <published>2016-09-13T10:22:20.000Z</published>
-    <updated>2016-09-14T02:59:54.610Z</updated>
+    <updated>2016-09-14T09:58:22.253Z</updated>
     
     <content type="html"><![CDATA[<p>最近把博客迁移到了香港的服务器上面，开启了 HTTP2 以及 HSTS，于是活生生的成了本博客的素材。HTTP1 与 HTTP2 是有挺大差别的，首先我注意到的就是 Timeline 的不同。</p>
 <img src="/2016/09/13/从Timeline看HTTP1与HTTP2/http1.png" alt="http1" title="http1">
@@ -40,6 +40,7 @@
 <li>当前域的连接数已达到6条(HTTP1)而阻塞<br>在 HTTP1.1 中，每一个请求和响应都要占用一个 TCP 连接，基于此，一般浏览器都会增加多几条连接出来，现代浏览器一般允许6-8的同域的并发请求连接。如果连接过多，会给服务器造成较大压力。Chromium 在 HTTP1.1 中对同一个域的最大并发请求数量为6，超出会导致阻塞，所以才会有了子域名，独立域名等方式来分散请求，从而加速网站加载，但这又会导致 DNS 耗时增加。同时要注意，这个在 SPDY 和 HTTP2 并不适用，反而适得其反，HTTP2 实现了多路复用和服务端推送，在一条连接上完成所有事情，同一个域的所有 HTTP2 的请求都在一个 TCP 连接上完成，所以包括分散域名，资源合并什么的都不再适用。</li>
 <li>处理磁盘缓存而阻塞<br>TODO</li>
 </ul>
+<a id="more"></a>
 <p>其他的应该都好理解了。<code>Proxy Negotiation</code>是与代理协商的时间，<code>DNS Lookup</code> 是 DNS 查询的时间，<code>Initial Connection</code> 是建立连接包括 TCP 握手和 SSL 协商需要的时间，<code>SSL</code> 是完成 SSL 握手需要的时间， <code>Request sent</code> 是请求从第一个字节发出到全部发完消耗的时间，<code>Waiting(TTFB)</code> 是请求发送结束后到得到响应花费的时间，TFFB 即 Time to First Byte，最后的 <code>Content Download</code> 就是响应从第一个字节到全部接收消耗的时间。 </p>
 <p>这里讲的很笼统的，并且其实我自己查了很多资料，依然不是很了解，如果有错误的地方还望赐教，以后再继续填坑。</p>
 <hr>
@@ -52,7 +53,23 @@
     <summary type="html">
     
       &lt;p&gt;最近把博客迁移到了香港的服务器上面，开启了 HTTP2 以及 HSTS，于是活生生的成了本博客的素材。HTTP1 与 HTTP2 是有挺大差别的，首先我注意到的就是 Timeline 的不同。&lt;/p&gt;
-&lt;img src=&quot;/2016/09/13/从Timeline看HTTP
+&lt;img src=&quot;/2016/09/13/从Timeline看HTTP1与HTTP2/http1.png&quot; alt=&quot;http1&quot; title=&quot;http1&quot;&gt;
+&lt;img src=&quot;/2016/09/13/从Timeline看HTTP1与HTTP2/http2.png&quot; alt=&quot;http2&quot; title=&quot;http2&quot;&gt;
+&lt;p&gt;应该接触过 Web 开发的都知道这个，其实就下面这个东西。&lt;br&gt;&lt;img src=&quot;/2016/09/13/从Timeline看HTTP1与HTTP2/timeline.png&quot; alt=&quot;timeline&quot; title=&quot;timeline&quot;&gt;&lt;br&gt;官方似乎并没有解释清楚 Queuing 和 Stalled。在&lt;a href=&quot;https://bugs.chromium.org/p/chromium/issues/detail?id=476749#c11&quot;&gt;这里&lt;/a&gt;有这样提到：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Currently, if we’re waiting for a socket to become available:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;we’ll call it stalled if some proxy negotiation happened&lt;/li&gt;
+&lt;li&gt;we’ll call it queuing if no proxy/ssl work was required. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以，我这里就把两个笼统起来说。官方列了几点引起 Queuing 的原因，同时 Stalled 也会因为这些原因而等待(黑人问号???求知道的人解释…)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;请求属于低优先级而阻塞&lt;br&gt;这点应该适用于 SPDY 和 HTTP2 上面，HTTP1 貌似并没有给资源划分优先级的功能，SPDY 的一个新特性就是优先级机制，客户端会给每个请求分配一个优先级，低优先级的，一般也是非关键的，可能会阻塞通道的的请求，会被延后请求。&lt;/li&gt;
+&lt;li&gt;等待不可用的 TCP 连接释放而阻塞&lt;br&gt;TODO&lt;/li&gt;
+&lt;li&gt;当前域的连接数已达到6条(HTTP1)而阻塞&lt;br&gt;在 HTTP1.1 中，每一个请求和响应都要占用一个 TCP 连接，基于此，一般浏览器都会增加多几条连接出来，现代浏览器一般允许6-8的同域的并发请求连接。如果连接过多，会给服务器造成较大压力。Chromium 在 HTTP1.1 中对同一个域的最大并发请求数量为6，超出会导致阻塞，所以才会有了子域名，独立域名等方式来分散请求，从而加速网站加载，但这又会导致 DNS 耗时增加。同时要注意，这个在 SPDY 和 HTTP2 并不适用，反而适得其反，HTTP2 实现了多路复用和服务端推送，在一条连接上完成所有事情，同一个域的所有 HTTP2 的请求都在一个 TCP 连接上完成，所以包括分散域名，资源合并什么的都不再适用。&lt;/li&gt;
+&lt;li&gt;处理磁盘缓存而阻塞&lt;br&gt;TODO&lt;/li&gt;
+&lt;/ul&gt;
     
     </summary>
     
