@@ -267,6 +267,173 @@
             
               
                 
+                <a class="post-title-link" href="/2016/09/29/Angular 最佳实践总结 (一)/" itemprop="url">
+                  Angular 最佳实践总结 (一)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-29T14:45:13+08:00" content="2016-09-29">
+              2016-09-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/29/Angular 最佳实践总结 (一)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/29/Angular 最佳实践总结 (一)/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/09/29/Angular 最佳实践总结 (一)/" class="leancloud_visitors" data-flag-title="Angular 最佳实践总结 (一)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>搞了快一年的 Angular，Angular 真的是一个非常强大非常齐全非常好用的框架，而且拥有强大的社区支持，虽然踩了很多坑，但是仍然无悔学习了这样一个框架。Angular 2 已经正式发布了，我也打算学 Angular2 去了，现在手头上还有一个用 Angular 的项目，这个项目我是想把我学到的很多 Angular 的最佳实践都用进去，借此我就想干脆也写几篇博客总结下好了，我写的比较散，想到什么就说什么。</p>
+<h2 id="使用单次绑定或单向绑定"><a href="#使用单次绑定或单向绑定" class="headerlink" title="使用单次绑定或单向绑定"></a>使用单次绑定或单向绑定</h2><p>什么，Angular 还有这个，确实有，从 Angular 1.3 开始就有了 once-time binding，Angular 1.5 开始支持了 one-way binding。看看他们的用法：</p>
+<p>单次绑定很简单，加上<code>::</code> 就可以了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;p&gt;&#123;&#123;::vm.title&#125;&#125;&lt;<span class="regexp">/p&gt;</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>An expression that starts with <code>::</code> is considered a one-time expression. One-time expressions will stop recalculating once they are stable, which happens after the first digest if the expression result is a non-undefined value (see value stabilization algorithm below).</p>
+</blockquote>
+<p>当 digest 结束之后并且单次绑定的值不为 undefined 时，这个值将不再被监听。官方称这个算法为 <code>Value stabilization algorithm</code> 还解释了一下。看到这个，再想起 Angular 源码那注释，觉得真的业界良心啊。想具体了解下单次绑定，出门右转 -&gt; <a href="https://docs.angularjs.org/guide/expression">docs.angularjs</a></p>
+<p>其实 Angular1 还是不断再发展，现在最新的是 1.5.9，加了很多新的东西，也做了很多性能优化。单向绑定也是 1.5 之后才引入的新东西。1.5 也引入了一个新的东西叫 component，和 directive 差不多，具体我没用过我也不太了解，不过写法简洁了很多。单向绑定主要就是用于 component 和 directive 的。</p>
+<p>随便找个比较简单的例子来说下，</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line"><span class="meta">  'use strict'</span>;</div><div class="line">  <span class="keyword">var</span> app = angular.module(<span class="string">'app'</span>);</div><div class="line"></div><div class="line">  app.component(<span class="string">'menuBar'</span>, &#123;</div><div class="line">    <span class="comment">// defines a two way binding in and out of the component</span></div><div class="line">    bindings: &#123;</div><div class="line">      brand:<span class="string">'&lt;'</span></div><div class="line">     &#125;,</div><div class="line">    <span class="comment">// Load the template</span></div><div class="line">    templateUrl: <span class="string">'/js/components/appComponent.html'</span>,</div><div class="line">    controller: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// A list of menus</span></div><div class="line">      <span class="keyword">this</span>.menu = [&#123;</div><div class="line">        name: <span class="string">"Home"</span>,</div><div class="line">        component: <span class="string">"home"</span></div><div class="line">      &#125;, &#123;</div><div class="line">        name: <span class="string">"About"</span>,</div><div class="line">        component: <span class="string">"about"</span></div><div class="line">      &#125;, &#123;</div><div class="line">        name: <span class="string">"Contact"</span>,</div><div class="line">        component: <span class="string">"contact"</span></div><div class="line">      &#125;];</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<p>单向绑定就上面的 <code>&lt;</code> ，我们知道一般有 <code>@</code>, <code>=</code>, <code>&amp;</code> 三种方式，分别表示绑定字面量，绑定表达式，绑定事件，而新增的 <code>&lt;</code> 是用来实现单向绑定的。上面这段代码是从别的地方找来的，由于我自己没有使用过，所以暂时不过多介绍，晚点搞清楚了再补充下。</p>
+<h2 id="谨慎使用-interval"><a href="#谨慎使用-interval" class="headerlink" title="谨慎使用 $interval"></a>谨慎使用 $interval</h2><p>如果我们要实现实时显示当前时间的效果，有三种方式:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">vm.time = <span class="built_in">Date</span>.now();</div><div class="line"></div><div class="line"><span class="comment">// 方式一</span></div><div class="line">setInterval(() =&gt; &#123;</div><div class="line">  vm.time = <span class="built_in">Date</span>.now();</div><div class="line">  $scope.$digest();</div><div class="line">&#125;, <span class="number">1000</span>);</div><div class="line"></div><div class="line"><span class="comment">// 方式二</span></div><div class="line">setInterval(() =&gt; &#123;</div><div class="line">  $scope.$apply(() =&gt; &#123;</div><div class="line">    vm.time = <span class="built_in">Date</span>.now();</div><div class="line">  &#125;)</div><div class="line">&#125;, <span class="number">1000</span>);</div><div class="line"></div><div class="line"><span class="comment">// 方式三</span></div><div class="line">$interval(() =&gt; &#123;</div><div class="line">  vm.time = <span class="built_in">Date</span>.now();</div><div class="line">&#125;, <span class="number">1000</span>);</div></pre></td></tr></table></figure>
+<p>考虑到页面还有其他双向绑定量，你觉得上面三种方式哪种性能消耗会小一点？</p>
+<p>我这边测试了下，三种方式导致当前 digest 所执行的 watcher 表达式数量分别是　方式一 (34) &lt; 方式二 (140) = 方式三 (140)。</p>
+
+
+
+<p>我感觉有种被骗的感觉，我记得大家都说不要手动调用 <code>$digest</code> 啊要用 <code>$apply</code> 啊… 但事实是这里的方式一是性能最好的，如果要说原因，那是因为<code>$scope.$digest()</code> 只会触发当前 scope 进行 digest，而其余的就会从 <code>$rootScope</code> 下来整个都进行 digest，对于我们这里只是想要实现时间变化的需求来说就显得有点多于了，这种情况下还是方式一合适些。当然了你也可以用原生 JS 来写，但这样就使用不了 Angular 的日期格式化功能了~</p>
+<p>不少人认为 Angular 脏检查是轮询，如果不加限制使用 <code>$interval</code>，不就和轮询没区别了。所以能少用就少用，这里不用 <code>$interval</code> 是因为它会在每次循环结束自动调用 <code>$rootScope</code> 上面的 digest，因此使用 setInterval，如果你不触发 digest，那么这个数据的变化是不会同步到视图中的，所以我们手动的触发了当前作用于的 digest。</p>
+<h2 id="ng-repeat-使用-trackby-优化"><a href="#ng-repeat-使用-trackby-优化" class="headerlink" title="ng-repeat 使用 trackby 优化"></a>ng-repeat 使用 trackby 优化</h2><p>Angular 会为每个 ngModel 生成一个 <code>hashkey</code>，并使用他来跟踪其值的变化，当我们使用 ng-repeat 时，如果数组的内容发生了变化，Angular 不会重新销毁和渲染整个 DOM，而是找出变化的一部分做出修改，由于 <code>hashkey</code> 是根据节点内容产生的，这意味着我们的数组中不能有完全一样的两个节点存在。并且当数组的子项为对象时，用一个类似的新的数组覆盖它会导致 Angular 销毁并重新渲染整个 DOM。我们试一试便知。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 不使用 track by --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">ng-repeat</span>=<span class="string">"item in items"</span>&gt;</span></div><div class="line">  &#123;&#123;item.value&#125;&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- 使用 track by --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">ng-repeat</span>=<span class="string">"item in vm.items track by item.key"</span>&gt;</span></div><div class="line">  &#123;&#123;item.value&#125;&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">p</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>我们在控制器里面这样写看下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vm.items = [&#123;key: <span class="number">1</span>, value: <span class="number">2</span>&#125;, &#123;key: <span class="number">3</span>, value: <span class="number">4</span>&#125;, &#123;key: <span class="number">5</span>, value: <span class="number">6</span>&#125;];</div><div class="line">$timeout(() =&gt; vm.items = [&#123;key: <span class="number">1</span>, value: <span class="number">2</span>&#125;, &#123;key: <span class="number">3</span>, value: <span class="number">4</span>&#125;, &#123;key: <span class="number">5</span>, value: <span class="number">6</span>&#125;], <span class="number">2000</span>);</div><div class="line">$timeout(() =&gt; vm.items.push(&#123;key: <span class="number">7</span>, value: <span class="number">8</span>&#125;), <span class="number">3000</span>);</div></pre></td></tr></table></figure>
+<p>可以自己试一试，然后调出开发者工具查看下 DOM 的变化</p>
+<p>结果是：</p>
+<ul>
+<li><p>不使用 track by</p>
+<p>2 秒后重新渲染全部子节点，3 秒后添加渲染了一个新节点。</p>
+</li>
+<li><p>使用 track by</p>
+<p>2 秒后没变化，3秒后添加渲染了一个新节点。</p>
+</li>
+</ul>
+<p>他们的区别就在数组重新赋值上面，还有就是数组必须是一个由对象组成的数组。在有些情况下，我们可能需要使用一个新的数组覆盖旧的数组，而他们之间可能有部分是相同的，如果我们使用 trackBy，Angular 就可以利用这一部分已经渲染好的 DOM，从而达到了优化的目的。</p>
+<p>如果没有特别的唯一标识可以指定，也可以直接使用 <code>track by $index</code>，也可以起到一样的作用。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/09/29/Angular 最佳实践总结 (一)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/09/24/Angular1之折腾记/" itemprop="url">
                   Angular1之折腾记
                 </a>
@@ -813,146 +980,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/06/浅谈JavaScript模块定义规范/" itemprop="url">
-                  浅谈 JavaScript 模块定义规范
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-06T22:28:35+08:00" content="2016-08-06">
-              2016-08-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/06/浅谈JavaScript模块定义规范/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/06/浅谈JavaScript模块定义规范/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/08/06/浅谈JavaScript模块定义规范/" class="leancloud_visitors" data-flag-title="浅谈 JavaScript 模块定义规范">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>JS 模块定义常见的有三种方式，即 AMD, CMD 和 CommonJS。其实还有一个 UMD，他是 CommonJS 和 AMD 揉和在一起而已。不过这些都 out 了，拥抱 ES6 吧。话虽这么说，你让那些不用 ES6 不用 babel 的怎么活，所以还是要了解下滴。</p>
-<h2 id="CommonJS"><a href="#CommonJS" class="headerlink" title="CommonJS"></a>CommonJS</h2><p>CommonJS 是服务端即 Node.js 采用的模块化方案，我们应该都很熟悉了。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</div><div class="line">fs.readFileSync();</div></pre></td></tr></table></figure></p>
-<p>这个过程是同步的，只有成功加载 <code>fs</code> 后才能执行后面的步骤。但在服务器文件都在本地，所以这个问题不大。但这个在浏览器就不合适了，如果文件加载耗时很长，将导致一直等待。</p>
-<h2 id="AMD"><a href="#AMD" class="headerlink" title="AMD"></a>AMD</h2><p>AMD 全称 Asynchronous Module Definition，意思就是异步模块定义。<br>用法如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>([<span class="string">'math'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">math</span>) </span>&#123;</div><div class="line">    math.add(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>math 模块的加载和 <code>math.add()</code> 方法的执行不是同步的，这样浏览器就不会假死。<br>RequireJs 和 CurlJs 实现了 AMD 规范，将他们嵌入网页，就可以在浏览器端进行模块化编程了。<br>关于 AMD 的详细模块定义可以参考<a href="https://github.com/amdjs/amdjs-api/wiki/AMD-(%E4%B8%AD%E6%96%87%E7%89%88">wiki</a>)。这里给出 Underscore 的 AMD 定义方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> define == <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</div><div class="line">    define(<span class="string">'underscore'</span>, [], <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> _;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="CMD"><a href="#CMD" class="headerlink" title="CMD"></a>CMD</h2><p>CMD 全称 Common Module Definition，意思就是通用模块定义。。<br>对于依赖的模块，AMD 是提前执行，而 CMD 是延迟执行。AMD 推崇依赖前置，而 CMD 则推崇依赖就近。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params">require, exports, module</span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> math = <span class="built_in">require</span>(<span class="string">'./math'</span>);</div><div class="line">    math.add(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>CMD 的主要实现是 SeaJS<br>AMD 预先加载所有依赖，使用的时候才去执行，速度快，可以并行加载多个模块。但这就需要开发的时候把全部依赖都提前定义，不便于开发和阅读，而且部分依赖（弱依赖）可能只在少数情况下使用。<br>CMD 只有在真正需要的时候才去加载依赖，使用的时候才去定义执行，但这个加载逻辑偏重，耗性能。</p>
-<h2 id="UMD"><a href="#UMD" class="headerlink" title="UMD"></a>UMD</h2><p>UMD 全称 Universal Module Definition。<br>UMD 是 AMD 和 CommonJS 的揉和，他优先使用 CommonJS 的加载方式，其次才使用 AMD 的加载方式。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">window, factory</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> exports === <span class="string">'object'</span>) &#123;</div><div class="line">     </div><div class="line">        <span class="built_in">module</span>.exports = factory();</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</div><div class="line">     </div><div class="line">        define(factory);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">     </div><div class="line">        <span class="built_in">window</span>.eventUtil = factory();</div><div class="line">    &#125;</div><div class="line">&#125;)(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">//module ...</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>其实就是一个服务端和浏览端通用的模块解决方案。</p>
-<h2 id="ES6-Module"><a href="#ES6-Module" class="headerlink" title="ES6 Module"></a>ES6 Module</h2><p>ES6 在语言规格的层面上实现了模块功能，并且实现非常简单，完全可以替代现有的模块加载方案，成为浏览器和服务端都通用的模块解决方案。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/06/浅谈JavaScript模块定义规范/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -998,7 +1025,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-count">20</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

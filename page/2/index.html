@@ -267,6 +267,146 @@
             
               
                 
+                <a class="post-title-link" href="/2016/08/06/浅谈JavaScript模块定义规范/" itemprop="url">
+                  浅谈 JavaScript 模块定义规范
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-06T22:28:35+08:00" content="2016-08-06">
+              2016-08-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/06/浅谈JavaScript模块定义规范/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/06/浅谈JavaScript模块定义规范/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/08/06/浅谈JavaScript模块定义规范/" class="leancloud_visitors" data-flag-title="浅谈 JavaScript 模块定义规范">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>JS 模块定义常见的有三种方式，即 AMD, CMD 和 CommonJS。其实还有一个 UMD，他是 CommonJS 和 AMD 揉和在一起而已。不过这些都 out 了，拥抱 ES6 吧。话虽这么说，你让那些不用 ES6 不用 babel 的怎么活，所以还是要了解下滴。</p>
+<h2 id="CommonJS"><a href="#CommonJS" class="headerlink" title="CommonJS"></a>CommonJS</h2><p>CommonJS 是服务端即 Node.js 采用的模块化方案，我们应该都很熟悉了。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</div><div class="line">fs.readFileSync();</div></pre></td></tr></table></figure></p>
+<p>这个过程是同步的，只有成功加载 <code>fs</code> 后才能执行后面的步骤。但在服务器文件都在本地，所以这个问题不大。但这个在浏览器就不合适了，如果文件加载耗时很长，将导致一直等待。</p>
+<h2 id="AMD"><a href="#AMD" class="headerlink" title="AMD"></a>AMD</h2><p>AMD 全称 Asynchronous Module Definition，意思就是异步模块定义。<br>用法如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>([<span class="string">'math'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">math</span>) </span>&#123;</div><div class="line">    math.add(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>math 模块的加载和 <code>math.add()</code> 方法的执行不是同步的，这样浏览器就不会假死。<br>RequireJs 和 CurlJs 实现了 AMD 规范，将他们嵌入网页，就可以在浏览器端进行模块化编程了。<br>关于 AMD 的详细模块定义可以参考<a href="https://github.com/amdjs/amdjs-api/wiki/AMD-(%E4%B8%AD%E6%96%87%E7%89%88">wiki</a>)。这里给出 Underscore 的 AMD 定义方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> define == <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</div><div class="line">    define(<span class="string">'underscore'</span>, [], <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> _;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="CMD"><a href="#CMD" class="headerlink" title="CMD"></a>CMD</h2><p>CMD 全称 Common Module Definition，意思就是通用模块定义。。<br>对于依赖的模块，AMD 是提前执行，而 CMD 是延迟执行。AMD 推崇依赖前置，而 CMD 则推崇依赖就近。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params">require, exports, module</span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> math = <span class="built_in">require</span>(<span class="string">'./math'</span>);</div><div class="line">    math.add(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>CMD 的主要实现是 SeaJS<br>AMD 预先加载所有依赖，使用的时候才去执行，速度快，可以并行加载多个模块。但这就需要开发的时候把全部依赖都提前定义，不便于开发和阅读，而且部分依赖（弱依赖）可能只在少数情况下使用。<br>CMD 只有在真正需要的时候才去加载依赖，使用的时候才去定义执行，但这个加载逻辑偏重，耗性能。</p>
+<h2 id="UMD"><a href="#UMD" class="headerlink" title="UMD"></a>UMD</h2><p>UMD 全称 Universal Module Definition。<br>UMD 是 AMD 和 CommonJS 的揉和，他优先使用 CommonJS 的加载方式，其次才使用 AMD 的加载方式。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">window, factory</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> exports === <span class="string">'object'</span>) &#123;</div><div class="line">     </div><div class="line">        <span class="built_in">module</span>.exports = factory();</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</div><div class="line">     </div><div class="line">        define(factory);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">     </div><div class="line">        <span class="built_in">window</span>.eventUtil = factory();</div><div class="line">    &#125;</div><div class="line">&#125;)(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">//module ...</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>其实就是一个服务端和浏览端通用的模块解决方案。</p>
+<h2 id="ES6-Module"><a href="#ES6-Module" class="headerlink" title="ES6 Module"></a>ES6 Module</h2><p>ES6 在语言规格的层面上实现了模块功能，并且实现非常简单，完全可以替代现有的模块加载方案，成为浏览器和服务端都通用的模块解决方案。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/08/06/浅谈JavaScript模块定义规范/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/06/Underscore源码学习(七)/" itemprop="url">
                   Underscore 源码学习(七)
                 </a>
@@ -817,141 +957,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/01/Underscore源码学习(四)/" itemprop="url">
-                  Underscore 源码学习(四)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-01T15:37:14+08:00" content="2016-08-01">
-              2016-08-01
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/01/Underscore源码学习(四)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/01/Underscore源码学习(四)/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/08/01/Underscore源码学习(四)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(四)">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>终于看完了 Underscore 的集合部分了，看 Underscore 源码真的是长见识了，感觉真的受益匪浅。<br>但是集合里面方法也挺多的，我都不知道该拿哪些出来讲下，最近接触了 Redux，就说下 createRedux 这个方法吧，为后面讲 Redux 做个铺垫。<br>先看源码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> createReduce = <span class="function"><span class="keyword">function</span>(<span class="params">dir</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> reducer = <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, initial</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),</div><div class="line">        length = (keys || obj).length,</div><div class="line">        index = dir &gt; <span class="number">0</span> ? <span class="number">0</span> : length - <span class="number">1</span>;</div><div class="line">    <span class="keyword">if</span>(!initial) &#123;</div><div class="line">      memo = obj[keys ? keys[index] : index];</div><div class="line">      index += dir;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">for</span>(; index &gt;= <span class="number">0</span> &amp;&amp; index &lt; length; index += dir) &#123;</div><div class="line">      <span class="keyword">var</span> currentKey = keys ? keys[index] : index;</div><div class="line">      memo = iteratee(memo, obj[currentKey], currentKey, obj);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> memo;</div><div class="line">  &#125;;</div><div class="line">  </div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</div><div class="line">    <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>这是 reduce 函数的工厂函数，用于生成一个 reducer ，dir 是决定方向用的。<br>我们从最后一个 return 开始看起，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">obj, iteratee, memo, context</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt;= <span class="number">3</span>;</div><div class="line">  <span class="keyword">return</span> reducer(obj, opitimizeCb(iteratee, context, <span class="number">4</span>), memo, initial);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>我们使用 reduce 的时候，如果没有指定 memo 值，这时候参数个数只有两个即 obj 和 iteratee，所以 initial 为 false 表示没有初始化。对于没初始的情况，就是增加了一个 if 语句里面的内容而已，作用是把第一个元素作为 memo 值。<br>接着就是有没有初始化都共用的部分了，通过一个 for 循环把 keys 遍历，并把相应的信息交给 iteratee 去处理，参数 memo 是上一次处理结果。遍历完后把最后的处理结果 memo 返回就完了。<br>这个函数派生了两个方法，即<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">_.reduce = _.foldl = _.inject = createReduce(<span class="number">1</span>);</div><div class="line">_.reduceRight = _.foldr = createReduce(<span class="number">-1</span>);</div></pre></td></tr></table></figure></p>
-<p>只是方向不同而已。<br>举个例子方便理解些，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> sum = _.reduce([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="function"><span class="keyword">function</span>(<span class="params">accumulator, value, index, collection</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> accmulator + value;</div><div class="line">&#125;, <span class="number">0</span>);</div></pre></td></tr></table></figure></p>
-<p>结果为 15 这个应该很明显，js 原生也有 reduce 方法，如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">left, right</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> left + right;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/01/Underscore源码学习(四)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -997,7 +1002,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-count">20</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
