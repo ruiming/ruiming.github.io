@@ -84,7 +84,7 @@
     <link href="https://ruiming.github.io/2016/09/11/%E6%8F%90%E5%8D%87%E7%BD%91%E7%AB%99%E5%8A%A0%E8%BD%BD%E9%80%9F%E5%BA%A6%E7%9A%84%20N%20%E4%B8%AA%E6%96%B9%E6%B3%95/"/>
     <id>https://ruiming.github.io/2016/09/11/提升网站加载速度的 N 个方法/</id>
     <published>2016-09-11T05:53:33.000Z</published>
-    <updated>2016-09-13T09:08:40.226Z</updated>
+    <updated>2016-09-29T05:07:37.555Z</updated>
     
     <content type="html"><![CDATA[<p>Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。以下针对 HTTP1 和 HTTP1.1，在 HTTP2 中，很多最佳实践都适得其反了。</p>
 <h2 id="减少文件传输数量"><a href="#减少文件传输数量" class="headerlink" title="减少文件传输数量"></a>减少文件传输数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。</p>
@@ -123,8 +123,7 @@
  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">	<span class="keyword">var</span> ArrayProto = <span class="built_in">Array</span>.prototype, ObjProto = <span class="built_in">Object</span>.prototype;</div><div class="line"><span class="keyword">var</span> SymbolProto = <span class="keyword">typeof</span> <span class="built_in">Symbol</span> !== <span class="string">'undefined'</span> ? <span class="built_in">Symbol</span>.prototype : <span class="literal">null</span>;</div><div class="line"><span class="keyword">var</span> push = ArrayProto.push,</div><div class="line">    slice = ArrayProto.slice,</div><div class="line">    toString = ObjProto.toString,</div><div class="line">    hasOwnProperty = ObjProto.hasOwnProperty;</div></pre></td></tr></table></figure>
 <p> <code>Array.prototype.push</code> 是无法压缩的，而如果我们赋值 <code>ArrayProto = Array.prototype</code> ，那么 <code>ArrayProto</code> 就可以被替换掉，同理，上面中的 <code>push</code>, <code>slice</code> 等都是对压缩友好的。除此之外，一般的压缩工具还会把 <code>undefined</code>  都替换为 <code>void 0</code>，一来可以避免 <code>underfined</code> 重写的问题，二来字符数少了。目前我比较清楚的就这两个，有兴趣的话可以去了解下压缩的过程，对比下压缩前后。</p>
 </li>
-<li><p>避免引入无用代码<br>有一种比较常见的场景是我们使用了 FontAweSome 等的文件后，虽然我们可以很方便的通过写 CSS 类名来添加修改图标，但我们用到的毕竟时少数图标，所以其他没有用到的图标的引入就是非必须的。这个我自己没有实践过，可以看看<a href="http://stackoverflow.com/questions/15331525/optimize-font-awesome-for-only-used-classes" target="_blank" rel="external">Optimize Font Awesome for only used classes</a>这里的讨论。<br>除了去做筛选之外，还有的办法就是我们不要引入整个图标文件，有些提供图标的网站可以让你自己选择需要的图标后以字体和 CSS 文件的形式下载下来。这样做就稍微麻烦一点，不过既然你要图文件小，那麻烦一点也没什么。<br>另外，在使用一些框架的时候，他们可能默认开启了调试模式。比如 Angular，在 Angular 的视图上面我们会经常看到视图上绑定的变量出现了 <code>ng-bind</code> 的 CSS 类名，以及出现再 <code>ng-if</code> 和 <code>ng-repeat</code> 上的注释。这些也是可以关掉的。Angular 只需要在 config 中添加下面这一句话即可。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$compileProvider.debugInfoEnabled(<span class="literal">false</span>);</div></pre></td></tr></table></figure>
+<li><p>避免引入无用代码<br>有一种比较常见的场景是我们使用了 FontAweSome 等的文件后，虽然我们可以很方便的通过写 CSS 类名来添加修改图标，但我们用到的毕竟时少数图标，所以其他没有用到的图标的引入就是非必须的。这个我自己没有实践过，可以看看<a href="http://stackoverflow.com/questions/15331525/optimize-font-awesome-for-only-used-classes" target="_blank" rel="external">Optimize Font Awesome for only used classes</a>这里的讨论。<br>除了去做筛选之外，还有的办法就是我们不要引入整个图标文件，有些提供图标的网站可以让你自己选择需要的图标后以字体和 CSS 文件的形式下载下来。这样做就稍微麻烦一点，不过既然你要图文件小，那麻烦一点也没什么。</p>
 </li>
 </ol>
 <h2 id="其他-Web-提速手段"><a href="#其他-Web-提速手段" class="headerlink" title="其他 Web 提速手段"></a>其他 Web 提速手段</h2><p>前面集中就文件请求数和文件体积开展讨论，其实还远远不止上面这些办法。常用的还有以下这些。</p>
