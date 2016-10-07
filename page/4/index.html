@@ -267,6 +267,141 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/22/JavaScript闭包，继承与原型链/" itemprop="url">
+                  JavaScript 闭包，继承与原型链
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-22T15:03:23+08:00" content="2016-07-22">
+              2016-07-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/22/JavaScript闭包，继承与原型链/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/22/JavaScript闭包，继承与原型链/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/22/JavaScript闭包，继承与原型链/" class="leancloud_visitors" data-flag-title="JavaScript 闭包，继承与原型链">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p> JavaScript 闭包和原型链学习心得，如果有不对的地方望指出。</p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>什么是闭包，有很多说法，我的理解是一个函数可以记住和使用外部变量，保存这个变量的引用在自己的一个环境之中。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeAdder</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">y</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x + y;</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> add5 = makeAdder(<span class="number">5</span>);</div><div class="line"><span class="keyword">var</span> add10 = makeAdder(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(add5(<span class="number">2</span>));  <span class="comment">// 7</span></div><div class="line"><span class="built_in">console</span>.log(add10(<span class="number">2</span>)); <span class="comment">// 12</span></div></pre></td></tr></table></figure></p>
+<p>这个例子中， makeAdder 是一个函数工厂，add5 和 add10 就是闭包，他们记住了外部变量 x。通常一个函数执行完毕后其运行期上下文会被释放，但由于闭包的属性包含了与运行期上下文作用域链相同的对象引用，导致这个激活对象无法销毁，这就会导致内存消耗，另外，闭包内部的作用域链并不处在闭包作用域链的前端，并且闭包经常使用外部变量的话，导致对象属性的遍历经常到其原型上面去（一个解决方法是把他赋值到闭包自身的作用域上面），从而增加性能消耗。<br>既然闭包会导致内存增加和性能消耗，那为什么那么多人还使用它呢？上面的例子可能不太能说明问题，我们看下其他例子。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Counter = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> privateCounter = <span class="number">0</span>;</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">changeBy</span>(<span class="params">val</span>) </span>&#123;</div><div class="line">    privateCounter += val;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    increment: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      changeBy(<span class="number">1</span>);</div><div class="line">    &#125;,</div><div class="line">    decrement: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      changeBy(<span class="number">-1</span>);</div><div class="line">    &#125;,</div><div class="line">    value: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> privateCounter;</div><div class="line">    &#125;</div><div class="line">  &#125;   </div><div class="line">&#125;)();</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 0 */</span></div><div class="line">Counter.increment();</div><div class="line">Counter.increment();</div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 2 */</span></div><div class="line">Counter.decrement();</div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 1 */</span></div></pre></td></tr></table></figure></p>
+<p>这个例子中外部只能通过 value 方法获取 privateCounter 的值，只能通过 increment 和 decrement 方法来改变 privateCounter 的值，无法直接获取到 priavateCounter 和调用 changeBy 函数。这种模式叫 module模式，因为大部分模块都是这样写的，包括 Underscore 也是这样。上篇中就说道了 Underscore 使用了立即执行函数，其用途其一是为了不污染外部变量，因为 JavaScript 是函数作用域，其次它利用了闭包的特性又可以保持函数内部闭包的可调用和被闭包所引用变量在闭包环境中的存在，同时函数内部可以定义一些私有变量和私有方法。我们无需担心这些变量和函数在外部函数执行完毕结束后的失效。<br>当你看到函数里面又 return 函数时，同时该函数又使用了外部变量，则该函数就是一个闭包。<br>关于闭包还有一个很容易犯错的地方，比如你想实现第一秒输出1,第二秒输出2,以此类推。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(i);</div><div class="line">    &#125;, i*<span class="number">1000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>但是实际运行结果是第一秒输出6,第二秒输出6…<br>闭包是记住了外部变量的引用，每次循环都建立了一个 timer 函数，但 console 并还没有被执行，当循环结束后确实是建立了5个计时器或者说5个闭包，但当开始执行 console 的时候，由于这些闭包所引用的 i 此时结果为6，所以会输出5次 6。<br>更能说明问题些，我们稍作修改下：<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/22/JavaScript闭包，继承与原型链/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/20/Underscore源码学习(一)/" itemprop="url">
                   Underscore 源码学习(一)
                 </a>
@@ -853,182 +988,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/06/18/谈谈前端自动构建工具gulp/" itemprop="url">
-                  谈谈前端自动构建工具 Gulp
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-06-18T20:18:17+08:00" content="2016-06-18">
-              2016-06-18
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/06/18/谈谈前端自动构建工具gulp/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/18/谈谈前端自动构建工具gulp/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/06/18/谈谈前端自动构建工具gulp/" class="leancloud_visitors" data-flag-title="谈谈前端自动构建工具 Gulp">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。</p>
-<p>​Gulp 上面优秀的插件特别多，我使用的有这些： </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> gulp <span class="keyword">from</span> <span class="string">'gulp'</span></div><div class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">'gulp-babel'</span></div><div class="line"><span class="keyword">import</span> uglify <span class="keyword">from</span> <span class="string">'gulp-uglify'</span></div><div class="line"><span class="keyword">import</span> ngAnnotate <span class="keyword">from</span> <span class="string">'gulp-ng-annotate'</span></div><div class="line"><span class="keyword">import</span> concat <span class="keyword">from</span> <span class="string">'gulp-concat'</span></div><div class="line"><span class="keyword">import</span> cleanCSS <span class="keyword">from</span> <span class="string">'gulp-clean-css'</span></div><div class="line"><span class="keyword">import</span> imagemin <span class="keyword">from</span> <span class="string">'gulp-imagemin'</span></div><div class="line"><span class="keyword">import</span> minifyHtml <span class="keyword">from</span> <span class="string">'gulp-minify-html'</span></div><div class="line"><span class="keyword">import</span> ngTemplate <span class="keyword">from</span> <span class="string">'gulp-ng-template'</span></div><div class="line"><span class="keyword">import</span> plumber <span class="keyword">from</span> <span class="string">'gulp-plumber'</span></div><div class="line"><span class="keyword">import</span> sass <span class="keyword">from</span> <span class="string">'gulp-sass'</span></div><div class="line"><span class="keyword">import</span> usemin <span class="keyword">from</span> <span class="string">'gulp-usemin'</span></div><div class="line"><span class="keyword">import</span> runSequence <span class="keyword">from</span> <span class="string">'gulp-run-sequence'</span></div><div class="line"><span class="keyword">import</span> eslint <span class="keyword">from</span> <span class="string">'gulp-eslint'</span></div></pre></td></tr></table></figure>
-<ul>
-<li><p>gulp-uglify</p>
-<p>对 JavaScript 进行压缩的插件，可以有效减少 JavaScript 的文件大小。</p>
-</li>
-<li><p>gulp-ng-annotate</p>
-<p>对 Angular 的代码进行转换，因为使用上面的 <code>gulp-uglify</code> 对 Angular 的代码进行压缩时会破坏 Angular 文件的依赖注入功能，导致无法正常工作，这个基本上是 Angular 开发必备的了。</p>
-</li>
-<li><p>gulp-concat</p>
-<p>文件合并，前端合并文件以减少请求是非常重要的优化技巧。</p>
-</li>
-<li><p>gulp-clean-css</p>
-<p>字如其名，对css 进行合并压缩。</p>
-</li>
-<li><p>gulp-imagemin</p>
-<p>对图片进行压缩。</p>
-</li>
-<li><p>gulp-minify-html</p>
-<p>对html文件进行压缩。</p>
-</li>
-<li><p>gulp-ng-template</p>
-<p>这个也是 Angular 里面比较响当当的一个插件了，他的作用是将 Angular 模板存到 templateCache ，可以提升模板加载速度。</p>
-</li>
-<li><p>gulp-plumber</p>
-<p>这个貌似也是 Gulp 必不可少的插件之一了，可以避免 Gulp 出错导致整个进程崩掉。</p>
-</li>
-<li><p>gulp-sass</p>
-<p>编译 sass 代码为 css，非常方便。</p>
-</li>
-<li><p>gulp-run-sequence</p>
-<p>可以让 Gulp 的任务顺序执行，有些时候我们希望 Gulp 执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了。</p>
-</li>
-<li><p>gulp-usemin</p>
-<p>这个是用来从工作环境到生产环境进行部署的工具。</p>
-</li>
-<li><p>gulp-eslint</p>
-<p>eslint 代码检查。</p>
-</li>
-</ul>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/06/18/谈谈前端自动构建工具gulp/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1069,7 +1033,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-count">21</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1077,7 +1041,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1086,7 +1050,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

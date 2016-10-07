@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-09-30T03:10:31.796Z</updated>
+  <updated>2016-10-07T08:58:37.994Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -14,6 +14,253 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>编译原理与PEG.js</title>
+    <link href="https://ruiming.github.io/2016/10/07/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E4%B8%8EPEG-js/"/>
+    <id>https://ruiming.github.io/2016/10/07/编译原理与PEG-js/</id>
+    <published>2016-10-07T08:54:32.000Z</published>
+    <updated>2016-10-07T08:58:37.994Z</updated>
+    
+    <content type="html"><![CDATA[<p>本着从没有翻译过技术文档和觉得翻译一下应该对文档会更加深入了解的想法来翻译，译文可能存在大量错误和不流畅的地方，建议自己阅读官方文档，本译文仅供参考，欢迎对错误指正。</p>
+<h1 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h1><p>这学期开始上编译原理这门课，比较纳闷的一点是老师要求用 Java。作为一个想学好编译原理的 Java 黑，自然要寻找另一门可以进行实践的语言，编译在 JavaScript 中应用非常广泛，几乎所有主流的语言都可以编译到 JavaScript，Babel 编译 ES6 到 ES5，以及 CofferScript, TypeScript, JSX 等等编译为 JavaScript。另外，JavaScript 作为一门函数第一公民的语言，我想用来做编译也是特别方便的。一开始看了 Jison，感觉还是挺简单的，不过现在貌似流行 PEG.js，老实说我并不知道他们区别，我还只是一个初学者，或者初学者也算不上，因为最近一个月根本没好好听课 =.=</p>
+<p>有几个重要的概念先罗列下：</p>
+<ol>
+<li><p>词法分析(Lexical analysis 或 Scanning)</p>
+<p>词法分析是编译的第一个阶段，用于读入组成源程序的字符流，并把它们组织成为有意义的语素的序列</p>
+</li>
+<li><p>语法分析(Syntax analysis 或 Parsing)</p>
+<p>语法分析使用词法分析器生成的各个词法单元的第一个分量来创建树形的中间表示(语法树)</p>
+</li>
+<li><p>语义分析(Syntax analysis)</p>
+<p>使用语法树和符号表中的信息来检查源程序是否和语言定义的语义一致，同时也收集类型信息(类型检查)</p>
+</li>
+<li><p>Lex(Lexical Analyzar)</p>
+<p>Lex 是一个产生词法分析器的程序，它输入描述构词规则的一系列正则表达式，然后构建有穷自动机和这个有穷自动机的一个驱动程序，进而生成一个词法分析程序</p>
+</li>
+<li><p>Yacc(Yet Another Compiler Compiler)</p>
+<p>Yacc 是 Unix/Linux 上一个用来生成编译器的编译器，Yacc 的输入是巴科斯范式(BNF)表达的语法规则以及语法规约的处理代码(Lex 生成)。Lex 负责词法解析，Yacc 负责语法解析</p>
+</li>
+<li><p>Bison</p>
+<p>Bison 是 Yacc 的一个GNU 执行/扩展</p>
+</li>
+<li><p>Flex</p>
+<p>Flex 是 Lex 的继承者</p>
+</li>
+<li><p>其他</p>
+<blockquote>
+<p>Mysql 中的 sql 分析器只用了 Yacc 而没有使用 Lex，Go 的语法分析器也一样，只使用了 Bison 没有使用 Flex；而 PHP 则同时使用了 Flex 和 Bison。目前来看，应该是正则在效率上还是有些问题的，因此对于效率要求比较高的一些应用宁愿自己来写 Lex 功能而不会直接使用 Lex。</p>
+</blockquote>
+</li>
+</ol>
+<h1 id="PEG-js"><a href="#PEG-js" class="headerlink" title="PEG.js"></a>PEG.js</h1><p>PEG.js 是一个基于 JavaScript 的简单的解析器生成器，它用来生成一个快速且具备完善错误报告的解析器。你可以用它来处理复杂的数据或计算机语言，已经轻松的构造变换器，解释器，编译器以及其他的工具。</p>
+<a id="more"></a>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>简单和具有表现力的语法符号</li>
+<li>集成了词法分析( lexcial )和语义分析( syntactical )</li>
+<li>具备优良的错误报告</li>
+<li>基于解析表达式语法的形式，比传统的 LL(k) 和 LR(k) 解析器更强大</li>
+<li>可以用于浏览器，命令行，或者通过 JavaScript 的 API</li>
+</ul>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p><a href="http://pegjs.org/online" target="_blank" rel="external">在线版本</a> 是生成一个解析器最简单的方式，只要输入你定义的语法，尝试解析少量的输入，下载生成的解析后的代码。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h3><p>如果要使用 <code>pegj</code> 命令，全局安装 PEG.js</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g pegjs</div></pre></td></tr></table></figure>
+<p>如果要使用 JavaScript 的 API，本地安装 PEG.js</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install pegjs</div></pre></td></tr></table></figure>
+<p>如果你两者都需要，那么两种方式都安装即可</p>
+<h3 id="浏览器"><a href="#浏览器" class="headerlink" title="浏览器"></a>浏览器</h3><p><a href="http://pegjs.org/#download" target="_blank" rel="external">下载</a> PEG.js 库(普通或者压缩的版本) 或者通过 Bower 安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bower install pegjs</div></pre></td></tr></table></figure>
+<h2 id="生成一个解析器"><a href="#生成一个解析器" class="headerlink" title="生成一个解析器"></a>生成一个解析器</h2><p>PEG.js 根据一个你希望解析的输入的语法以及你指定的返回结果(对匹配的进行语义分析)生成解析器。最后生成解析器本质上只是一个带有一些简单 API 的 JavaScript 对象。</p>
+<h3 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h3><p>想要根据你的语法生成一个解析器，使用 <code>pegjs</code> 命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pegjs arithmetics.pegjs</div></pre></td></tr></table></figure>
+<p>这将会把解析器代码写入一个以 ‘.js’ 为扩展名的相同文件名文件中， 你也可以自己指定输出：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">pegjs</span> <span class="selector-tag">-o</span> <span class="selector-tag">arithmetics-parser</span><span class="selector-class">.js</span> <span class="selector-tag">arithmetics</span><span class="selector-class">.pegjs</span></div></pre></td></tr></table></figure>
+<p>如果你省略了输入和输出文件，那么将会使用标准的输入输出</p>
+<p>默认下，解析器的生成采用了 Node.js 的模块格式，你可以使用 <code>--format</code> 选项来覆盖。</p>
+<p>你可以调整一下几个选项：</p>
+<ul>
+<li><code>--allowed-start-rules</code> – 逗号相隔的会被用来解析的规则（默认为第一个规则）</li>
+<li><code>--cache</code> – 让解析器缓存结果，避免在极端情况下出现了指数级的解析时间而降低解析器速度</li>
+<li><code>--dependency</code> – 给解析器指定依赖（可以多次指定）</li>
+<li><code>--export-var</code> – 指定一个全局变量名称，当没有进行模块到处时，解析器对象会以该名称命名</li>
+<li><code>--extra-options</code> – 其他的传递给 <code>peg.generate</code> 的选项（JSON 格式）</li>
+<li><code>--extra-options-file</code> – 同上，只不过选项保存在文件里面</li>
+<li><code>--format</code> – 指定解析器的到导出格式，如 <code>amd</code>， <code>commonjs</code>，<code>globals</code>，<code>umd</code>（默认: <code>commonjs</code>）</li>
+<li><code>--optimize</code> – 在优化解析速度（<code>speed</code>）和代码大小（<code>size</code>）之间进行选择（默认：<code>speed</code>）</li>
+<li><code>--plugin</code> – 让 PEG.js 使用一个指定的插件（可以多次指定）</li>
+<li><code>--trace</code> – 让解析器跟踪其运行情况</li>
+</ul>
+<h3 id="JavaScript-API"><a href="#JavaScript-API" class="headerlink" title="JavaScript API"></a>JavaScript API</h3><p>在 Node.js 中，需要引入 PEG.js 这个模块</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> peg = <span class="built_in">require</span>(<span class="string">'pegjs'</span>);</div></pre></td></tr></table></figure>
+<p>在浏览器中，通过 <code>&lt;script&gt;</code> 标签引入 PEG.js 库到你的网页中。如果 PEG.js 使用 AMD 模块化方案，它会把模块定义在一个变量上面，否则他的 API 将会挂载在全局对象 <code>peg</code> 中</p>
+<p>为了生成一个解析器，调用 <code>peg.generate</code> 方法并把你的语法作为参数传递进去</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> parser = peg.generate(<span class="string">"start = ('a'/'b')+"</span>);</div></pre></td></tr></table></figure>
+<p>这个方法会返回解析器对象或者返回源码（取决于你的 <code>output</code> 参数 – 参见下文）。如果语法非法它将抛出错误，错误会包含 <code>message</code> 属性，它携带更详细的错误信息</p>
+<p>你可以传入以下选项组成的对象作为 <code>peg.generate</code> 的第二个参数，以下选项是受支持的：</p>
+<ul>
+<li><code>allowedStartRules</code> – 指定解析器从哪个规则开始解析（默认：语法中的第一个规则）</li>
+<li><code>cache</code> – 如果为 <code>true</code>，解析器会缓存结果以避免指数级的解析时间影响解析器效率（默认：<code>false</code>）</li>
+<li><code>dependencies</code> – 解析需要的依赖，它的值为一个变量与依赖模块映射的对象。解析器通过这些变量来使用那些模块。只有当 <code>format</code> 被设置为 <code>amd</code>，<code>commonjs</code> 或者 <code>umd</code> （默认：<code>{}</code>）时才有效。</li>
+<li><code>exportVar</code> – 一个全局对象名，当没有进行模块导出时，解析器对象会以该名称命名</li>
+<li><code>format</code> – 生成的解析器的导出格式（”amd”，”bare”，”commonjs”，”globals”，”umd”），只有当 <code>output</code> 设置为 <code>source</code> 时（默认：<code>null</code>）才有效</li>
+<li><code>optimize</code> – 在优化解析速度（<code>speed</code>）和代码大小（<code>size</code>）之间进行选择（默认：<code>speed</code>）</li>
+<li><code>output</code> – 如果设置为 <code>parser</code>，这个方法将返回解析器对象；如果设置为 <code>source</code>，它会以字符串的形式返回生成的解析器的源码（默认：<code>parser</code>）</li>
+<li><code>plugin</code> – 让 PEG.js 使用一个指定的插件（可以多次指定）</li>
+<li><code>trace</code> – 让解析器跟踪其运行情况</li>
+</ul>
+<h2 id="使用解析器"><a href="#使用解析器" class="headerlink" title="使用解析器"></a>使用解析器</h2><p>使用生成的解析器的方法十分简单，只要调用它的 <code>parse</code> 方法并把参数作为一个字符串传入即可。该方法会返回解析的结果（确切的值取决于你的生成该解析器的语法）或者抛出错误（如果你的输入非法）。抛出的错误信息带有 <code>location</code>，<code>expected</code>，<code>found</code> 以及包含更多错误信息的 <code>message</code> </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">parser.parse(<span class="string">"abba"</span>);		<span class="comment">// returns ["a", "b", "b", "a"]</span></div><div class="line">parser.parse(<span class="string">"abcd"</span>);		<span class="comment">// throws an exception</span></div></pre></td></tr></table></figure>
+<p>你还可以通过传入第二个参数来调整解析行为，该参数是一个支持以下可选项的对象：</p>
+<ul>
+<li><code>startRule</code> – 从这个规则开始解析</li>
+<li><code>tracer</code> – 追踪解析行为</li>
+</ul>
+<p>解析器也支持你自定义的选项</p>
+<h2 id="句法和语义"><a href="#句法和语义" class="headerlink" title="句法和语义"></a>句法和语义</h2><p>PEG.js 的句法不是面向行的，并且会忽略标记（token）之间的空白，这一点和 JavaScript 相似。你也可以使用 JavaScript 风格的注释（<code>//...</code> 和 <code>/*...*/</code>）</p>
+<p>让我们看一个简单的可以识别形如 <code>2*(3+4)</code> 这样的表达式的语法。根据这个语法生成的解析器可以计算该表达式的值</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">start</div><div class="line">  = additive</div><div class="line"></div><div class="line">additive</div><div class="line">  = left:multiplicative <span class="string">"+"</span> right:additive &#123; <span class="keyword">return</span> left + right; &#125;</div><div class="line">  / multiplicative</div><div class="line"></div><div class="line">multiplicative</div><div class="line">  = left:primary <span class="string">"*"</span> right:multiplicative &#123; <span class="keyword">return</span> left * right; &#125;</div><div class="line">  / primary</div><div class="line"></div><div class="line">primary</div><div class="line">  = integer</div><div class="line">  / <span class="string">"("</span> additive:additive <span class="string">")"</span> &#123; <span class="keyword">return</span> additive; &#125;</div><div class="line"></div><div class="line">integer <span class="string">"integer"</span></div><div class="line">  = digits:[<span class="number">0</span><span class="number">-9</span>]+ &#123; <span class="keyword">return</span> <span class="built_in">parseInt</span>(digits.join(<span class="string">""</span>), <span class="number">10</span>); &#125;</div></pre></td></tr></table></figure>
+<p>在顶层，语法包含了规则（在我们的例子中，有五条规则）。每条规则都由一个名字（例如 <code>integer</code>）来区分它们，并且还有一个解析表达式（例如 <code>digits:[0-9] + { return parseInt(digits.join(&quot;&quot;), 10); }</code>）来定义一个对输入文本的匹配，你还可以在其中包含你的 JavaScript 代码来处理被成功匹配到的文本。规则可以包含别名以便于错误提示（例如上面的例子中，只有 <code>integer</code> 规则具有别名）。解析将从第一条规则，这条规则也叫作 <em>start rule</em></p>
+<p>一个规则名必须是一个 JavaScript 标识符，它后面跟着一个 <code>=</code> 和解析表达式。如果这个规则名有一个别名，它作为一个 JavaScript 字符串书写在规则名和 <code>=</code> 之间。规则之间需要用空格分割开，但在解析表达式后面跟着 <code>;</code> 也是可以的。</p>
+<p>你可以在第一个规则前初始化一些用 <code>{}</code> 闭合的 JavaScript 代码。这些代码会在解析器开始解析之前先执行。在初始化操作中定义的变量名和函数可以在规则操作和语义谓词中直接使用，同时他们也可以直接访问通过 <code>options</code> 传递进来的对象。初始化过程中括号必须严格闭合。比如我们来看一个简单的例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">makeInteger</span>(<span class="params">o</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="built_in">parseInt</span>(o.join(<span class="string">""</span>), <span class="number">10</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">start</div><div class="line">  = additive</div><div class="line"></div><div class="line">additive</div><div class="line">  = left:multiplicative <span class="string">"+"</span> right:additive &#123; <span class="keyword">return</span> left + right; &#125;</div><div class="line">  / multiplicative</div><div class="line"></div><div class="line">multiplicative</div><div class="line">  = left:primary <span class="string">"*"</span> right:multiplicative &#123; <span class="keyword">return</span> left * right; &#125;</div><div class="line">  / primary</div><div class="line"></div><div class="line">primary</div><div class="line">  = integer</div><div class="line">  / <span class="string">"("</span> additive:additive <span class="string">")"</span> &#123; <span class="keyword">return</span> additive; &#125;</div><div class="line"></div><div class="line">integer <span class="string">"integer"</span></div><div class="line">  = digits:[<span class="number">0</span><span class="number">-9</span>]+ &#123; <span class="keyword">return</span> makeInteger(digits); &#125;</div></pre></td></tr></table></figure>
+<p>规则的解析表达式用来匹配输入的文本。这里由好几种类型的表达式 – 匹配字符或字符类，显示可选部分和重复等等。表达式中也可以包含其他规则的引用。详细介绍见下文。</p>
+<p>如果一个表达式成功的匹配到了一个输入流的部分文本，它会产生一个匹配结果，这是一个 JavaScript 值。例如：</p>
+<ul>
+<li>一个匹配字符串的表达式生成一个包含被匹配串的 JavaScript 字符串</li>
+<li>一个匹配包含子表达式的字符串的表达式生成一个含有全部被匹配项的 JavaScript 数组</li>
+</ul>
+<p>当在表达式中使用规则名时，它将递归的解析下去并最终返回全部解析完成的结果</p>
+<p>一个特殊的情况是解析表达式是一个解析行为 – 一段 JavaScript 代码包含在 <code>{}</code> 里面。它会处理匹配到的文本串并返回处理的结果，这个值是也被认为是表达式匹配的结果（换句话说，解析行为是对被匹配文本的一个变换器）</p>
+<p>在我们的算术例子中由几个解析行为。比如这个表达式 <code>digits:[0-9] + { return parseInt(digits.join(&quot;&quot;), 10); }</code>，它处理 [0-9]+ 匹配的结果，这个结果是一个包含匹配的数字字符串组成的数组，它作为参数传入到该后面的行为被拼接成为一个 JavaScript <code>number</code> 对象后返回</p>
+<h2 id="解析表达式类型"><a href="#解析表达式类型" class="headerlink" title="解析表达式类型"></a>解析表达式类型</h2><p>解析表达式有好几种类型，他们当中可能有些还包含子表达式从而形成一个递归结构</p>
+<p>“<em>literal</em>“</p>
+<p>‘<em>literal</em>‘</p>
+<p>解析表达式会精确匹配字符串并返回，该字符串的句法和 JavaScript 一样。在字符串后面追加 <code>i</code> 使得匹配区分大小写</p>
+<p><em>.</em></p>
+<p>匹配一个字符并作为一个字符串返回</p>
+<p><em>[characters]</em></p>
+<p>从一个集合中匹配一个字符并作为一个字符串返回。集合中的字符可以以和 JavaScript 字符串相同的方式进行转义处理。集合中的字符也可以包含范围（例如 [a-z] 表示匹配一个小写字母）。在字符前面加上 <code>^</code> 表示取反（例如：<code>[^a-z]</code> 表示匹配一个非小写字母）。在右括号后面添加 <code>i</code> 可以让匹配区分大小写</p>
+<p><em>rule</em></p>
+<p>递归的匹配一个解析表达式规则并返回匹配的结果</p>
+<p><em>( expression )</em></p>
+<p>匹配一个子表达式并返回匹配的结果</p>
+<p><em>expression *</em></p>
+<p>匹配表达式零次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，正则表达式没有回溯</p>
+<p><em>expression +</em></p>
+<p>匹配表达式一次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，正则表达式没有回溯</p>
+<p><em>expression ?</em></p>
+<p>尝试匹配表达式，如果匹配成功，返回匹配的结果，否则返回 <code>null</code>。不像正则表达式，正则表达式没有回溯</p>
+<p><em>&amp; expression</em></p>
+<p>尝试匹配表达式，如果匹配成功，只返回 <code>undefined</code> 并且不消耗任何输入，否则认为匹配是失败的</p>
+<p><em>! expression</em></p>
+<p>尝试匹配表达式，如果匹配你成功，只返回 <code>undefined</code> 并且不消耗任何输入，否则认为匹配是失败的</p>
+<p><code>&amp; { predicate }</code></p>
+<p><code>predicate</code> 是一段 JavaScript 代码，可以理解为是它是在一个函数里面等待执行。它会把前面表达式匹配得到的结果作为它的参数。它通过 <code>return</code> 来返回 JavaScript 值。If the returned value evaluates to <code>true</code> in boolean context，返回 <code>undefined</code> 并且不消耗任何输入，否则认为匹配是失败的</p>
+<p>在 <code>predicate</code> 中的代码可以访问初始化时定义的变量和方法</p>
+<p>在 <code>predicate</code> 中的代码可以通过调用 <code>location</code> 函数来访问当前位置信息，它会返回一个像下面这样的对象：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  start: &#123; offset: 23, line: 5, column: 6 &#125;,</div><div class="line">  end: &#123; offset: 23, line: 5, colume: 6&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>start</code> 和 <code>end</code> 都指向当前解析的位置，<code>offset</code> 为一个从 0 开始的偏移值，<code>line</code> 和 <code>column</code> 为从 1 开始的行号和列号</p>
+<p>在 <code>pedicate</code> 中的代码可以通过 <code>options</code> 变量来访问解析器被调用时传递进来的选项对象</p>
+<p>注意括号必须严格闭合</p>
+<p><em>! { predicate }</em></p>
+<p><code>predicate</code> 是一段 JavaScript 代码，可以理解为是它是在一个函数里面等待执行。它会把前面表达式匹配得到的结果作为它的参数。它通过 <code>return</code> 来返回 JavaScript 值。If the returned value evaluates to <code>false</code> in boolean context，返回 <code>undefined</code> 并且不消耗任何输入，否则认为匹配是失败的</p>
+<p>在 <code>predicate</code> 中的代码可以访问初始化时定义的变量和方法</p>
+<p>在 <code>predicate</code> 中的代码可以通过调用 <code>location</code> 函数来访问当前位置信息，它会返回一个像下面这样的对象：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  start: &#123; offset: 23, line: 5, column: 6 &#125;,</div><div class="line">  end: &#123; offset: 23, line: 5, colume: 6&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>start</code> 和 <code>end</code> 都指向当前解析的位置，<code>offset</code> 为一个从 0 开始的偏移值，<code>line</code> 和 <code>column</code> 为从 1 开始的行号和列号</p>
+<p>在 <code>pedicate</code> 中的代码可以通过 <code>options</code> 变量来访问解析器被调用时传递进来的选项对象</p>
+<p>注意括号必须严格闭合</p>
+<p><em>$ expression</em></p>
+<p>尝试匹配表达式，如果匹配成功，返回匹配的文本而不是匹配的结果</p>
+<p><em>label: expression</em></p>
+<p>匹配表达式并使用 <code>label</code> 来保存匹配结果，<code>label</code> 必须是一个 JavaScript 符号</p>
+<p>符号表达式通常和解析行为一起使用，表达式匹配结果保存在符号中，解析行为通过符号来访问匹配结果</p>
+<p><em>expression_1</em> <em>expression_2</em> … <em>expression_n</em></p>
+<p>匹配一连串表达式并把匹配结果作为一个数组返回</p>
+<p><em>expression { action }</em></p>
+<p>匹配表达式，如果匹配成功，则执行表达式，否则认为匹配是失败的</p>
+<p><code>action</code> 是一段 JavaScript 代码，可以理解为是它是在一个函数里面等待执行。它会把前面表达式匹配得到的结果作为它的参数。它通过 <code>return</code> 来返回 JavaScript 值。返回值是匹配的结果。</p>
+<p>为了便于查错，<code>action</code> 里面可以调用 <code>expected</code> 函数来让解析器抛出一个错误。这个函数有两个参数，一个描述当前位置预期的结果和可选的当前位置的信息（默认为 <code>location</code> 函数调用返回的结果 – 见下文）。这个描述会作为抛出错误信息的一部分</p>
+<p><code>action</code> 里面也可以调用 <code>error</code> 函数，同样也会让编译器抛出错误。这个函数也由两个参数 – 错误信息和可选的位置信息（默认为 <code>location</code> 函数调用返回的结果 – 见下文）。错误信息将被抛出的错误所使用</p>
+<p><code>action</code> 里面的代码也可以访问语法初始化时的定义的变量和方法。注意必须严格括号闭合</p>
+<p><code>action</code> 里面的代码也可以通过 <code>text</code> 函数来访问前面表达式匹配的字符串</p>
+<p><code>action</code> 里面的代码也可以通过调用 <code>location</code> 函数来访问当前位置信息，它会返回一个像下面这样的对象：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  start: &#123; offset: 23, line: 5, column: 6 &#125;,</div><div class="line">  end: &#123; offset: 25, line: 5, colume: 8&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>start</code> 执行表达式开始的位置，而 <code>end</code> 指向表达式结束的位置。<code>offset</code> 是从 0 开始的偏移值，<code>line</code> 和 <code>column</code> 是从 1 开始的行数和列数</p>
+<p><code>action</code> 里面的代码可以通过 <code>options</code> 变量来访问解析器被调用时传递进来的选项对象</p>
+<p>注意括号必须严格闭合</p>
+<p><em>expression_1 / expression_2 / … / expression_n</em></p>
+<p>尝试匹配第一个表达式，如果没有匹配到，则尝试第二个，以此类推。最后返回第一个匹配成功的表达式匹配的结果。如果没有成功匹配的表达式，则认为匹配失败。</p>
+<h2 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h2><p>解析器生成器和生成的解析器都可以在以下环境中运行：</p>
+<ul>
+<li>Node.js 4+</li>
+<li>Internet Explorer 8+</li>
+<li>Edge</li>
+<li>Firefox</li>
+<li>Chrome</li>
+<li>Safari</li>
+<li>Opera</li>
+</ul>
+<h2 id="Development"><a href="#Development" class="headerlink" title="Development"></a>Development</h2><ul>
+<li><a href="http://pegjs.org/" target="_blank" rel="external">Project website</a></li>
+<li><a href="https://github.com/pegjs/pegjs/wiki" target="_blank" rel="external">Wiki</a></li>
+<li><a href="https://github.com/pegjs/pegjs" target="_blank" rel="external">Source code</a></li>
+<li><a href="https://github.com/pegjs/pegjs/issues" target="_blank" rel="external">Issue tracker</a></li>
+<li><a href="http://groups.google.com/group/pegjs" target="_blank" rel="external">Google Group</a></li>
+<li><a href="http://twitter.com/peg_js" target="_blank" rel="external">Twitter</a></li>
+</ul>
+<p>PEG.js is developed by <a href="http://majda.cz/" target="_blank" rel="external">David Majda</a> (<a href="http://twitter.com/dmajda" target="_blank" rel="external">@dmajda</a>). The <a href="https://github.com/pegjs/bower" target="_blank" rel="external">Bower package</a> is maintained by <a href="http://www.michel-kraemer.com/" target="_blank" rel="external">Michel Krämer</a> (<a href="https://twitter.com/michelkraemer" target="_blank" rel="external">@michelkraemer</a>).</p>
+<p>You are welcome to contribute code. Unless your contribution is really trivial you should get in touch with me first — this can prevent wasted effort on both sides. You can send code both as a patch or a GitHub pull request.</p>
+<p>Note that PEG.js is still very much work in progress. There are no compatibility guarantees until version 1.0.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本着从没有翻译过技术文档和觉得翻译一下应该对文档会更加深入了解的想法来翻译，译文可能存在大量错误和不流畅的地方，建议自己阅读官方文档，本译文仅供参考，欢迎对错误指正。&lt;/p&gt;
+&lt;h1 id=&quot;编译原理&quot;&gt;&lt;a href=&quot;#编译原理&quot; class=&quot;headerlink&quot; title=&quot;编译原理&quot;&gt;&lt;/a&gt;编译原理&lt;/h1&gt;&lt;p&gt;这学期开始上编译原理这门课，比较纳闷的一点是老师要求用 Java。作为一个想学好编译原理的 Java 黑，自然要寻找另一门可以进行实践的语言，编译在 JavaScript 中应用非常广泛，几乎所有主流的语言都可以编译到 JavaScript，Babel 编译 ES6 到 ES5，以及 CofferScript, TypeScript, JSX 等等编译为 JavaScript。另外，JavaScript 作为一门函数第一公民的语言，我想用来做编译也是特别方便的。一开始看了 Jison，感觉还是挺简单的，不过现在貌似流行 PEG.js，老实说我并不知道他们区别，我还只是一个初学者，或者初学者也算不上，因为最近一个月根本没好好听课 =.=&lt;/p&gt;
+&lt;p&gt;有几个重要的概念先罗列下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;词法分析(Lexical analysis 或 Scanning)&lt;/p&gt;
+&lt;p&gt;词法分析是编译的第一个阶段，用于读入组成源程序的字符流，并把它们组织成为有意义的语素的序列&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;语法分析(Syntax analysis 或 Parsing)&lt;/p&gt;
+&lt;p&gt;语法分析使用词法分析器生成的各个词法单元的第一个分量来创建树形的中间表示(语法树)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;语义分析(Syntax analysis)&lt;/p&gt;
+&lt;p&gt;使用语法树和符号表中的信息来检查源程序是否和语言定义的语义一致，同时也收集类型信息(类型检查)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Lex(Lexical Analyzar)&lt;/p&gt;
+&lt;p&gt;Lex 是一个产生词法分析器的程序，它输入描述构词规则的一系列正则表达式，然后构建有穷自动机和这个有穷自动机的一个驱动程序，进而生成一个词法分析程序&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Yacc(Yet Another Compiler Compiler)&lt;/p&gt;
+&lt;p&gt;Yacc 是 Unix/Linux 上一个用来生成编译器的编译器，Yacc 的输入是巴科斯范式(BNF)表达的语法规则以及语法规约的处理代码(Lex 生成)。Lex 负责词法解析，Yacc 负责语法解析&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Bison&lt;/p&gt;
+&lt;p&gt;Bison 是 Yacc 的一个GNU 执行/扩展&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Flex&lt;/p&gt;
+&lt;p&gt;Flex 是 Lex 的继承者&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;其他&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Mysql 中的 sql 分析器只用了 Yacc 而没有使用 Lex，Go 的语法分析器也一样，只使用了 Bison 没有使用 Flex；而 PHP 则同时使用了 Flex 和 Bison。目前来看，应该是正则在效率上还是有些问题的，因此对于效率要求比较高的一些应用宁愿自己来写 Lex 功能而不会直接使用 Lex。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&quot;PEG-js&quot;&gt;&lt;a href=&quot;#PEG-js&quot; class=&quot;headerlink&quot; title=&quot;PEG.js&quot;&gt;&lt;/a&gt;PEG.js&lt;/h1&gt;&lt;p&gt;PEG.js 是一个基于 JavaScript 的简单的解析器生成器，它用来生成一个快速且具备完善错误报告的解析器。你可以用它来处理复杂的数据或计算机语言，已经轻松的构造变换器，解释器，编译器以及其他的工具。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="PEG" scheme="https://ruiming.github.io/categories/PEG/"/>
+    
+    
+      <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Compiler" scheme="https://ruiming.github.io/tags/Compiler/"/>
+    
+      <category term="PEG.js" scheme="https://ruiming.github.io/tags/PEG-js/"/>
+    
+  </entry>
   
   <entry>
     <title>Angular 最佳实践总结 (一)</title>
@@ -1443,138 +1690,6 @@
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
       <category term="Front end" scheme="https://ruiming.github.io/tags/Front-end/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>谈谈前端自动构建工具 Gulp</title>
-    <link href="https://ruiming.github.io/2016/06/18/%E8%B0%88%E8%B0%88%E5%89%8D%E7%AB%AF%E8%87%AA%E5%8A%A8%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7gulp/"/>
-    <id>https://ruiming.github.io/2016/06/18/谈谈前端自动构建工具gulp/</id>
-    <published>2016-06-18T12:18:17.000Z</published>
-    <updated>2016-08-04T08:33:38.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。</p>
-<p>​Gulp 上面优秀的插件特别多，我使用的有这些： </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> gulp <span class="keyword">from</span> <span class="string">'gulp'</span></div><div class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">'gulp-babel'</span></div><div class="line"><span class="keyword">import</span> uglify <span class="keyword">from</span> <span class="string">'gulp-uglify'</span></div><div class="line"><span class="keyword">import</span> ngAnnotate <span class="keyword">from</span> <span class="string">'gulp-ng-annotate'</span></div><div class="line"><span class="keyword">import</span> concat <span class="keyword">from</span> <span class="string">'gulp-concat'</span></div><div class="line"><span class="keyword">import</span> cleanCSS <span class="keyword">from</span> <span class="string">'gulp-clean-css'</span></div><div class="line"><span class="keyword">import</span> imagemin <span class="keyword">from</span> <span class="string">'gulp-imagemin'</span></div><div class="line"><span class="keyword">import</span> minifyHtml <span class="keyword">from</span> <span class="string">'gulp-minify-html'</span></div><div class="line"><span class="keyword">import</span> ngTemplate <span class="keyword">from</span> <span class="string">'gulp-ng-template'</span></div><div class="line"><span class="keyword">import</span> plumber <span class="keyword">from</span> <span class="string">'gulp-plumber'</span></div><div class="line"><span class="keyword">import</span> sass <span class="keyword">from</span> <span class="string">'gulp-sass'</span></div><div class="line"><span class="keyword">import</span> usemin <span class="keyword">from</span> <span class="string">'gulp-usemin'</span></div><div class="line"><span class="keyword">import</span> runSequence <span class="keyword">from</span> <span class="string">'gulp-run-sequence'</span></div><div class="line"><span class="keyword">import</span> eslint <span class="keyword">from</span> <span class="string">'gulp-eslint'</span></div></pre></td></tr></table></figure>
-<ul>
-<li><p>gulp-uglify</p>
-<p>对 JavaScript 进行压缩的插件，可以有效减少 JavaScript 的文件大小。</p>
-</li>
-<li><p>gulp-ng-annotate</p>
-<p>对 Angular 的代码进行转换，因为使用上面的 <code>gulp-uglify</code> 对 Angular 的代码进行压缩时会破坏 Angular 文件的依赖注入功能，导致无法正常工作，这个基本上是 Angular 开发必备的了。</p>
-</li>
-<li><p>gulp-concat</p>
-<p>文件合并，前端合并文件以减少请求是非常重要的优化技巧。</p>
-</li>
-<li><p>gulp-clean-css</p>
-<p>字如其名，对css 进行合并压缩。</p>
-</li>
-<li><p>gulp-imagemin</p>
-<p>对图片进行压缩。</p>
-</li>
-<li><p>gulp-minify-html</p>
-<p>对html文件进行压缩。</p>
-</li>
-<li><p>gulp-ng-template</p>
-<p>这个也是 Angular 里面比较响当当的一个插件了，他的作用是将 Angular 模板存到 templateCache ，可以提升模板加载速度。</p>
-</li>
-<li><p>gulp-plumber</p>
-<p>这个貌似也是 Gulp 必不可少的插件之一了，可以避免 Gulp 出错导致整个进程崩掉。</p>
-</li>
-<li><p>gulp-sass</p>
-<p>编译 sass 代码为 css，非常方便。</p>
-</li>
-<li><p>gulp-run-sequence</p>
-<p>可以让 Gulp 的任务顺序执行，有些时候我们希望 Gulp 执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了。</p>
-</li>
-<li><p>gulp-usemin</p>
-<p>这个是用来从工作环境到生产环境进行部署的工具。</p>
-</li>
-<li><p>gulp-eslint</p>
-<p>eslint 代码检查。</p>
-</li>
-</ul>
-<a id="more"></a>
-<p>​    上面的这些插件都是我在一个项目中使用到的，通过这些工具实现了前端的自动化开发，我在项目中有开发环境和生产环境之分。</p>
-<p>​    在 Gulp 中，我有一段在开发环境下执行的任务</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gulp.task(<span class="string">'default'</span>, [<span class="string">'css'</span>, <span class="string">'js'</span>, <span class="string">'angular'</span>, <span class="string">'img'</span>, <span class="string">'templates:dist'</span>, <span class="string">'sass'</span>, <span class="string">'fonts'</span>])</div></pre></td></tr></table></figure>
-<p>​    这段代码帮我做了</p>
-<ul>
-<li><code>css</code>：进行 css 文件(这些文件是第三方 css 文件如 bootstrap)的合并。</li>
-<li><code>javascript</code>：进行 JavaScript 文件的合并，这是将所有我写的 Angular 文件进行合并，但不进行压缩以方便我调试。</li>
-<li><code>angular</code>：将项目所有的 JavaScript 依赖如 Angular, ui-router, jQuery 等文件进行压缩合并。</li>
-<li><code>img</code>：将图片进行压缩和迁移，这些图片压缩后放入生产环境对应的文件夹中。</li>
-<li><code>templates:dist</code>：对 Angular 的视图进行合并，使用了上述的 <code>gulp-ng-template</code> 插件，合并后为一个新的 JavaScript 文件。</li>
-<li><code>sass</code>：将我写的 scss 代码进行编译。</li>
-<li><p><code>fonts</code>：移动相应的字体文件到生产环境中。</p>
-<p>​开发环境下我们需要自动构建，也需要便于调试，所以我用上面这样的方式来处理，并且开启了 watch 监视变化，在有更改发生时自动构建。当我处理完全部工作后需要 push 到服务器上面时，会执行 <code>gulp product</code> 即下面的 task。</p>
-</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">gulp.task(<span class="string">'product'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>)</span>&#123;</div><div class="line">  runSequence(<span class="string">'together'</span>, <span class="string">'move'</span>, cb)</div><div class="line">&#125;);</div><div class="line"></div><div class="line">gulp.task(<span class="string">'together'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>)</span>&#123;</div><div class="line">    gulp.src(<span class="string">'index.html'</span>)</div><div class="line">        .pipe(plumber())</div><div class="line">        .pipe(usemin(&#123;</div><div class="line">            cssProduct: [<span class="string">'concat'</span>],</div><div class="line">            jsProduct: [ngAnnotate(),<span class="string">'concat'</span>,uglify()]</div><div class="line">        &#125;))</div><div class="line">        .pipe(gulp.dest(<span class="string">'backend/app/'</span>))</div><div class="line">        .on(<span class="string">'end'</span>,cb);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">gulp.task(<span class="string">'move'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> gulp.src(<span class="string">'backend/app/index.html'</span>)</div><div class="line">                .pipe(gulp.dest(<span class="string">'backend/app/templates/'</span>));</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>​    这里使用了上述说的 <code>ng-run-sequence</code> 插件，这里会在执行完 <code>together</code> 的任务后才开始执行 <code>move</code> 的任务。这里主要使用的插件是 <code>gulp-usemin</code>，我用它来做了这些事情，为了方便说明，我贴下代码。需要先说明的是，我在项目中一共有3个 <code>index.html</code> 文件。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"zh-CN"</span> <span class="attr">ng-app</span>=<span class="string">"index"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- build:cssProduct /static/css/app.min.css --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/app.min.css"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"src/css/bookist.css"</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    ...</div><div class="line">    <span class="comment">&lt;!-- build:jsProduct /static/js/app.min.js --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/dependence.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/app.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"src/js/templates.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- endbuild --&gt;</span></div><div class="line">    <span class="comment">&lt;!-- build:remove --&gt;</span></div><div class="line">    <span class="comment">&lt;!--</span></div><div class="line">        这段注释会被移除</div><div class="line">    --&gt;</div><div class="line">    <span class="comment">&lt;!-- endbuild--&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>​    省去了没有用的代码，这里需要你对 <code>ng-usemin</code> 有一定的了解。这个 <code>index.html</code> 是我在开发环境下使用的，使用了我开发环境的 task 生成文件，我在上面有补充说明了。</p>
-<p>​    所以，在部署生产环境时执行这段 task 的意义是，将开发环境下的代码再做进一步的合并和压缩。<code>ng-usemin</code> 这个插件会帮我们处理这个 <code>index.html</code> 文件，最后会在我们指定的目录下部署好这些东西。但是因为后端处理 <code>index.html</code> 的路径原因，我还要对 <code>index.html</code> 做一次移动，所以有了第三个 <code>index.html</code>。</p>
-<p>​    最终生成的 index 和相应的资源位置如下</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"zh-CN"</span> <span class="attr">ng-app</span>=<span class="string">"index"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"/static/css/app.min.css"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/static/js/app.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;​类似 Gulp 这样的工具可以说是前端利器，基本前端开发都离不开他，类似的解决方案还有 Grunt 和 Webpack 等，不过我用 Gulp 比较多一些，所以我只能谈谈 Gulp 了。&lt;/p&gt;
-&lt;p&gt;​Gulp 上面优秀的插件特别多，我使用的有这些： &lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; gulp &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; babel &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-babel&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; uglify &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-uglify&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; ngAnnotate &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-ng-annotate&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; concat &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-concat&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; cleanCSS &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-clean-css&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; imagemin &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-imagemin&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; minifyHtml &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-minify-html&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; ngTemplate &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-ng-template&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; plumber &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-plumber&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; sass &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-sass&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; usemin &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-usemin&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; runSequence &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-run-sequence&#39;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; eslint &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;gulp-eslint&#39;&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;gulp-uglify&lt;/p&gt;
-&lt;p&gt;对 JavaScript 进行压缩的插件，可以有效减少 JavaScript 的文件大小。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-ng-annotate&lt;/p&gt;
-&lt;p&gt;对 Angular 的代码进行转换，因为使用上面的 &lt;code&gt;gulp-uglify&lt;/code&gt; 对 Angular 的代码进行压缩时会破坏 Angular 文件的依赖注入功能，导致无法正常工作，这个基本上是 Angular 开发必备的了。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-concat&lt;/p&gt;
-&lt;p&gt;文件合并，前端合并文件以减少请求是非常重要的优化技巧。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-clean-css&lt;/p&gt;
-&lt;p&gt;字如其名，对css 进行合并压缩。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-imagemin&lt;/p&gt;
-&lt;p&gt;对图片进行压缩。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-minify-html&lt;/p&gt;
-&lt;p&gt;对html文件进行压缩。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-ng-template&lt;/p&gt;
-&lt;p&gt;这个也是 Angular 里面比较响当当的一个插件了，他的作用是将 Angular 模板存到 templateCache ，可以提升模板加载速度。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-plumber&lt;/p&gt;
-&lt;p&gt;这个貌似也是 Gulp 必不可少的插件之一了，可以避免 Gulp 出错导致整个进程崩掉。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-sass&lt;/p&gt;
-&lt;p&gt;编译 sass 代码为 css，非常方便。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-run-sequence&lt;/p&gt;
-&lt;p&gt;可以让 Gulp 的任务顺序执行，有些时候我们希望 Gulp 执行了一些任务完成之后才来执行下一个任务，这时候这个插件就派上用场了。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-usemin&lt;/p&gt;
-&lt;p&gt;这个是用来从工作环境到生产环境进行部署的工具。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;gulp-eslint&lt;/p&gt;
-&lt;p&gt;eslint 代码检查。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-    
-    </summary>
-    
-      <category term="JavaScript" scheme="https://ruiming.github.io/categories/JavaScript/"/>
-    
-    
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
-      <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
-    
-      <category term="Front end" scheme="https://ruiming.github.io/tags/Front-end/"/>
-    
-      <category term="Gulp" scheme="https://ruiming.github.io/tags/Gulp/"/>
     
   </entry>
   

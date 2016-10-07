@@ -267,6 +267,166 @@
             
               
                 
+                <a class="post-title-link" href="/2016/08/01/谈谈React和Redux/" itemprop="url">
+                  谈谈 React 和 Redux
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-01T15:53:32+08:00" content="2016-08-01">
+              2016-08-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/React/" itemprop="url" rel="index">
+                    <span itemprop="name">React</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/01/谈谈React和Redux/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/01/谈谈React和Redux/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/08/01/谈谈React和Redux/" class="leancloud_visitors" data-flag-title="谈谈 React 和 Redux">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>刚回到家的时候学习了 React 和 Redux，现在才想来总结一下，不知道会不会忘的差不多了…本来是想写一个问卷发布系统的，使用 React 和 Redux 已经完成了基础的几个功能，但是那个代码量…用 Angular 写简直轻轻松松的好吧…然后就去重构项目还有现在学的 Underscore 去了。是时候重新回顾下了。<br>此处主要讲的是 Redux 。</p>
+<h3 id="关于-Redux"><a href="#关于-Redux" class="headerlink" title="关于 Redux"></a>关于 Redux</h3><blockquote>
+<p>redux 是facebook 提出的 flux 架构的一种优秀实现；而且不局限于为 react 提供数据状态处理。它是零依赖的，可以配合其他任何框架或者类库一起使用。要想配合 react，还得引入 react-redux。</p>
+</blockquote>
+<h3 id="关于-Flux"><a href="#关于-Flux" class="headerlink" title="关于 Flux"></a>关于 Flux</h3><p>那什么是 Flux 呢？见下图<br><img src="/2016/08/01/谈谈React和Redux/flux-overview.png" alt="flux-overview.png" title="flux-overview.png"><br>Flux 可以分为四个部分：</p>
+<ul>
+<li>View: 视图层</li>
+<li>Action: 视图层触发的动作</li>
+<li>Dispatcher: 派发器，用来接受 Actions, 执行回调函数</li>
+<li>Store：数据层，用来存放应用的状态，其变更会触发 View 层更新</li>
+</ul>
+<p>Flux 的最大特点就是单向流动，他的过程大概如下：</p>
+<ol>
+<li>用户访问 View ，触发了动作 Action</li>
+<li>Dispatcher 收到 Action ，根据 Action 类别进行相应的处理，处理结束后要求 Store 更新</li>
+<li>Store 进行更新，通知 View 层刷新</li>
+<li>View 层收到通知更新页面</li>
+</ol>
+<p>额，其实我没有用 Flux，不敢讲太多了，简单的说就是一种单项数据流动的解决方案吧。我是直接学 Redux，对 Flux 也就大概了解这么多了。</p>
+<h3 id="Redux-和-Flux"><a href="#Redux-和-Flux" class="headerlink" title="Redux 和 Flux"></a>Redux 和 Flux</h3><p>Redux 是 Flux 的一种实现，但他们又有所不同，在 Flux 中，Store 可以有多个，但 Redux 有且只能有一个 Store，Flux 中存在 Dispatcher，在 Redux 则没有这个，而是用 reducer 代替了。不多说了，直接往下说 Redux 吧，我快扯不下去 Flux 了=.=</p>
+<h3 id="理解Redux"><a href="#理解Redux" class="headerlink" title="理解Redux"></a>理解Redux</h3><p>Redux 由四部分组成：</p>
+<ul>
+<li>Action</li>
+<li>Reducer</li>
+<li>Store</li>
+<li>Views</li>
+</ul>
+<p>我们结合具体的应用场景来看</p>
+<h4 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h4><p>先从 Action 说起，一个 Action 是一个普通的对象。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> SET_PAPER_TITLE = <span class="string">'SET_PAPER_TITLE'</span>;</div><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> ADD_QUESTION = <span class="string">'ADD_QUESTION'</span>;</div><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> REMOVE_QUESTION = <span class="string">'REMOVE_QUESTION'</span>;</div><div class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">setPaperTitle</span>(<span class="params">newTitle</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">        type: SET_PAPER_TITLE,</div><div class="line">        value: newTitle</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">addQuestion</span>(<span class="params">type</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">        type: ADD_QUESTION,</div><div class="line">        questionType: type</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">removeQuestion</span>(<span class="params">questionId</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">        type: REMOVE_QUESTION,</div><div class="line">        questionId: questionId</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>type 属性是必须的，表示动作类别，其他的参数可以自定。<br>我们先不用管 Action 有什么用，后面会提到。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/08/01/谈谈React和Redux/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/01/Underscore源码学习(四)/" itemprop="url">
                   Underscore 源码学习(四)
                 </a>
@@ -808,146 +968,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/22/JavaScript闭包，继承与原型链/" itemprop="url">
-                  JavaScript 闭包，继承与原型链
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-22T15:03:23+08:00" content="2016-07-22">
-              2016-07-22
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/07/22/JavaScript闭包，继承与原型链/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/22/JavaScript闭包，继承与原型链/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/07/22/JavaScript闭包，继承与原型链/" class="leancloud_visitors" data-flag-title="JavaScript 闭包，继承与原型链">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p> JavaScript 闭包和原型链学习心得，如果有不对的地方望指出。</p>
-<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>什么是闭包，有很多说法，我的理解是一个函数可以记住和使用外部变量，保存这个变量的引用在自己的一个环境之中。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeAdder</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">y</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x + y;</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> add5 = makeAdder(<span class="number">5</span>);</div><div class="line"><span class="keyword">var</span> add10 = makeAdder(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(add5(<span class="number">2</span>));  <span class="comment">// 7</span></div><div class="line"><span class="built_in">console</span>.log(add10(<span class="number">2</span>)); <span class="comment">// 12</span></div></pre></td></tr></table></figure></p>
-<p>这个例子中， makeAdder 是一个函数工厂，add5 和 add10 就是闭包，他们记住了外部变量 x。通常一个函数执行完毕后其运行期上下文会被释放，但由于闭包的属性包含了与运行期上下文作用域链相同的对象引用，导致这个激活对象无法销毁，这就会导致内存消耗，另外，闭包内部的作用域链并不处在闭包作用域链的前端，并且闭包经常使用外部变量的话，导致对象属性的遍历经常到其原型上面去（一个解决方法是把他赋值到闭包自身的作用域上面），从而增加性能消耗。<br>既然闭包会导致内存增加和性能消耗，那为什么那么多人还使用它呢？上面的例子可能不太能说明问题，我们看下其他例子。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Counter = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> privateCounter = <span class="number">0</span>;</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">changeBy</span>(<span class="params">val</span>) </span>&#123;</div><div class="line">    privateCounter += val;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    increment: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      changeBy(<span class="number">1</span>);</div><div class="line">    &#125;,</div><div class="line">    decrement: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      changeBy(<span class="number">-1</span>);</div><div class="line">    &#125;,</div><div class="line">    value: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> privateCounter;</div><div class="line">    &#125;</div><div class="line">  &#125;   </div><div class="line">&#125;)();</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 0 */</span></div><div class="line">Counter.increment();</div><div class="line">Counter.increment();</div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 2 */</span></div><div class="line">Counter.decrement();</div><div class="line"><span class="built_in">console</span>.log(Counter.value()); <span class="comment">/* logs 1 */</span></div></pre></td></tr></table></figure></p>
-<p>这个例子中外部只能通过 value 方法获取 privateCounter 的值，只能通过 increment 和 decrement 方法来改变 privateCounter 的值，无法直接获取到 priavateCounter 和调用 changeBy 函数。这种模式叫 module模式，因为大部分模块都是这样写的，包括 Underscore 也是这样。上篇中就说道了 Underscore 使用了立即执行函数，其用途其一是为了不污染外部变量，因为 JavaScript 是函数作用域，其次它利用了闭包的特性又可以保持函数内部闭包的可调用和被闭包所引用变量在闭包环境中的存在，同时函数内部可以定义一些私有变量和私有方法。我们无需担心这些变量和函数在外部函数执行完毕结束后的失效。<br>当你看到函数里面又 return 函数时，同时该函数又使用了外部变量，则该函数就是一个闭包。<br>关于闭包还有一个很容易犯错的地方，比如你想实现第一秒输出1,第二秒输出2,以此类推。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(i);</div><div class="line">    &#125;, i*<span class="number">1000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>但是实际运行结果是第一秒输出6,第二秒输出6…<br>闭包是记住了外部变量的引用，每次循环都建立了一个 timer 函数，但 console 并还没有被执行，当循环结束后确实是建立了5个计时器或者说5个闭包，但当开始执行 console 的时候，由于这些闭包所引用的 i 此时结果为6，所以会输出5次 6。<br>更能说明问题些，我们稍作修改下：<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/07/22/JavaScript闭包，继承与原型链/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -988,7 +1013,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-count">21</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -996,7 +1021,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1005,7 +1030,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
