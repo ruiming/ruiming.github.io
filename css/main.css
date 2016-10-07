@@ -1549,7 +1549,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #a88aec;
+  background: #c4d665;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2526,9 +2526,14 @@ body {
 .one-collumn {
   background-image: url("https://cdn.bookist.org/Th135_Hakurei_Shrine.png");
   background-repeat: no-repeat;
-  background-position: top;
+  background-position: center center;
   background-size: cover;
   background-attachment: fixed;
+}
+@media (max-width: ) {
+  .one-collumn {
+    background-attachment: scroll;
+  }
 }
 .one-collumn header {
   background: transparent;
@@ -2550,7 +2555,6 @@ body {
   padding-bottom: 20px;
 }
 .posts-expand {
-  padding: 40px;
   margin: 0;
 }
 .footer-inner {
