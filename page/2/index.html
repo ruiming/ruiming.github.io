@@ -271,6 +271,141 @@
             
               
                 
+                <a class="post-title-link" href="/2016/09/04/浅谈 Angular 脏检查/" itemprop="url">
+                  浅谈 Angular 脏检查
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-04T14:57:22+08:00" content="2016-09-04">
+              2016-09-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/04/浅谈 Angular 脏检查/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/04/浅谈 Angular 脏检查/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/09/04/浅谈 Angular 脏检查/" class="leancloud_visitors" data-flag-title="浅谈 Angular 脏检查">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Angular 的脏值检查机制一直是 Angular 被人诟病的地方，但瑕不掩瑜，Angular 还是一个非常优秀的框架，并且 Angular2 也已经抛弃了这个脏值检查的算法。<br>最近在看《AngularJS 深度剖析与最佳实践》，不得不说是一本很好的书籍，作者在第三章开始讲背后的原理，这里分析了 Angular 的 $digest 函数，即脏检查机制。所以自己也去下载了 Angular 最新的源码去瞧了下，然后做下笔记吧。</p>
+<p>首先要注意，Angular 的 digest 的触发不是定时的，只有在指定的事件触发之后才会进入 $digest。基本上我们用的带 <code>$</code> 的东西调用之后都可能会触发 digest。比如我们使用 <code>setTimeout</code> 就不会触发 digest，即当你使用 <code>setTimeout</code> 更改 viewmodel 的值后，它不会同步的反映到用户的视图中去，解决方法有两个，一个是使用 Angular 提供的 <code>$timeout</code> 替代 <code>setTimeout</code>，<code>$timeout</code> 会在执行结束之后自动触发 digest； 另一个方法是手动调用 $apply，$apply 是 Angular 对 digest 的一层封装，我们一般不会直接调用 digest 而是通过使用 $apply 方法。比如对于 <code>setTimeout</code>，我们就可以这样触发 digest。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">setTimeout(() =&gt; &#123;</div><div class="line">  $scope.$apply(() =&gt; &#123;</div><div class="line">    $scope.test = <span class="number">123</span>;</div><div class="line">  &#125;)    </div><div class="line">&#125;, <span class="number">500</span>);</div></pre></td></tr></table></figure></p>
+<p>我们看一个例子，这也是 Angular 源码 $digest 部分的一个示例。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> scope = ...;</div><div class="line">scope.name = <span class="string">'misko'</span>;</div><div class="line">scope.counter = <span class="number">0</span>;</div><div class="line"></div><div class="line">expect(scope.counter).toEqual(<span class="number">0</span>);</div><div class="line">scope.$watch(<span class="string">'name'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">newValue, oldValue</span>)</span>&#123;</div><div class="line">  scope.counter = scope.counter + <span class="number">1</span>;</div><div class="line">&#125;);</div><div class="line">expect(scope.counter).toEqual(<span class="number">0</span>);</div><div class="line"></div><div class="line"><span class="comment">// 执行第一次 digest，第一次 digest 会遍历全部的 watcher，并触发上面的方法，从而使的 count+1</span></div><div class="line">scope.$digest();</div><div class="line">expect(scope.counter).toEqual(<span class="number">1</span>);</div><div class="line"></div><div class="line"><span class="comment">// 第二次调用时，由于上一次调用检查 name 不脏，所以不会再去处理</span></div><div class="line">scope.$digest();</div><div class="line">expect(scope.counter).toEqual(<span class="number">1</span>);</div><div class="line"></div><div class="line"><span class="comment">// 第三次调用时，由于 name 发生了变化，使得当前值和上一次保存的值不同，所以会触发起 $watch 方法</span></div><div class="line">scope.name = <span class="string">'adam'</span>;</div><div class="line">scope.$digest();</div><div class="line">expect(scope.counter).toEqual(<span class="number">2</span>);</div></pre></td></tr></table></figure></p>
+<p>Angular 的脏值检查过程大致如下：<br>对当前作用域和子作用域上的 <code>$$watchers</code> 进行遍历，<code>$$watches</code> 保存着 scope 上的所有变量以及其 <code>$watch</code> 方法，调用时会取当前值和上一次值进行比较，如果不相等则会调用 <code>$watch</code> 方法，同时会保存当前的值以在下一次进行比较，并且记录此次检查结果为脏。然后重复进行直到数据不脏为止，因此至少要 digest 两次，超出 10 次会报错，可以调高这个次数限制。当数据不再脏即 model 稳定下来之后， Angular 才会开始一次性批量更新 UI。从而减少了浏览器的 repaint 次数，提升性能。</p>
+<p>深入到源码来看：<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/09/04/浅谈 Angular 脏检查/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/15/项目采坑笔记/" itemprop="url">
                   项目采坑笔记
                 </a>
@@ -661,287 +796,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/05/Underscore源码学习(六)/" itemprop="url">
-                  Underscore 源码学习(六)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-05T13:59:06+08:00" content="2016-08-05">
-              2016-08-05
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/05/Underscore源码学习(六)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/05/Underscore源码学习(六)/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/08/05/Underscore源码学习(六)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(六)">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>关于 Underscore 的 mixin 方法。<br>首先先看个例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Panel</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  consoe.log(<span class="keyword">this</span>, <span class="keyword">this</span> <span class="keyword">instanceof</span> Panel);</div><div class="line">  <span class="keyword">if</span>(<span class="keyword">this</span> <span class="keyword">instanceof</span> Panel) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Panel();</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">a = Panel();        <span class="comment">// Window   false</span></div><div class="line">b = <span class="keyword">new</span> Panel();    <span class="comment">// Panel&#123;&#125;  true</span></div></pre></td></tr></table></figure></p>
-<p>当函数作为构造器使用时，函数内的 <code>this</code> 执行被新建的对象。当函数被调用时，函数内的 <code>this</code> 则为被调用的对象，在这里是 <code>Window</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> _ = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</div><div class="line">  <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> _) <span class="keyword">return</span> obj;</div><div class="line">  <span class="keyword">if</span> (!(<span class="keyword">this</span> <span class="keyword">instanceof</span> _)) <span class="keyword">return</span> <span class="keyword">new</span> _(obj);</div><div class="line">  <span class="keyword">this</span>._wrapped = obj;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>同样的，如果我们使用下面方法调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> under = _();</div></pre></td></tr></table></figure></p>
-<p>第二个条件成立，所以新建一个 <code>_</code> 对象后返回，注意这里是再次调用这个函数。<br>如果我们这样调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> under = <span class="keyword">new</span> _();</div></pre></td></tr></table></figure></p>
-<p>就好像上面第二次调用一样，这时候就构造了 <code>under</code> 这个对象，如果传入了参数 <code>obj</code>，则把 <code>obj</code> 存入 <code>under</code> 这个对象的 <code>_wrapped</code> 属性中。<br><code>Underscore</code> 提供了一个 OO 的调用方法，即:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> chainResult = <span class="function"><span class="keyword">function</span>(<span class="params">instance, obj</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> instance._chain ? _(obj).chain() : obj;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">_.mixin = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</div><div class="line">    <span class="comment">// 遍历obj中的函数</span></div><div class="line">    _.each(_.functions(obj), <span class="function"><span class="keyword">function</span>(<span class="params">name</span>) </span>&#123;</div><div class="line">        <span class="comment">// 避免原型链查找，提升性能</span></div><div class="line">        <span class="keyword">var</span> func = _[name] = obj[name];</div><div class="line">        _.prototype[name] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="comment">// 把wrapped作为数组第一个参数(context)，其余传参push到这个数组中</span></div><div class="line">            <span class="keyword">var</span> args = [<span class="keyword">this</span>._wrapped];</div><div class="line">            push.apply(args, <span class="built_in">arguments</span>);</div><div class="line">            <span class="comment">// 如果this是一个_实例，则使用func调用的结果来新建_实例后返回以供继续链式调用</span></div><div class="line">            <span class="comment">// 如果this不是一个_实例，则直接返回func调用的结果</span></div><div class="line">            <span class="keyword">return</span> chainResult(<span class="keyword">this</span>, func.apply(_, args));</div><div class="line">        &#125;;</div><div class="line">    &#125;);</div><div class="line">    <span class="keyword">return</span> _;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 把Underscore对象mixin化，这样就可以直接在_上调用方法</span></div><div class="line">_.mixin(_);</div></pre></td></tr></table></figure></p>
-<p>当然我们还可以把自己写的方法通过 <code>mixin</code> 加入到 <code>Underscore</code> 对象中。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/05/Underscore源码学习(六)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/04/Underscore源码学习(五)/" itemprop="url">
-                  Underscore 源码学习(五)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-04T15:18:48+08:00" content="2016-08-04">
-              2016-08-04
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Underscore/" itemprop="url" rel="index">
-                    <span itemprop="name">Underscore</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/04/Underscore源码学习(五)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/04/Underscore源码学习(五)/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/08/04/Underscore源码学习(五)/" class="leancloud_visitors" data-flag-title="Underscore 源码学习(五)">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Underscore 的函数大部分还是挺好理解的，感觉过一遍就行了，不过今天看到两个函数感觉还是挺有意思的，并且也挺常用。这两个函数就是 throttle 和 debounce。</p>
-<h2 id="throttle"><a href="#throttle" class="headerlink" title="throttle"></a>throttle</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">_.throttle = <span class="function"><span class="keyword">function</span>(<span class="params">func, wait, options</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> timeout, context, args, result;</div><div class="line">  <span class="keyword">var</span> previous = <span class="number">0</span>;</div><div class="line">  <span class="keyword">if</span> (!options) options = &#123;&#125;;</div><div class="line"></div><div class="line">  <span class="keyword">var</span> later = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// 更改previous即上一次执行时间为当前时间</span></div><div class="line">    previous = options.leading === <span class="literal">false</span> ? <span class="number">0</span> : _.now();</div><div class="line">    timeout = <span class="literal">null</span>;</div><div class="line">    result = func.apply(context, args);</div><div class="line">    <span class="keyword">if</span> (!timeout) context = args = <span class="literal">null</span>;</div><div class="line">  &#125;;</div><div class="line"></div><div class="line">  <span class="keyword">var</span> throttled = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> now = _.now();</div><div class="line">    <span class="comment">// 如果leading为false时禁用第一次首先执行，previous等于now（效果同已经执行过一次，所以第一次被禁用）</span></div><div class="line">    <span class="comment">// 这个if语句只在第一次执行该函数的时候有效</span></div><div class="line">    <span class="keyword">if</span> (!previous &amp;&amp; options.leading === <span class="literal">false</span>) previous = now;</div><div class="line">    <span class="keyword">var</span> remaining = wait - (now - previous);</div><div class="line">    context = <span class="keyword">this</span>;</div><div class="line">    args = <span class="built_in">arguments</span>;</div><div class="line">    <span class="comment">// 超时处理和未到时的处理</span></div><div class="line">    <span class="keyword">if</span> (remaining &lt;= <span class="number">0</span> || remaining &gt; wait) &#123;</div><div class="line">      <span class="comment">// timeout不为null时清除掉并设置为null</span></div><div class="line">      <span class="keyword">if</span> (timeout) &#123;</div><div class="line">        clearTimeout(timeout);</div><div class="line">        timeout = <span class="literal">null</span>;</div><div class="line">      &#125;</div><div class="line">      previous = now;</div><div class="line">      <span class="comment">// 立即调用</span></div><div class="line">      result = func.apply(context, args);</div><div class="line">      <span class="keyword">if</span> (!timeout) context = args = <span class="literal">null</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!timeout &amp;&amp; options.trailing !== <span class="literal">false</span>) &#123;    <span class="comment">// 如果没有禁用最后一次执行</span></div><div class="line">      timeout = setTimeout(later, remaining);               <span class="comment">// remaining毫秒后执行later</span></div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 返回调用的结果</span></div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">  &#125;;</div><div class="line"></div><div class="line">  throttled.cancel = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    clearTimeout(timeout);</div><div class="line">    previous = <span class="number">0</span>;</div><div class="line">    timeout = context = args = <span class="literal">null</span>;</div><div class="line">  &#125;;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> throttled;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>其实一步步去理解也不难，就不细说这个方法了。这个方法有可选项设置，分别为 {leading: false} 和 {trailing: false}。</p>
-<p>所以一般有四类情况：</p>
-<ul>
-<li>默认情况<br>第一次调用时立即响应，之后每个周期内最多执行一次，周期内触发会产生定时执行使在上一次执行时间 <code>preview</code> 周期时间后再次执行。</li>
-<li>设置 <code>leading</code> 为 <code>false</code><br>同默认情况区别在于第一次调用不会立即执行而是等待周期时间后再次执行，如果在周期时间内触发，一样等待上一次执行时间 <code>preview</code> 周期时间后再执行。</li>
-<li>设置 <code>trailing</code> 为 <code>false</code><br>最后周期内最多执行一次，但在周期时间内调用不会触发 <code>timeout</code>，只能在上一次 <code>timeout</code> 失效后调用才能生效并且此时调用将立即执行。</li>
-<li>设置 <code>leading</code> 和 <code>trailing</code> 为 <code>false</code><br>如果同时还设置 <code>leading</code> 为 <code>false</code> 的话，那么第一次调用不会立即执行而是等待周期时间后才执行，在这段时间内调用都不会有效果。</li>
-</ul>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/08/04/Underscore源码学习(五)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
