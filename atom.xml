@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-10-09T07:36:51.366Z</updated>
+  <updated>2016-10-09T09:17:44.766Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://ruiming.github.io/2016/10/07/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E4%B8%8EPEG-js/"/>
     <id>https://ruiming.github.io/2016/10/07/编译原理与PEG-js/</id>
     <published>2016-10-07T08:54:32.000Z</published>
-    <updated>2016-10-09T07:36:51.366Z</updated>
+    <updated>2016-10-09T09:17:44.766Z</updated>
     
     <content type="html"><![CDATA[<h1 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h1><p>这学期开始上编译原理这门课，比较纳闷的一点是老师要求用 Java。作为一个想学好编译原理的 Java 黑，自然要寻找另一门可以进行实践的语言，编译在 JavaScript 中应用非常广泛，几乎所有主流的语言都可以编译到 JavaScript，Babel 编译 ES6 到 ES5，以及 CofferScript, TypeScript, JSX 等等编译为 JavaScript。另外，JavaScript 作为一门函数第一公民的语言，我想用来做编译也是特别方便的。一开始看了 Jison，感觉还是挺简单的，不过现在貌似流行 PEG.js，老实说我并不知道他们区别，我还只是一个初学者，或者初学者也算不上，因为最近一个月根本没好好听课 =.=</p>
 <p>有几个重要的概念先罗列下：</p>
@@ -159,11 +159,11 @@
 <p><em>( expression )</em></p>
 <p>匹配一个子表达式并返回匹配的结果</p>
 <p><em>expression *</em></p>
-<p>匹配表达式零次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，正则表达式没有回溯</p>
+<p>匹配表达式零次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，解析表达式没有回溯</p>
 <p><em>expression +</em></p>
-<p>匹配表达式一次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，正则表达式没有回溯</p>
+<p>匹配表达式一次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，解析表达式没有回溯</p>
 <p><em>expression ?</em></p>
-<p>尝试匹配表达式，如果匹配成功，返回匹配的结果，否则返回 <code>null</code>。不像正则表达式，正则表达式没有回溯</p>
+<p>尝试匹配表达式，如果匹配成功，返回匹配的结果，否则返回 <code>null</code>。不像正则表达式，解析表达式没有回溯</p>
 <p><em>&amp; expression</em></p>
 <p>尝试匹配表达式，如果匹配成功，只返回 <code>undefined</code> 并且不消耗任何输入，否则认为匹配是失败的</p>
 <p><em>! expression</em></p>

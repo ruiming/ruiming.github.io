@@ -96,7 +96,7 @@
 <meta property="og:url" content="https://ruiming.github.io/2016/10/07/编译原理与PEG-js/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="编译原理这学期开始上编译原理这门课，比较纳闷的一点是老师要求用 Java。作为一个想学好编译原理的 Java 黑，自然要寻找另一门可以进行实践的语言，编译在 JavaScript 中应用非常广泛，几乎所有主流的语言都可以编译到 JavaScript，Babel 编译 ES6 到 ES5，以及 CofferScript, TypeScript, JSX 等等编译为 JavaScript。另外，Jav">
-<meta property="og:updated_time" content="2016-10-09T07:36:51.366Z">
+<meta property="og:updated_time" content="2016-10-09T09:17:44.766Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="编译原理与PEG.js">
 <meta name="twitter:description" content="编译原理这学期开始上编译原理这门课，比较纳闷的一点是老师要求用 Java。作为一个想学好编译原理的 Java 黑，自然要寻找另一门可以进行实践的语言，编译在 JavaScript 中应用非常广泛，几乎所有主流的语言都可以编译到 JavaScript，Babel 编译 ES6 到 ES5，以及 CofferScript, TypeScript, JSX 等等编译为 JavaScript。另外，Jav">
@@ -481,11 +481,11 @@
 <p><em>( expression )</em></p>
 <p>匹配一个子表达式并返回匹配的结果</p>
 <p><em>expression *</em></p>
-<p>匹配表达式零次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，正则表达式没有回溯</p>
+<p>匹配表达式零次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，解析表达式没有回溯</p>
 <p><em>expression +</em></p>
-<p>匹配表达式一次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，正则表达式没有回溯</p>
+<p>匹配表达式一次或多次并以数组的形式返回匹配结果。这个匹配是贪婪匹配，即解析器会尽可能的进行多次匹配。不像正则表达式，解析表达式没有回溯</p>
 <p><em>expression ?</em></p>
-<p>尝试匹配表达式，如果匹配成功，返回匹配的结果，否则返回 <code>null</code>。不像正则表达式，正则表达式没有回溯</p>
+<p>尝试匹配表达式，如果匹配成功，返回匹配的结果，否则返回 <code>null</code>。不像正则表达式，解析表达式没有回溯</p>
 <p><em>&amp; expression</em></p>
 <p>尝试匹配表达式，如果匹配成功，只返回 <code>undefined</code> 并且不消耗任何输入，否则认为匹配是失败的</p>
 <p><em>! expression</em></p>
