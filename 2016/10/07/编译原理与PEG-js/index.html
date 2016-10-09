@@ -96,7 +96,7 @@
 <meta property="og:url" content="https://ruiming.github.io/2016/10/07/编译原理与PEG-js/index.html">
 <meta property="og:site_name" content="Ruiming's Blog">
 <meta property="og:description" content="编译原理这学期开始上编译原理这门课，比较纳闷的一点是老师要求用 Java。作为一个想学好编译原理的 Java 黑，自然要寻找另一门可以进行实践的语言，编译在 JavaScript 中应用非常广泛，几乎所有主流的语言都可以编译到 JavaScript，Babel 编译 ES6 到 ES5，以及 CofferScript, TypeScript, JSX 等等编译为 JavaScript。另外，Jav">
-<meta property="og:updated_time" content="2016-10-09T07:35:37.966Z">
+<meta property="og:updated_time" content="2016-10-09T07:36:51.366Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="编译原理与PEG.js">
 <meta name="twitter:description" content="编译原理这学期开始上编译原理这门课，比较纳闷的一点是老师要求用 Java。作为一个想学好编译原理的 Java 黑，自然要寻找另一门可以进行实践的语言，编译在 JavaScript 中应用非常广泛，几乎所有主流的语言都可以编译到 JavaScript，Babel 编译 ES6 到 ES5，以及 CofferScript, TypeScript, JSX 等等编译为 JavaScript。另外，Jav">
@@ -374,7 +374,7 @@
 </blockquote>
 </li>
 </ol>
-<h1 id="解析表达式"><a href="#解析表达式" class="headerlink" title="解析表达式"></a>解析表达式</h1><p>在了解 PEG.js 之前有必要先了解下 (PEG)[<a href="https://zh.wikipedia.org/wiki/%E8%A7%A3%E6%9E%90%E8%A1%A8%E8%BE%BE%E6%96%87%E6%B3%95]（解析表达文法），以及它与" target="_blank" rel="external">https://zh.wikipedia.org/wiki/%E8%A7%A3%E6%9E%90%E8%A1%A8%E8%BE%BE%E6%96%87%E6%B3%95]（解析表达文法），以及它与</a> CFG（上下文无关文法）的区别。以下摘选<a href="https://zh.wikipedia.org/wiki/%E8%A7%A3%E6%9E%90%E8%A1%A8%E8%BE%BE%E6%96%87%E6%B3%95" target="_blank" rel="external">维基百科</a>上面关于解析表达式的解释</p>
+<h1 id="解析表达式"><a href="#解析表达式" class="headerlink" title="解析表达式"></a>解析表达式</h1><p>在了解 PEG.js 之前有必要先了解下 <a href="https://zh.wikipedia.org/wiki/%E8%A7%A3%E6%9E%90%E8%A1%A8%E8%BE%BE%E6%96%87%E6%B3%95" target="_blank" rel="external">PEG</a>（解析表达文法），以及它与 CFG（上下文无关文法）的区别。以下摘选<a href="https://zh.wikipedia.org/wiki/%E8%A7%A3%E6%9E%90%E8%A1%A8%E8%BE%BE%E6%96%87%E6%B3%95" target="_blank" rel="external">维基百科</a>上面关于解析表达式的解释</p>
 <blockquote>
 <p>解析表达文法里面的每一个非终结符本质上表示递归下降解析器里面的一个解析<a href="https://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0" target="_blank" rel="external">函数</a>，其对应的解析表达式展示了这个函数包含的代码内容。概念上，每一个解析函数接受一个输入字符串作为参数，返回以下其中一个结果:</p>
 <ul>
