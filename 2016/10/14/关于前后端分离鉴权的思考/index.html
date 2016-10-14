@@ -102,7 +102,7 @@
 <meta property="og:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/CSRF.jpg">
 <meta property="og:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/jwt.jpeg">
 <meta property="og:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/tokens-new.png">
-<meta property="og:updated_time" content="2016-10-14T11:51:28.213Z">
+<meta property="og:updated_time" content="2016-10-14T11:54:55.587Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于前后端分离鉴权的思考">
 <meta name="twitter:description" content="前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。
@@ -393,7 +393,7 @@
 <p>同样的，它会使用 Base64Url 编码组成 JWT 结构的第二部分</p>
 </li>
 <li><p>Signature</p>
-<p>前面两部分都是使用 Base64Url 进行编码的，即客户端可以解开知道里面的信息。Signature 需要使用编码后的 header 和 payload 以及我们提供的一个密钥，然后使用 header 中指定的签名算法进行签名。签名的作用是保证 JWT 没有被篡改过。同样，这一段也会进行 base64Url 编码。</p>
+<p>前面两部分都是使用 Base64Url 进行编码的，即客户端可以解开知道里面的信息。Signature 需要使用编码后的 header 和 payload 以及我们提供的一个密钥，然后使用 header 中指定的签名算法进行签名。签名的作用是保证 JWT 没有被篡改过。</p>
 </li>
 </ul>
 <p>三个部分通过 <code>.</code> 连接在一起就是我们的 JWT 了，它可能长这个样子：</p>
