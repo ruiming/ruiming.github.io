@@ -1,0 +1,930 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+  
+
+<link href="//cdn.bootcss.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Angular,JavaScript,JWT,Koa," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Ruiming's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.jpg?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。
+前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。我不会一开始就讲我的做法，而是循序渐进的从">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于前后端分离鉴权的思考">
+<meta property="og:url" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/index.html">
+<meta property="og:site_name" content="Ruiming's Blog">
+<meta property="og:description" content="前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。
+前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。我不会一开始就讲我的做法，而是循序渐进的从">
+<meta property="og:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/flow-cookie-session.jpg">
+<meta property="og:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/CSRF.jpg">
+<meta property="og:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/jwt.jpeg">
+<meta property="og:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/tokens-new.png">
+<meta property="og:updated_time" content="2016-10-14T11:51:28.213Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于前后端分离鉴权的思考">
+<meta name="twitter:description" content="前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。
+前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。我不会一开始就讲我的做法，而是循序渐进的从">
+<meta name="twitter:image" content="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/flow-cookie-session.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6247361191572669000,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/"/>
+
+  <title> 关于前后端分离鉴权的思考 | Ruiming's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81637252-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="bg"></div>
+  <div class="container one-collumn  page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Ruiming's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                关于前后端分离鉴权的思考
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-14T19:29:05+08:00" content="2016-10-14">
+              2016-10-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/14/关于前后端分离鉴权的思考/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/14/关于前后端分离鉴权的思考/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/10/14/关于前后端分离鉴权的思考/" class="leancloud_visitors" data-flag-title="关于前后端分离鉴权的思考">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。</p>
+<p>前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。我不会一开始就讲我的做法，而是循序渐进的从传统的存储方式逐渐过渡到我的做法当中来。</p>
+<h2 id="如何安全的传输用户-token"><a href="#如何安全的传输用户-token" class="headerlink" title="如何安全的传输用户 token"></a>如何安全的传输用户 token</h2><p>这是最传统也是最简单的方式了，前端登录，后端根据用户信息生成一个 token，并保存这个 token 和对应的用户 id，接着把 token 传给用户，存入浏览器 cookie，之后浏览器请求带上这个 cookie，后端根据这个 cookie 来标识用户。</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/flow-cookie-session.jpg" alt="flow-cookie-session" title="flow-cookie-session">
+<p>但这样做问题就很多，如果我们的页面出现了 XSS 漏洞，由于 cookie 可以被 JavaScript 读取，XSS 漏洞会导致用户 token 泄露，而作为后端识别用户的标识，cookie 的泄露意味着用户信息不再安全。</p>
+<p>尽管我们通过转义输出内容，使用 CDN 等可以尽量避免 XSS 注入，但谁也不能保证在大型的项目中不会出现这个问题。另外，后端每次都需要根据 token 查出用户 id，这就增加了数据库的查询和存储开销。</p>
+<p>在设置 cookie 的时候，其实你还可以设置 httpOnly 以及 secure 项。设置 httpOnly 后 cookie 将不能被 JS 读取，浏览器会自动的把它加在请求的 header 当中，设置 secure 的话，cookie 就只允许通过 HTTPS 传输。</p>
+<p>secure 选项可以过滤掉一些使用 HTTP 协议的 XSS 注入，但并不能完全阻止。</p>
+<p>httpOnly 选项使得 JS 不能读取到 cookie，那么 XSS 注入的问题也基本不用担心了。但设置 httpOnly 就带来了另一个问题，就是很容易的被 XSRF，即跨站请求伪造。当你浏览器开着这个页面的时候，另一个页面可以很容易的跨站请求这个页面的内容。因为 cookie 默认被发了出去。</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/CSRF.jpg" alt="CSRF" title="CSRF">
+<p>看起来我们不能兼顾。确实，光依靠这一个 token 我们没办法兼顾这两点。既然一个不够，那就两个。于是有了 XSRF-TOKEN，它和作为用户令牌的 token 类似，也是服务器生成的一个散列值。我们把 token 通过 httpOnly 发回去，把 XSRF-TOKEN 直接发回去。我们可以无视 httpOnly 的 cookie 因为我们没法操纵它，但对于这个 XSRF-TOKEN，我们就可以在我们网站的每个请求中都加入到 header 里面去。而服务端就需要检查这个 header 的 XSRF-TOKEN 是否真实有效。</p>
+<p>由于 XSRF-TOKEN 以非 httpOnly 的形式存储在 cookie 中，正常情况下只有我们自己的网站可以获取到该 XSRF-TOKEN。这样 XSRF 攻击就变得不太可能了。另外由于用户 token 是通过 httpOnly 形式存储，JS 不可获取，这样也保证了用户 token 的安全。XSS 注入最多只能获取到 XSRF-TOKEN。</p>
+<p>但还是有一种可能，XSS 注入取得 XSRF-TOKEN 后在当前页面发送请求出去。本文并不打算讨论 XSRF 和 XSS，明白这两个真正危害的地方就可以知道，这种 XSS 注入取得 XSRF-TOKEN 后发送请求其实并没有带来什么危害。不过呢，还是要看具体情况吧，如果我们的网站有一个投票 XXX 的接口，这个接口的链接被用在 XSS 注入中，那么当所有人打开这个页面的时候，都会自动的朝 XXX 投了一票。</p>
+<p>不同于 XSRF， XSRF 可以从其他网站执行该段脚本，而这里只能注入到我们的网站中来执行。因为我们的 JS 也是这样子做的，取出 XSRF-TOKEN 放入请求头部然后发送请求出去，所以这就无法避免了。事实上，由于我们的前端代码都是公开的，无论 JS 层面绕多少个弯，XSS 注入还是可以照着做过来。但好在这种方式其实造成的影响相当有限，并不会比我们常说的 XSS 注入和 XSRF 攻击的危害大，要知道 XSS 注入危害的 cookie 的泄露，但其实这里并没有 cookie 的泄露。</p>
+<p>我们再讨论另一个问题，前面也说了，服务器要经常去查询这个 token 对应的是哪一个用户。其实可不可以不要服务器去查询呢？如果我们生成 token 遵循一定的规律，比如我们使用对称加密算法来加密用户 id 形成 token，那么服务端以后其实只要解密该 token 就可以知道用户的 id 是什么了。不过呢，我只是举个例子而已，要是真这么做，只要你的对称加密算法泄露了，所有用户信息都不再安全了。恩，那用非对称加密算法来做呢，由公钥加密生成 token，私钥来解密 token，这样做就安全多了。其实现在有个规范就是这样做的，就是我们接下来要介绍的 JWT。</p>
+<a id="more"></a>
+<h2 id="Json-Web-Token"><a href="#Json-Web-Token" class="headerlink" title="Json Web Token"></a>Json Web Token</h2><p>接下来我们就简单介绍 JWT 这个东西，全称叫 Json Web Token。</p>
+<h3 id="JWT-简介"><a href="#JWT-简介" class="headerlink" title="JWT 简介"></a>JWT 简介</h3><p>JWT 是一个开放标准(<a href="https://tools.ietf.org/html/rfc7519" target="_blank" rel="external">RFC 7519</a>)，它定义了一种用于简洁，自包含的用于通信双方之间以 JSON 对象的形式安全传递信息的方法。JWT 可以使用 HMAC 算法或者是 RSA 的公钥密钥对进行签名。它具备两个特点：</p>
+<ul>
+<li><p>简洁(Compact) </p>
+<p>可以通过URL, POST 参数或者在 HTTP header 发送，因为数据量小，传输速度快</p>
+</li>
+<li><p>自包含(Self-contained)</p>
+<p>负载中包含了所有用户所需要的信息，避免了多次查询数据库</p>
+</li>
+</ul>
+<h3 id="JWT-组成"><a href="#JWT-组成" class="headerlink" title="JWT 组成"></a>JWT 组成</h3><p>JWT 由 Header, Payload, Signature 三部分组成，即头部，负载，签名，长这样：</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/jwt.jpeg" alt="jwt" title="jwt">
+<ul>
+<li><p>Header 头部</p>
+<p>头部包含了两部分，token 类型和采用的加密算法</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"alg"</span>: <span class="string">"HS256"</span>,</div><div class="line">  <span class="attr">"typ"</span>: <span class="string">"JWT"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>它会使用 Base64Url 编码组成 JWT 结构的第一部分</p>
+</li>
+<li><p>Payload</p>
+<p>这部分就是我们存放信息的地方了，你可以把用户 ID 等信息放在这里，JWT 规范里面对这部分有进行了比较详细的介绍，常用的由 iss（签发者），exp（过期时间），sub（面向的用户），aud（接收方），iat（签发时间）。这些我们应该规范的使用，因为他们可能是在校验中使用到了（猜测，表示我一个也没用到 =.= ）</p>
+<p>例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"sub"</span>: <span class="string">"1234567890"</span>,</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"John Doe"</span>,</div><div class="line">  <span class="attr">"admin"</span>: <span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>同样的，它会使用 Base64Url 编码组成 JWT 结构的第二部分</p>
+</li>
+<li><p>Signature</p>
+<p>前面两部分都是使用 Base64Url 进行编码的，即客户端可以解开知道里面的信息。Signature 需要使用编码后的 header 和 payload 以及我们提供的一个密钥，然后使用 header 中指定的签名算法进行签名。签名的作用是保证 JWT 没有被篡改过。同样，这一段也会进行 base64Url 编码。</p>
+</li>
+</ul>
+<p>三个部分通过 <code>.</code> 连接在一起就是我们的 JWT 了，它可能长这个样子：</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eyJhbGciOiJIUzI<span class="number">1</span><span class="symbol">NiIsInR5</span>cCI<span class="number">6</span>IkpX<span class="attr">VCJ9</span>.eyJpZCI<span class="number">6</span>IjU<span class="number">3</span>ZmVmMTY<span class="number">0</span>ZTU<span class="number">0</span>YWY<span class="number">2</span><span class="symbol">NGZmYzUzZGJkNSIsInhzcmYiOiI0</span>ZWE<span class="number">1</span>YzUwOGE<span class="number">2</span><span class="symbol">NTY2</span>ZTc<span class="number">2</span>MjQw<span class="symbol">NTQzZjhmZWIwNmZkNDU3</span><span class="symbol">Nzc3</span>YmUzOTU<span class="number">0</span>OW<span class="name">M0</span>MDE<span class="number">2</span><span class="symbol">NDM2</span>YWZkYTY<span class="number">1</span>ZDIzMzBlIiwiaWF<span class="number">0</span>Ijox<span class="symbol">NDc2</span><span class="symbol">NDI3</span>OTMzfQ.PA<span class="number">3</span>QjeyZSUh<span class="number">7</span>H<span class="number">0</span>GfE<span class="number">0</span>vJaKW<span class="number">4</span>LjKJuC<span class="number">3</span>dVLQiY<span class="number">4</span>hii<span class="number">8</span>s</div></pre></td></tr></table></figure>
+<p>长度貌似和你的加密算法和私钥有关系。其实到这一步可能就有人会想了，HTTP 请求总会带上 token，这样这个 token 传来传去占用不必要的带宽啊。如果你这么想了，那你可以去了解下 HTTP2，HTTP2 对头部进行了压缩，相信也解决了这个问题。</p>
+<h3 id="JWT-使用"><a href="#JWT-使用" class="headerlink" title="JWT 使用"></a>JWT 使用</h3><p>JWT 生成了，怎么使用就看你了，不过还是有一点要求的。当访问需要 JWT 验证的 API 时，需要把该 JWT 放入头部的 Authorization 中</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">Authorization:</span> Bearer <span class="params">&lt;token&gt;</span></div></pre></td></tr></table></figure>
+<p>注意 <code>Bearer</code> 是必须的，中间有一个空格，后面跟着 JWT，这样服务端就可以从 Authorization 取出来用了。当然了，你也可以完全爱怎么来就怎么来。但是按照规范你可以省很多事情。</p>
+<p>简单的 JWT 流程是这样的，不带 XSRF 的，没有找到带 XSRF 的图 =.=</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/tokens-new.png" alt="tokens-new" title="tokens-new">
+<h2 id="JWT-实践"><a href="#JWT-实践" class="headerlink" title="JWT 实践"></a>JWT 实践</h2><p>刚才前面也说了，前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。首先要强调下，下面说的不是唯一的方式，也不是最好的方式，而只是我自己这么用了并且我认为挺稳妥的。我在 Koa 中使用了两个模块，<a href="https://github.com/auth0/node-jsonwebtoken" target="_blank" rel="external">jsonwebtoken</a> 和 <a href="https://github.com/koajs/jwt/tree/koa-v2" target="_blank" rel="external">koa-jwt</a>。我以登录为例简单说下整个流程。</p>
+<h3 id="登录，生成-JWT"><a href="#登录，生成-JWT" class="headerlink" title="登录，生成 JWT"></a>登录，生成 JWT</h3><p>在说登录的处理之前，我想先强调这个登录页面还是后端(ejs)来渲染的，而不是前端来渲染。这个其实也会影响到我们存储 token 的考虑。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">router.get([<span class="string">'/'</span>, <span class="string">'/login'</span>], <span class="keyword">async</span> (ctx, next) =&gt; &#123;</div><div class="line">    <span class="keyword">if</span>(ctx.cookies.get(<span class="string">'jwt'</span>)) &#123;</div><div class="line">        <span class="keyword">let</span> token = jwt.decode(ctx.cookies.get(<span class="string">'jwt'</span>));</div><div class="line">        <span class="keyword">if</span>(token.id) &#123;</div><div class="line">            <span class="keyword">let</span> result = <span class="keyword">await</span> UserModel.findById(token.id);</div><div class="line">            <span class="keyword">if</span>(result &amp;&amp; result._id) <span class="keyword">await</span> send(ctx, <span class="string">'./public/index.html'</span>);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            ctx.cookies.set(<span class="string">'jwt'</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">            ctx.render(<span class="string">'login.ejs'</span>, &#123;err: <span class="string">'JWT 验证失败'</span>&#125;);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">await</span> ctx.render(<span class="string">'login.ejs'</span>);  </div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>当用户访问网站主页或者登录页面的时候，首先要先判断下是否已经有效登录了，如果是，那么跳转到 Angular 中去，否则跳转到登录页面。因为我想法是做一个主页，这个主页不需要加载太多类库，只是简单的展示页面和登录注册页面，用户登录或注册成功后在跳转到 Angular 的入口文件去。</p>
+<p>接下来就是真正的登录接口了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">exports.login = <span class="keyword">async</span> (ctx, next) =&gt; &#123;</div><div class="line">    <span class="keyword">let</span> result = <span class="keyword">await</span> UserModel.findOne(&#123;</div><div class="line">        email: ctx.request.body.email, </div><div class="line">        password: SHA256(ctx.request.body.password).toString()&#125;);</div><div class="line">    <span class="keyword">let</span> xsrf = SHA256(_.random(<span class="number">999999999</span>)).toString();</div><div class="line">    <span class="keyword">if</span>(result &amp;&amp; result._id) &#123;</div><div class="line">        <span class="keyword">let</span> token = jwt.sign(&#123;id: result._id, xsrf: xsrf&#125;, config.app.secretKey);</div><div class="line">        ctx.cookies.set(<span class="string">"XSRF-TOKEN"</span>, xsrf, &#123;httpOnly: <span class="literal">false</span>, overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="keyword">new</span> <span class="built_in">Date</span>().getTime() + <span class="number">5184000000</span>)&#125;);</div><div class="line">        ctx.cookies.set(<span class="string">"jwt"</span>, token, &#123;httpOnly: <span class="literal">true</span>, overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="keyword">new</span> <span class="built_in">Date</span>().getTime() + <span class="number">5184000000</span>)&#125;);</div><div class="line">        <span class="keyword">await</span> ctx.redirect(<span class="string">'/'</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">let</span> exist = <span class="keyword">await</span> UserModel.findOne(&#123;email: ctx.request.body.email&#125;);</div><div class="line">        <span class="keyword">if</span>(exist &amp;&amp; exist._id)  ctx.throw(<span class="number">401</span>, <span class="string">'密码错误'</span>);</div><div class="line">        <span class="keyword">else</span> ctx.throw(<span class="number">401</span>, <span class="string">'邮箱未注册'</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>恩，熟悉 Node 的应该看懂没啥问题。这里有个变量 <code>xsrf</code> ，作用前面我们已经说了，还有变量 <code>token</code> 就是 JWT 了。然后我们把他设置到 cookie 中，注意 <code>xsrf</code> 不能设置 <code>httpOnly</code> 而 <code>token</code> 需要设置为 <code>httpOnly</code>，不要忘了把 <code>xsrf</code> 也放入 JWT 的 payload 部分中去，这里 payload 存储了用户 id 和当前的 <code>xsrf</code>。</p>
+<h3 id="请求带上-XSRF"><a href="#请求带上-XSRF" class="headerlink" title="请求带上 XSRF"></a>请求带上 XSRF</h3><p>我们需要在以后的每个请求都带上 XSRF-TOKEN，具体操作就是把 cookie 中的 XSRF-TOKEN 取出来，放入请求的 X-XSRF-TOKEN 头部中，然后发送出去就好了。如果你用的是 Angular，其实你什么都不需要做了，因为这一步 Angular 已经帮你做好了，前提是你的 xsrf 必须放到 cookie 中的 XSRF-TOKEN 这个里面。如果你用的不是 Angular，那你就自己查下怎么做吧，这一步并不难做到。</p>
+<h3 id="设置-header-和校验-XSRF"><a href="#设置-header-和校验-XSRF" class="headerlink" title="设置 header 和校验 XSRF"></a>设置 header 和校验 XSRF</h3><p>前面说了，我们需要把 JWT 放到请求的 <code>Authorization</code> 头部中，但是由于我们对 JWT 设置了 <code>httpOnly</code> ，所以这个操作几乎就不太可能了。但别忘了我们可以在服务端做这一步，与此同时我们也可以把校验 <code>XSRF</code> 也做了，这里先不需要校验 JWT。</p>
+<p>如果熟悉 Koa 的话就清楚 Koa 的中间件思路。我们在较顶层的位置写入：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// XSRF 检测，处理客户端未授权问题</span></div><div class="line">app.use(<span class="keyword">async</span> (ctx, next) =&gt; &#123;</div><div class="line">    <span class="keyword">let</span> token = ctx.cookies.get(<span class="string">'jwt'</span>), xsrf = ctx.request.headers[<span class="string">'x-xsrf-token'</span>];</div><div class="line">    ctx.request.header.authorization = <span class="string">'Bearer '</span> + token;</div><div class="line">    <span class="comment">// 当 JWT 存在且访问 API 时，检测 XSRF </span></div><div class="line">    <span class="keyword">if</span>(token !== <span class="keyword">void</span> <span class="number">0</span> &amp;&amp; <span class="regexp">/^\/api\//</span>.test(ctx.url)) &#123;;</div><div class="line">        <span class="keyword">let</span> verify = <span class="built_in">Promise</span>.promisify(jwt.verify);</div><div class="line">        <span class="keyword">await</span> verify(token, config.app.secretKey).then(<span class="keyword">async</span> (data) =&gt; &#123;</div><div class="line">            <span class="keyword">if</span>(xsrf !== data.xsrf) &#123;</div><div class="line">                ctx.cookies.set(<span class="string">"XSRF-TOKEN"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">                ctx.cookies.set(<span class="string">"jwt"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">                ctx.status = <span class="number">401</span>;</div><div class="line">                ctx.body =  &#123; success: <span class="literal">false</span>, message: <span class="string">'用户验证失败'</span>&#125;;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">await</span> next();</div><div class="line">            &#125;</div><div class="line">        &#125;, err =&gt; &#123;</div><div class="line">            ctx.cookies.set(<span class="string">"XSRF-TOKEN"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">            ctx.cookies.set(<span class="string">"jwt"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;)</div><div class="line">            ctx.status = <span class="number">401</span>;</div><div class="line">            ctx.body = &#123; success: <span class="literal">false</span>, message: <span class="string">'用户验证失败'</span>&#125;;</div><div class="line">        &#125;);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">await</span> next();</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>最前面几行就是设置 header，可以看到非常简单。if 语句进来就是检验 <code>XSRF</code> 了，我的逻辑是只有用户请求 API 的时候并且 JWT 存在的时候才做检测。我们后面有对 JWT 的检测所以这里不需要做，如果 JWT 不存在或者方位的不是 API 直接 next 就好了。</p>
+<p>这里调用了 <code>jwt.verify</code> 方法取出了 payload 的内容，这个方法是 <code>jsonwebtoken</code> 这个模块提供的。</p>
+<h3 id="检验-JWT"><a href="#检验-JWT" class="headerlink" title="检验 JWT"></a>检验 JWT</h3><p>有一点需要注意的是，有些资源我们允许用户无需登录就进行访问。例如我们前面的登录注册界面，还要像静态资源等等。使用 <code>koa-jwt</code> 可以很方便的做这件事情。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">app.use(handel.routes())</div><div class="line">   .use(handel.allowedMethods());</div><div class="line"></div><div class="line">app.use(jwt(&#123; secret: config.app.secretKey, algorithm: <span class="string">'RS256'</span> &#125;).unless(&#123; path: [<span class="regexp">/^\/css|js|img|fonts/</span>] &#125;));</div><div class="line"></div><div class="line">app.use(api.routes())</div><div class="line">   .use(api.allowedMethods());</div></pre></td></tr></table></figure>
+<p><code>handel</code> 这个路由是我的登录注册页面和接口这些，而 <code>api</code> 就是 Angular 中需要用到的一系列接口。中间我们加入了一句话。这里的 <code>jwt</code> 是 <code>koa-jwt</code> 模块。</p>
+<p>这些顺序不能乱，koa 中间件的加载是按自顶向下的顺序的，所以我们 <code>handel</code> 这里并不要 jwt 检测，而后面则需要。而我们前面说的 xsrf 检测和 header 处理自然是要放在更前的位置了。这里的 <code>path</code> 你可以根据需要修改。具体的用法参考文档就好了。</p>
+<p>整个流程就完了，这个就实现了我们前面探讨的成果。既保护了 token 的安全，又防止了 XSRF 攻击。当然了我不敢说绝对安全，根本就没有绝对安全的东西。但目前这样的鉴权系统应该算马马虎虎了。</p>
+<p>如果你的登录注册也是放在前端（比如由 Angular 来做），那你也可以像我上面说的这么做，或者可以把 jwt 作为登录请求的 response 返回，不过我不觉得这是一种安全的方式，关于其他的存储方式参考我后面给的链接吧，我就不多介绍了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实关于 JWT 存放到哪里一直由很多讨论，有人说存放到本地存储，有人说存 cookie。但我觉得上面我说的这种方式是挺稳妥的，如果你有什么意见和看法欢迎提出。参考资料也附出了比较热门的关于 jwt 存储位置的讨论文章，可以看下。</p>
+<hr>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://jwt.io/introduction/" target="_blank" rel="external">jwt.io</a></li>
+<li><a href="https://stormpath.com/blog/where-to-store-your-jwts-cookies-vs-html5-web-storage" target="_blank" rel="external">Where to Store your JWTs – Cookies vs HTML5 Web Storage</a></li>
+<li><a href="http://stackoverflow.com/questions/27067251/where-to-store-jwt-in-browser-how-to-protect-against-csrf" target="_blank" rel="external">Where to store JWT in browser? How to protect against CSRF?</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
+          
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+            <a href="/tags/JWT/" rel="tag">#JWT</a>
+          
+            <a href="/tags/Koa/" rel="tag">#Koa</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/07/编译原理与PEG-js/" rel="next" title="编译原理与PEG.js">
+                <i class="fa fa-chevron-left"></i> 编译原理与PEG.js
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/10/14/关于前后端分离鉴权的思考/"
+     data-title="关于前后端分离鉴权的思考"
+     data-content=""
+     data-url="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/14/关于前后端分离鉴权的思考/"
+           data-title="关于前后端分离鉴权的思考" data-url="https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://cdn.bookist.org/avatar.jpg"
+               alt="Ruiming" />
+          <p class="site-author-name" itemprop="name">Ruiming</p>
+          <p class="site-description motion-element" itemprop="description">Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Ruiming" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  Github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/zhuang-rui-ming" target="_blank" title="Zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Zhihu
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/zhuangruiming" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://plus.google.com/115149019958723046324" target="_blank" title="Google+">
+                  
+                    <i class="fa fa-fw fa-google-plus"></i>
+                  
+                  Google+
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何安全的传输用户-token"><span class="nav-number">1.</span> <span class="nav-text">如何安全的传输用户 token</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Json-Web-Token"><span class="nav-number">2.</span> <span class="nav-text">Json Web Token</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-简介"><span class="nav-number">2.1.</span> <span class="nav-text">JWT 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-组成"><span class="nav-number">2.2.</span> <span class="nav-text">JWT 组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-使用"><span class="nav-number">2.3.</span> <span class="nav-text">JWT 使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JWT-实践"><span class="nav-number">3.</span> <span class="nav-text">JWT 实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#登录，生成-JWT"><span class="nav-number">3.1.</span> <span class="nav-text">登录，生成 JWT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求带上-XSRF"><span class="nav-number">3.2.</span> <span class="nav-text">请求带上 XSRF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-header-和校验-XSRF"><span class="nav-number">3.3.</span> <span class="nav-text">设置 header 和校验 XSRF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检验-JWT"><span class="nav-number">3.4.</span> <span class="nav-text">检验 JWT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ruiming</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.3/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ruiming"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="//cdn.bootcss.com/UAParser.js/0.7.9/ua-parser.min.js"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("zubvLPlu4282neSFuGISU0Cj-gzGzoHsz", "nWvzBqYiScjyD8wQa4BXQH8f");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-10-09T09:17:44.766Z</updated>
+  <updated>2016-10-14T11:51:28.213Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -14,6 +14,127 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>关于前后端分离鉴权的思考</title>
+    <link href="https://ruiming.github.io/2016/10/14/%E5%85%B3%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%89%B4%E6%9D%83%E7%9A%84%E6%80%9D%E8%80%83/"/>
+    <id>https://ruiming.github.io/2016/10/14/关于前后端分离鉴权的思考/</id>
+    <published>2016-10-14T11:29:05.000Z</published>
+    <updated>2016-10-14T11:51:28.213Z</updated>
+    
+    <content type="html"><![CDATA[<p>前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。</p>
+<p>前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。我不会一开始就讲我的做法，而是循序渐进的从传统的存储方式逐渐过渡到我的做法当中来。</p>
+<h2 id="如何安全的传输用户-token"><a href="#如何安全的传输用户-token" class="headerlink" title="如何安全的传输用户 token"></a>如何安全的传输用户 token</h2><p>这是最传统也是最简单的方式了，前端登录，后端根据用户信息生成一个 token，并保存这个 token 和对应的用户 id，接着把 token 传给用户，存入浏览器 cookie，之后浏览器请求带上这个 cookie，后端根据这个 cookie 来标识用户。</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/flow-cookie-session.jpg" alt="flow-cookie-session" title="flow-cookie-session">
+<p>但这样做问题就很多，如果我们的页面出现了 XSS 漏洞，由于 cookie 可以被 JavaScript 读取，XSS 漏洞会导致用户 token 泄露，而作为后端识别用户的标识，cookie 的泄露意味着用户信息不再安全。</p>
+<p>尽管我们通过转义输出内容，使用 CDN 等可以尽量避免 XSS 注入，但谁也不能保证在大型的项目中不会出现这个问题。另外，后端每次都需要根据 token 查出用户 id，这就增加了数据库的查询和存储开销。</p>
+<p>在设置 cookie 的时候，其实你还可以设置 httpOnly 以及 secure 项。设置 httpOnly 后 cookie 将不能被 JS 读取，浏览器会自动的把它加在请求的 header 当中，设置 secure 的话，cookie 就只允许通过 HTTPS 传输。</p>
+<p>secure 选项可以过滤掉一些使用 HTTP 协议的 XSS 注入，但并不能完全阻止。</p>
+<p>httpOnly 选项使得 JS 不能读取到 cookie，那么 XSS 注入的问题也基本不用担心了。但设置 httpOnly 就带来了另一个问题，就是很容易的被 XSRF，即跨站请求伪造。当你浏览器开着这个页面的时候，另一个页面可以很容易的跨站请求这个页面的内容。因为 cookie 默认被发了出去。</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/CSRF.jpg" alt="CSRF" title="CSRF">
+<p>看起来我们不能兼顾。确实，光依靠这一个 token 我们没办法兼顾这两点。既然一个不够，那就两个。于是有了 XSRF-TOKEN，它和作为用户令牌的 token 类似，也是服务器生成的一个散列值。我们把 token 通过 httpOnly 发回去，把 XSRF-TOKEN 直接发回去。我们可以无视 httpOnly 的 cookie 因为我们没法操纵它，但对于这个 XSRF-TOKEN，我们就可以在我们网站的每个请求中都加入到 header 里面去。而服务端就需要检查这个 header 的 XSRF-TOKEN 是否真实有效。</p>
+<p>由于 XSRF-TOKEN 以非 httpOnly 的形式存储在 cookie 中，正常情况下只有我们自己的网站可以获取到该 XSRF-TOKEN。这样 XSRF 攻击就变得不太可能了。另外由于用户 token 是通过 httpOnly 形式存储，JS 不可获取，这样也保证了用户 token 的安全。XSS 注入最多只能获取到 XSRF-TOKEN。</p>
+<p>但还是有一种可能，XSS 注入取得 XSRF-TOKEN 后在当前页面发送请求出去。本文并不打算讨论 XSRF 和 XSS，明白这两个真正危害的地方就可以知道，这种 XSS 注入取得 XSRF-TOKEN 后发送请求其实并没有带来什么危害。不过呢，还是要看具体情况吧，如果我们的网站有一个投票 XXX 的接口，这个接口的链接被用在 XSS 注入中，那么当所有人打开这个页面的时候，都会自动的朝 XXX 投了一票。</p>
+<p>不同于 XSRF， XSRF 可以从其他网站执行该段脚本，而这里只能注入到我们的网站中来执行。因为我们的 JS 也是这样子做的，取出 XSRF-TOKEN 放入请求头部然后发送请求出去，所以这就无法避免了。事实上，由于我们的前端代码都是公开的，无论 JS 层面绕多少个弯，XSS 注入还是可以照着做过来。但好在这种方式其实造成的影响相当有限，并不会比我们常说的 XSS 注入和 XSRF 攻击的危害大，要知道 XSS 注入危害的 cookie 的泄露，但其实这里并没有 cookie 的泄露。</p>
+<p>我们再讨论另一个问题，前面也说了，服务器要经常去查询这个 token 对应的是哪一个用户。其实可不可以不要服务器去查询呢？如果我们生成 token 遵循一定的规律，比如我们使用对称加密算法来加密用户 id 形成 token，那么服务端以后其实只要解密该 token 就可以知道用户的 id 是什么了。不过呢，我只是举个例子而已，要是真这么做，只要你的对称加密算法泄露了，所有用户信息都不再安全了。恩，那用非对称加密算法来做呢，由公钥加密生成 token，私钥来解密 token，这样做就安全多了。其实现在有个规范就是这样做的，就是我们接下来要介绍的 JWT。</p>
+<a id="more"></a>
+<h2 id="Json-Web-Token"><a href="#Json-Web-Token" class="headerlink" title="Json Web Token"></a>Json Web Token</h2><p>接下来我们就简单介绍 JWT 这个东西，全称叫 Json Web Token。</p>
+<h3 id="JWT-简介"><a href="#JWT-简介" class="headerlink" title="JWT 简介"></a>JWT 简介</h3><p>JWT 是一个开放标准(<a href="https://tools.ietf.org/html/rfc7519" target="_blank" rel="external">RFC 7519</a>)，它定义了一种用于简洁，自包含的用于通信双方之间以 JSON 对象的形式安全传递信息的方法。JWT 可以使用 HMAC 算法或者是 RSA 的公钥密钥对进行签名。它具备两个特点：</p>
+<ul>
+<li><p>简洁(Compact) </p>
+<p>可以通过URL, POST 参数或者在 HTTP header 发送，因为数据量小，传输速度快</p>
+</li>
+<li><p>自包含(Self-contained)</p>
+<p>负载中包含了所有用户所需要的信息，避免了多次查询数据库</p>
+</li>
+</ul>
+<h3 id="JWT-组成"><a href="#JWT-组成" class="headerlink" title="JWT 组成"></a>JWT 组成</h3><p>JWT 由 Header, Payload, Signature 三部分组成，即头部，负载，签名，长这样：</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/jwt.jpeg" alt="jwt" title="jwt">
+<ul>
+<li><p>Header 头部</p>
+<p>头部包含了两部分，token 类型和采用的加密算法</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"alg"</span>: <span class="string">"HS256"</span>,</div><div class="line">  <span class="attr">"typ"</span>: <span class="string">"JWT"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>它会使用 Base64Url 编码组成 JWT 结构的第一部分</p>
+</li>
+<li><p>Payload</p>
+<p>这部分就是我们存放信息的地方了，你可以把用户 ID 等信息放在这里，JWT 规范里面对这部分有进行了比较详细的介绍，常用的由 iss（签发者），exp（过期时间），sub（面向的用户），aud（接收方），iat（签发时间）。这些我们应该规范的使用，因为他们可能是在校验中使用到了（猜测，表示我一个也没用到 =.= ）</p>
+<p>例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"sub"</span>: <span class="string">"1234567890"</span>,</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"John Doe"</span>,</div><div class="line">  <span class="attr">"admin"</span>: <span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>同样的，它会使用 Base64Url 编码组成 JWT 结构的第二部分</p>
+</li>
+<li><p>Signature</p>
+<p>前面两部分都是使用 Base64Url 进行编码的，即客户端可以解开知道里面的信息。Signature 需要使用编码后的 header 和 payload 以及我们提供的一个密钥，然后使用 header 中指定的签名算法进行签名。签名的作用是保证 JWT 没有被篡改过。同样，这一段也会进行 base64Url 编码。</p>
+</li>
+</ul>
+<p>三个部分通过 <code>.</code> 连接在一起就是我们的 JWT 了，它可能长这个样子：</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eyJhbGciOiJIUzI<span class="number">1</span><span class="symbol">NiIsInR5</span>cCI<span class="number">6</span>IkpX<span class="attr">VCJ9</span>.eyJpZCI<span class="number">6</span>IjU<span class="number">3</span>ZmVmMTY<span class="number">0</span>ZTU<span class="number">0</span>YWY<span class="number">2</span><span class="symbol">NGZmYzUzZGJkNSIsInhzcmYiOiI0</span>ZWE<span class="number">1</span>YzUwOGE<span class="number">2</span><span class="symbol">NTY2</span>ZTc<span class="number">2</span>MjQw<span class="symbol">NTQzZjhmZWIwNmZkNDU3</span><span class="symbol">Nzc3</span>YmUzOTU<span class="number">0</span>OW<span class="name">M0</span>MDE<span class="number">2</span><span class="symbol">NDM2</span>YWZkYTY<span class="number">1</span>ZDIzMzBlIiwiaWF<span class="number">0</span>Ijox<span class="symbol">NDc2</span><span class="symbol">NDI3</span>OTMzfQ.PA<span class="number">3</span>QjeyZSUh<span class="number">7</span>H<span class="number">0</span>GfE<span class="number">0</span>vJaKW<span class="number">4</span>LjKJuC<span class="number">3</span>dVLQiY<span class="number">4</span>hii<span class="number">8</span>s</div></pre></td></tr></table></figure>
+<p>长度貌似和你的加密算法和私钥有关系。其实到这一步可能就有人会想了，HTTP 请求总会带上 token，这样这个 token 传来传去占用不必要的带宽啊。如果你这么想了，那你可以去了解下 HTTP2，HTTP2 对头部进行了压缩，相信也解决了这个问题。</p>
+<h3 id="JWT-使用"><a href="#JWT-使用" class="headerlink" title="JWT 使用"></a>JWT 使用</h3><p>JWT 生成了，怎么使用就看你了，不过还是有一点要求的。当访问需要 JWT 验证的 API 时，需要把该 JWT 放入头部的 Authorization 中</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">Authorization:</span> Bearer <span class="params">&lt;token&gt;</span></div></pre></td></tr></table></figure>
+<p>注意 <code>Bearer</code> 是必须的，中间有一个空格，后面跟着 JWT，这样服务端就可以从 Authorization 取出来用了。当然了，你也可以完全爱怎么来就怎么来。但是按照规范你可以省很多事情。</p>
+<p>简单的 JWT 流程是这样的，不带 XSRF 的，没有找到带 XSRF 的图 =.=</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/tokens-new.png" alt="tokens-new" title="tokens-new">
+<h2 id="JWT-实践"><a href="#JWT-实践" class="headerlink" title="JWT 实践"></a>JWT 实践</h2><p>刚才前面也说了，前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。首先要强调下，下面说的不是唯一的方式，也不是最好的方式，而只是我自己这么用了并且我认为挺稳妥的。我在 Koa 中使用了两个模块，<a href="https://github.com/auth0/node-jsonwebtoken" target="_blank" rel="external">jsonwebtoken</a> 和 <a href="https://github.com/koajs/jwt/tree/koa-v2" target="_blank" rel="external">koa-jwt</a>。我以登录为例简单说下整个流程。</p>
+<h3 id="登录，生成-JWT"><a href="#登录，生成-JWT" class="headerlink" title="登录，生成 JWT"></a>登录，生成 JWT</h3><p>在说登录的处理之前，我想先强调这个登录页面还是后端(ejs)来渲染的，而不是前端来渲染。这个其实也会影响到我们存储 token 的考虑。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">router.get([<span class="string">'/'</span>, <span class="string">'/login'</span>], <span class="keyword">async</span> (ctx, next) =&gt; &#123;</div><div class="line">    <span class="keyword">if</span>(ctx.cookies.get(<span class="string">'jwt'</span>)) &#123;</div><div class="line">        <span class="keyword">let</span> token = jwt.decode(ctx.cookies.get(<span class="string">'jwt'</span>));</div><div class="line">        <span class="keyword">if</span>(token.id) &#123;</div><div class="line">            <span class="keyword">let</span> result = <span class="keyword">await</span> UserModel.findById(token.id);</div><div class="line">            <span class="keyword">if</span>(result &amp;&amp; result._id) <span class="keyword">await</span> send(ctx, <span class="string">'./public/index.html'</span>);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            ctx.cookies.set(<span class="string">'jwt'</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">            ctx.render(<span class="string">'login.ejs'</span>, &#123;err: <span class="string">'JWT 验证失败'</span>&#125;);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">await</span> ctx.render(<span class="string">'login.ejs'</span>);  </div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>当用户访问网站主页或者登录页面的时候，首先要先判断下是否已经有效登录了，如果是，那么跳转到 Angular 中去，否则跳转到登录页面。因为我想法是做一个主页，这个主页不需要加载太多类库，只是简单的展示页面和登录注册页面，用户登录或注册成功后在跳转到 Angular 的入口文件去。</p>
+<p>接下来就是真正的登录接口了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">exports.login = <span class="keyword">async</span> (ctx, next) =&gt; &#123;</div><div class="line">    <span class="keyword">let</span> result = <span class="keyword">await</span> UserModel.findOne(&#123;</div><div class="line">        email: ctx.request.body.email, </div><div class="line">        password: SHA256(ctx.request.body.password).toString()&#125;);</div><div class="line">    <span class="keyword">let</span> xsrf = SHA256(_.random(<span class="number">999999999</span>)).toString();</div><div class="line">    <span class="keyword">if</span>(result &amp;&amp; result._id) &#123;</div><div class="line">        <span class="keyword">let</span> token = jwt.sign(&#123;id: result._id, xsrf: xsrf&#125;, config.app.secretKey);</div><div class="line">        ctx.cookies.set(<span class="string">"XSRF-TOKEN"</span>, xsrf, &#123;httpOnly: <span class="literal">false</span>, overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="keyword">new</span> <span class="built_in">Date</span>().getTime() + <span class="number">5184000000</span>)&#125;);</div><div class="line">        ctx.cookies.set(<span class="string">"jwt"</span>, token, &#123;httpOnly: <span class="literal">true</span>, overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="keyword">new</span> <span class="built_in">Date</span>().getTime() + <span class="number">5184000000</span>)&#125;);</div><div class="line">        <span class="keyword">await</span> ctx.redirect(<span class="string">'/'</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">let</span> exist = <span class="keyword">await</span> UserModel.findOne(&#123;email: ctx.request.body.email&#125;);</div><div class="line">        <span class="keyword">if</span>(exist &amp;&amp; exist._id)  ctx.throw(<span class="number">401</span>, <span class="string">'密码错误'</span>);</div><div class="line">        <span class="keyword">else</span> ctx.throw(<span class="number">401</span>, <span class="string">'邮箱未注册'</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>恩，熟悉 Node 的应该看懂没啥问题。这里有个变量 <code>xsrf</code> ，作用前面我们已经说了，还有变量 <code>token</code> 就是 JWT 了。然后我们把他设置到 cookie 中，注意 <code>xsrf</code> 不能设置 <code>httpOnly</code> 而 <code>token</code> 需要设置为 <code>httpOnly</code>，不要忘了把 <code>xsrf</code> 也放入 JWT 的 payload 部分中去，这里 payload 存储了用户 id 和当前的 <code>xsrf</code>。</p>
+<h3 id="请求带上-XSRF"><a href="#请求带上-XSRF" class="headerlink" title="请求带上 XSRF"></a>请求带上 XSRF</h3><p>我们需要在以后的每个请求都带上 XSRF-TOKEN，具体操作就是把 cookie 中的 XSRF-TOKEN 取出来，放入请求的 X-XSRF-TOKEN 头部中，然后发送出去就好了。如果你用的是 Angular，其实你什么都不需要做了，因为这一步 Angular 已经帮你做好了，前提是你的 xsrf 必须放到 cookie 中的 XSRF-TOKEN 这个里面。如果你用的不是 Angular，那你就自己查下怎么做吧，这一步并不难做到。</p>
+<h3 id="设置-header-和校验-XSRF"><a href="#设置-header-和校验-XSRF" class="headerlink" title="设置 header 和校验 XSRF"></a>设置 header 和校验 XSRF</h3><p>前面说了，我们需要把 JWT 放到请求的 <code>Authorization</code> 头部中，但是由于我们对 JWT 设置了 <code>httpOnly</code> ，所以这个操作几乎就不太可能了。但别忘了我们可以在服务端做这一步，与此同时我们也可以把校验 <code>XSRF</code> 也做了，这里先不需要校验 JWT。</p>
+<p>如果熟悉 Koa 的话就清楚 Koa 的中间件思路。我们在较顶层的位置写入：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// XSRF 检测，处理客户端未授权问题</span></div><div class="line">app.use(<span class="keyword">async</span> (ctx, next) =&gt; &#123;</div><div class="line">    <span class="keyword">let</span> token = ctx.cookies.get(<span class="string">'jwt'</span>), xsrf = ctx.request.headers[<span class="string">'x-xsrf-token'</span>];</div><div class="line">    ctx.request.header.authorization = <span class="string">'Bearer '</span> + token;</div><div class="line">    <span class="comment">// 当 JWT 存在且访问 API 时，检测 XSRF </span></div><div class="line">    <span class="keyword">if</span>(token !== <span class="keyword">void</span> <span class="number">0</span> &amp;&amp; <span class="regexp">/^\/api\//</span>.test(ctx.url)) &#123;;</div><div class="line">        <span class="keyword">let</span> verify = <span class="built_in">Promise</span>.promisify(jwt.verify);</div><div class="line">        <span class="keyword">await</span> verify(token, config.app.secretKey).then(<span class="keyword">async</span> (data) =&gt; &#123;</div><div class="line">            <span class="keyword">if</span>(xsrf !== data.xsrf) &#123;</div><div class="line">                ctx.cookies.set(<span class="string">"XSRF-TOKEN"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">                ctx.cookies.set(<span class="string">"jwt"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">                ctx.status = <span class="number">401</span>;</div><div class="line">                ctx.body =  &#123; success: <span class="literal">false</span>, message: <span class="string">'用户验证失败'</span>&#125;;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">await</span> next();</div><div class="line">            &#125;</div><div class="line">        &#125;, err =&gt; &#123;</div><div class="line">            ctx.cookies.set(<span class="string">"XSRF-TOKEN"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;);</div><div class="line">            ctx.cookies.set(<span class="string">"jwt"</span>, <span class="literal">null</span>, &#123;overwrite: <span class="literal">true</span>, expires: <span class="keyword">new</span> <span class="built_in">Date</span>()&#125;)</div><div class="line">            ctx.status = <span class="number">401</span>;</div><div class="line">            ctx.body = &#123; success: <span class="literal">false</span>, message: <span class="string">'用户验证失败'</span>&#125;;</div><div class="line">        &#125;);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">await</span> next();</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>最前面几行就是设置 header，可以看到非常简单。if 语句进来就是检验 <code>XSRF</code> 了，我的逻辑是只有用户请求 API 的时候并且 JWT 存在的时候才做检测。我们后面有对 JWT 的检测所以这里不需要做，如果 JWT 不存在或者方位的不是 API 直接 next 就好了。</p>
+<p>这里调用了 <code>jwt.verify</code> 方法取出了 payload 的内容，这个方法是 <code>jsonwebtoken</code> 这个模块提供的。</p>
+<h3 id="检验-JWT"><a href="#检验-JWT" class="headerlink" title="检验 JWT"></a>检验 JWT</h3><p>有一点需要注意的是，有些资源我们允许用户无需登录就进行访问。例如我们前面的登录注册界面，还要像静态资源等等。使用 <code>koa-jwt</code> 可以很方便的做这件事情。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">app.use(handel.routes())</div><div class="line">   .use(handel.allowedMethods());</div><div class="line"></div><div class="line">app.use(jwt(&#123; secret: config.app.secretKey, algorithm: <span class="string">'RS256'</span> &#125;).unless(&#123; path: [<span class="regexp">/^\/css|js|img|fonts/</span>] &#125;));</div><div class="line"></div><div class="line">app.use(api.routes())</div><div class="line">   .use(api.allowedMethods());</div></pre></td></tr></table></figure>
+<p><code>handel</code> 这个路由是我的登录注册页面和接口这些，而 <code>api</code> 就是 Angular 中需要用到的一系列接口。中间我们加入了一句话。这里的 <code>jwt</code> 是 <code>koa-jwt</code> 模块。</p>
+<p>这些顺序不能乱，koa 中间件的加载是按自顶向下的顺序的，所以我们 <code>handel</code> 这里并不要 jwt 检测，而后面则需要。而我们前面说的 xsrf 检测和 header 处理自然是要放在更前的位置了。这里的 <code>path</code> 你可以根据需要修改。具体的用法参考文档就好了。</p>
+<p>整个流程就完了，这个就实现了我们前面探讨的成果。既保护了 token 的安全，又防止了 XSRF 攻击。当然了我不敢说绝对安全，根本就没有绝对安全的东西。但目前这样的鉴权系统应该算马马虎虎了。</p>
+<p>如果你的登录注册也是放在前端（比如由 Angular 来做），那你也可以像我上面说的这么做，或者可以把 jwt 作为登录请求的 response 返回，不过我不觉得这是一种安全的方式，关于其他的存储方式参考我后面给的链接吧，我就不多介绍了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实关于 JWT 存放到哪里一直由很多讨论，有人说存放到本地存储，有人说存 cookie。但我觉得上面我说的这种方式是挺稳妥的，如果你有什么意见和看法欢迎提出。参考资料也附出了比较热门的关于 jwt 存储位置的讨论文章，可以看下。</p>
+<hr>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://jwt.io/introduction/" target="_blank" rel="external">jwt.io</a></li>
+<li><a href="https://stormpath.com/blog/where-to-store-your-jwts-cookies-vs-html5-web-storage" target="_blank" rel="external">Where to Store your JWTs – Cookies vs HTML5 Web Storage</a></li>
+<li><a href="http://stackoverflow.com/questions/27067251/where-to-store-jwt-in-browser-how-to-protect-against-csrf" target="_blank" rel="external">Where to store JWT in browser? How to protect against CSRF?</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。&lt;/p&gt;
+&lt;p&gt;前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。我不会一开始就讲我的做法，而是循序渐进的从传统的存储方式逐渐过渡到我的做法当中来。&lt;/p&gt;
+&lt;h2 id=&quot;如何安全的传输用户-token&quot;&gt;&lt;a href=&quot;#如何安全的传输用户-token&quot; class=&quot;headerlink&quot; title=&quot;如何安全的传输用户 token&quot;&gt;&lt;/a&gt;如何安全的传输用户 token&lt;/h2&gt;&lt;p&gt;这是最传统也是最简单的方式了，前端登录，后端根据用户信息生成一个 token，并保存这个 token 和对应的用户 id，接着把 token 传给用户，存入浏览器 cookie，之后浏览器请求带上这个 cookie，后端根据这个 cookie 来标识用户。&lt;/p&gt;
+&lt;img src=&quot;/2016/10/14/关于前后端分离鉴权的思考/flow-cookie-session.jpg&quot; alt=&quot;flow-cookie-session&quot; title=&quot;flow-cookie-session&quot;&gt;
+&lt;p&gt;但这样做问题就很多，如果我们的页面出现了 XSS 漏洞，由于 cookie 可以被 JavaScript 读取，XSS 漏洞会导致用户 token 泄露，而作为后端识别用户的标识，cookie 的泄露意味着用户信息不再安全。&lt;/p&gt;
+&lt;p&gt;尽管我们通过转义输出内容，使用 CDN 等可以尽量避免 XSS 注入，但谁也不能保证在大型的项目中不会出现这个问题。另外，后端每次都需要根据 token 查出用户 id，这就增加了数据库的查询和存储开销。&lt;/p&gt;
+&lt;p&gt;在设置 cookie 的时候，其实你还可以设置 httpOnly 以及 secure 项。设置 httpOnly 后 cookie 将不能被 JS 读取，浏览器会自动的把它加在请求的 header 当中，设置 secure 的话，cookie 就只允许通过 HTTPS 传输。&lt;/p&gt;
+&lt;p&gt;secure 选项可以过滤掉一些使用 HTTP 协议的 XSS 注入，但并不能完全阻止。&lt;/p&gt;
+&lt;p&gt;httpOnly 选项使得 JS 不能读取到 cookie，那么 XSS 注入的问题也基本不用担心了。但设置 httpOnly 就带来了另一个问题，就是很容易的被 XSRF，即跨站请求伪造。当你浏览器开着这个页面的时候，另一个页面可以很容易的跨站请求这个页面的内容。因为 cookie 默认被发了出去。&lt;/p&gt;
+&lt;img src=&quot;/2016/10/14/关于前后端分离鉴权的思考/CSRF.jpg&quot; alt=&quot;CSRF&quot; title=&quot;CSRF&quot;&gt;
+&lt;p&gt;看起来我们不能兼顾。确实，光依靠这一个 token 我们没办法兼顾这两点。既然一个不够，那就两个。于是有了 XSRF-TOKEN，它和作为用户令牌的 token 类似，也是服务器生成的一个散列值。我们把 token 通过 httpOnly 发回去，把 XSRF-TOKEN 直接发回去。我们可以无视 httpOnly 的 cookie 因为我们没法操纵它，但对于这个 XSRF-TOKEN，我们就可以在我们网站的每个请求中都加入到 header 里面去。而服务端就需要检查这个 header 的 XSRF-TOKEN 是否真实有效。&lt;/p&gt;
+&lt;p&gt;由于 XSRF-TOKEN 以非 httpOnly 的形式存储在 cookie 中，正常情况下只有我们自己的网站可以获取到该 XSRF-TOKEN。这样 XSRF 攻击就变得不太可能了。另外由于用户 token 是通过 httpOnly 形式存储，JS 不可获取，这样也保证了用户 token 的安全。XSS 注入最多只能获取到 XSRF-TOKEN。&lt;/p&gt;
+&lt;p&gt;但还是有一种可能，XSS 注入取得 XSRF-TOKEN 后在当前页面发送请求出去。本文并不打算讨论 XSRF 和 XSS，明白这两个真正危害的地方就可以知道，这种 XSS 注入取得 XSRF-TOKEN 后发送请求其实并没有带来什么危害。不过呢，还是要看具体情况吧，如果我们的网站有一个投票 XXX 的接口，这个接口的链接被用在 XSS 注入中，那么当所有人打开这个页面的时候，都会自动的朝 XXX 投了一票。&lt;/p&gt;
+&lt;p&gt;不同于 XSRF， XSRF 可以从其他网站执行该段脚本，而这里只能注入到我们的网站中来执行。因为我们的 JS 也是这样子做的，取出 XSRF-TOKEN 放入请求头部然后发送请求出去，所以这就无法避免了。事实上，由于我们的前端代码都是公开的，无论 JS 层面绕多少个弯，XSS 注入还是可以照着做过来。但好在这种方式其实造成的影响相当有限，并不会比我们常说的 XSS 注入和 XSRF 攻击的危害大，要知道 XSS 注入危害的 cookie 的泄露，但其实这里并没有 cookie 的泄露。&lt;/p&gt;
+&lt;p&gt;我们再讨论另一个问题，前面也说了，服务器要经常去查询这个 token 对应的是哪一个用户。其实可不可以不要服务器去查询呢？如果我们生成 token 遵循一定的规律，比如我们使用对称加密算法来加密用户 id 形成 token，那么服务端以后其实只要解密该 token 就可以知道用户的 id 是什么了。不过呢，我只是举个例子而已，要是真这么做，只要你的对称加密算法泄露了，所有用户信息都不再安全了。恩，那用非对称加密算法来做呢，由公钥加密生成 token，私钥来解密 token，这样做就安全多了。其实现在有个规范就是这样做的，就是我们接下来要介绍的 JWT。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="安全" scheme="https://ruiming.github.io/categories/%E5%AE%89%E5%85%A8/"/>
+    
+    
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
+    
+      <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="JWT" scheme="https://ruiming.github.io/tags/JWT/"/>
+    
+      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
+    
+  </entry>
   
   <entry>
     <title>编译原理与PEG.js</title>
@@ -1625,99 +1746,6 @@
       <category term="TCP/IP" scheme="https://ruiming.github.io/tags/TCP-IP/"/>
     
       <category term="Webkit" scheme="https://ruiming.github.io/tags/Webkit/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Angular 学习总结</title>
-    <link href="https://ruiming.github.io/2016/06/18/Angular%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/"/>
-    <id>https://ruiming.github.io/2016/06/18/Angular学习总结/</id>
-    <published>2016-06-18T12:20:38.000Z</published>
-    <updated>2016-08-04T09:24:58.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。</p>
-<h2 id="Angular作用域"><a href="#Angular作用域" class="headerlink" title="Angular作用域"></a>Angular作用域</h2><p>​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switch 和 ng-include 也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为 Angular 的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性， Angular 会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。</p>
-<blockquote>
-<p>读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    </p>
-<p>写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。</p>
-</blockquote>
-<p>​    关于原型链继承这个可以参考此处<a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482" target="_blank" rel="external">JavaScript Prototypal Inheritance</a>，或者<a href="https://www.zybuluo.com/lxjwlt/note/107324" target="_blank" rel="external">[译文] 深入浅出 AngularJS 作用域</a></p>
-<p>​    使用上述的 ng-if ,  ng-repeat ,  ng-switch ,  ng-include 都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用 $parent 。</p>
-<p>​    但是，还没玩，也许这些你都知道。但是除了这些指令之外， textarea 也会自己创建一级作用域。所以你可能会发现你在 textarea 写的内容获取不到，但是却发现 textarea 总能取到第一次分配的初值。比如</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>​    我们在控制器里面定义</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$scope.content = <span class="string">"测试"</span></div></pre></td></tr></table></figure>
-<p>​    然后我们就会看到 textarea 的初值为”测试”，但是当我们更改其中的内容之后， $scope.content 却一直保持不变。</p>
-<p>​    同样，我们可以使用 $parent 的方式来解决这个问题。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"$parent.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>​    那如果不想使用 $parent 的话，可以给 content 分配一个类名，比如</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">ng-model</span>=<span class="string">"comment.content"</span>, <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">row</span>=<span class="string">"3"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>​    这样我们就可以通过 $scope.comment.content 来取值。</p>
-<h2 id="Angular-track-by"><a href="#Angular-track-by" class="headerlink" title="Angular track by"></a>Angular track by</h2><p>​    在使用 Angular 的 ng-repeat 迭代数组时，有时候会出现 Duplicates in a repeater are not allowed 的提示。</p>
-<p>​     track by 是用来建立 $watchCollection 和 DOM 之间的联系。建议自己加上 track by 后面带的值可以自己写，但要确保每个 ngRepeat 的值唯一，比如可以写 track by $index 。</p>
-<p>​    之所以要这么做，是因为，如果不使用 track by ，那么每个 ng-repeat 都会添加一个 $$hashkey 来对的 DOM 进行跟踪，这样会导致不能存在相同的 DOM ，使用 track by 的意义是避免不必要的渲染。</p>
-<p>​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。<a href="https://docs.angularjs.org/api/ng/directive/ngRepeat" target="_blank" rel="external">AngularJS: API: ngRepeat</a></p>
-<blockquote>
-<p>If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later,  ngRepeat  will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier,  track by $index  can also provide a performance boost.</p>
-</blockquote>
-<h2 id="Angular拦截器"><a href="#Angular拦截器" class="headerlink" title="Angular拦截器"></a>Angular拦截器</h2><p>​     Angular 拦截器是 Angular 的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。</p>
-<a id="more"></a>
-<ul>
-<li><p>判断请求是否成功</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$httpProvider.defaults.transformResponse.push((response) =&gt; &#123;</div><div class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span>(response.data) != <span class="literal">undefined</span> &amp;&amp; response.status == <span class="string">'success'</span>) &#123;</div><div class="line">  	response = response.data;</div><div class="line">    <span class="keyword">return</span> response;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span>(response.status == <span class="string">'error'</span>) &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">"Err: "</span> + response.message);</div><div class="line">    <span class="keyword">return</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> response;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>应该都能看懂，就不过多解释了。需要说明你的是，我们只需要一次配置，即可在整个项目中适用，特别方便。<br>​</p>
-</li>
-<li><p>timestampMarker</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">app.factory(<span class="string">'timestampMarker'</span>, [() =&gt; &#123;</div><div class="line">  <span class="keyword">let</span> timestampMarker = &#123;</div><div class="line">    request: (config) = &gt; &#123;</div><div class="line">      config.requestTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</div><div class="line">      <span class="keyword">return</span> config;</div><div class="line">    &#125;,</div><div class="line">    response: (response) = &gt; &#123;</div><div class="line">      response.config.responseTimestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</div><div class="line">      <span class="keyword">return</span> response;</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">&#125;]);</div></pre></td></tr></table></figure>
-<p>这是给每个请求加上时间戳来防止浏览器缓存。</p>
-</li>
-<li><p>tokenInjector</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">app.factory(<span class="string">'tokenInjector'</span>, [<span class="string">'$injector'</span>, <span class="string">'$q'</span>, ($injector, $q) =&gt; &#123;</div><div class="line">    <span class="keyword">let</span> tokenInjector = &#123;</div><div class="line">      	request: (config) =&gt; &#123;</div><div class="line">        <span class="keyword">let</span> url = host + <span class="string">'/auth_verify'</span>;</div><div class="line">        <span class="keyword">let</span> deferred = $q.defer();</div><div class="line">        <span class="keyword">let</span> http = $injector.get(<span class="string">'$http'</span>);</div><div class="line">        <span class="keyword">if</span>(config.url === url) &#123;</div><div class="line">          <span class="keyword">return</span> config;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(sessionStorage.verify === <span class="string">'true'</span>) &#123;</div><div class="line">          <span class="keyword">let</span> timestamp = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() / <span class="number">1000</span>;</div><div class="line">           <span class="keyword">if</span>(timestamp - sessionStorage.createdtime &gt;= <span class="number">7000</span>) &#123;</div><div class="line">              sessionStorage.verify = <span class="literal">false</span>;  </div><div class="line">          &#125;</div><div class="line">           config.headers[<span class="string">'token'</span>] = sessionStorage.token;</div><div class="line">           config.headers[<span class="string">'userid'</span>] = sessionStorage.user_id;</div><div class="line">           deferred.resolve(config);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;])</div></pre></td></tr></table></figure>
-<p>​上面是我从我的项目中截取的代码，作用是每次请求时，如果已经验证过，判断 token 创建时间和当前时间以判断 token 是否过期，如未过期，将 token 和 userid 加到请求的 headers 中。如果没有验证或者已经超时，则要去获取新的 token ，这里没有把代码写上。</p>
-</li>
-</ul>
-<p>​通过这三个例子，我想已经很明显的展示了 Angular 拦截器的强大之处。一次使用，终身受益，爽。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;这学期基本都是在学习和使用 Angular ，这篇文章主要是想介绍几个 Angular 需要注意或者了解的地方。&lt;/p&gt;
-&lt;h2 id=&quot;Angular作用域&quot;&gt;&lt;a href=&quot;#Angular作用域&quot; class=&quot;headerlink&quot; title=&quot;Angular作用域&quot;&gt;&lt;/a&gt;Angular作用域&lt;/h2&gt;&lt;p&gt;​    也许你知道 ng-if 和 ng-show 的区别是一个只有条件满足的时候才会创建 DOM ，一个是只有在条件满足的时候才会显示 DOM 也就是一开始也会跟着创建。但是你可能不知道， ng-if 会产生新的作用域， ng-repeat 和 ng-switch 和 ng-include 也是如此。这时候内部如果使用外部的变量，第一次的时候会正常显示，因为 Angular 的继承是原型链继承，如果子类没有这个属性就会去尝试继承父类的属性， Angular 会拿父类的属性来创建新的属于这个子类的属性，而这个属性将不再和外层的父类的属性挂钩，如果不注意很可能就会在这里踩坑。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;读子类的属性时，子类有这个属性（hasOwnProperty）的时候则读子类自己的，子类没有的时候读父类的，不管子类有没有这个属性，在子类上都不会有新属性被创建。    &lt;/p&gt;
-&lt;p&gt;写子类的属性时，如果子类有这个属性（hasOwnProperty）则写子类的，子类没有的话就会在子类上新建一个同名的新属性，而父类继承过来的属性被隐藏。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;​    关于原型链继承这个可以参考此处&lt;a href=&quot;http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs/14049482#14049482&quot;&gt;JavaScript Prototypal Inheritance&lt;/a&gt;，或者&lt;a href=&quot;https://www.zybuluo.com/lxjwlt/note/107324&quot;&gt;[译文] 深入浅出 AngularJS 作用域&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;​    使用上述的 ng-if ,  ng-repeat ,  ng-switch ,  ng-include 都会自己创建一级作用域，这点一定要注意。如果想要和父类的属性挂钩，可以使用 $parent 。&lt;/p&gt;
-&lt;p&gt;​    但是，还没玩，也许这些你都知道。但是除了这些指令之外， textarea 也会自己创建一级作用域。所以你可能会发现你在 textarea 写的内容获取不到，但是却发现 textarea 总能取到第一次分配的初值。比如&lt;/p&gt;
-&lt;figure class=&quot;highlight html&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;textarea&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;ng-model&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;content&quot;&lt;/span&gt;, &lt;span class=&quot;attr&quot;&gt;name&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;content&quot;&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;class&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;form-control&quot;&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;row&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;3&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;textarea&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;​    我们在控制器里面定义&lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;$scope.content = &lt;span class=&quot;string&quot;&gt;&quot;测试&quot;&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;​    然后我们就会看到 textarea 的初值为”测试”，但是当我们更改其中的内容之后， $scope.content 却一直保持不变。&lt;/p&gt;
-&lt;p&gt;​    同样，我们可以使用 $parent 的方式来解决这个问题。&lt;/p&gt;
-&lt;figure class=&quot;highlight html&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;textarea&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;ng-model&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;$parent.content&quot;&lt;/span&gt;, &lt;span class=&quot;attr&quot;&gt;name&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;content&quot;&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;class&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;form-control&quot;&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;row&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;3&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;textarea&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;​    那如果不想使用 $parent 的话，可以给 content 分配一个类名，比如&lt;/p&gt;
-&lt;figure class=&quot;highlight html&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;textarea&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;ng-model&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;comment.content&quot;&lt;/span&gt;, &lt;span class=&quot;attr&quot;&gt;name&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;content&quot;&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;class&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;form-control&quot;&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;row&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;3&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;textarea&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;​    这样我们就可以通过 $scope.comment.content 来取值。&lt;/p&gt;
-&lt;h2 id=&quot;Angular-track-by&quot;&gt;&lt;a href=&quot;#Angular-track-by&quot; class=&quot;headerlink&quot; title=&quot;Angular track by&quot;&gt;&lt;/a&gt;Angular track by&lt;/h2&gt;&lt;p&gt;​    在使用 Angular 的 ng-repeat 迭代数组时，有时候会出现 Duplicates in a repeater are not allowed 的提示。&lt;/p&gt;
-&lt;p&gt;​     track by 是用来建立 $watchCollection 和 DOM 之间的联系。建议自己加上 track by 后面带的值可以自己写，但要确保每个 ngRepeat 的值唯一，比如可以写 track by $index 。&lt;/p&gt;
-&lt;p&gt;​    之所以要这么做，是因为，如果不使用 track by ，那么每个 ng-repeat 都会添加一个 $$hashkey 来对的 DOM 进行跟踪，这样会导致不能存在相同的 DOM ，使用 track by 的意义是避免不必要的渲染。&lt;/p&gt;
-&lt;p&gt;​    官网API有进行详细的说明，不过我看了之后还是感觉不太明白，等我了解清楚了再来补充下。&lt;a href=&quot;https://docs.angularjs.org/api/ng/directive/ngRepeat&quot;&gt;AngularJS: API: ngRepeat&lt;/a&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;If you are working with objects that have an identifier property, you should track by the identifier instead of the whole object. Should you reload your data later,  ngRepeat  will not have to rebuild the DOM elements for items it has already rendered, even if the JavaScript objects in the collection have been substituted for new ones. For large collections, this significantly improves rendering performance. If you don’t have a unique identifier,  track by $index  can also provide a performance boost.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&quot;Angular拦截器&quot;&gt;&lt;a href=&quot;#Angular拦截器&quot; class=&quot;headerlink&quot; title=&quot;Angular拦截器&quot;&gt;&lt;/a&gt;Angular拦截器&lt;/h2&gt;&lt;p&gt;​     Angular 拦截器是 Angular 的一个强大功能，不过暂时没有怎么去研究，简单说下我的一些使用。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Angular" scheme="https://ruiming.github.io/categories/Angular/"/>
-    
-    
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
-      <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
-    
-      <category term="Front end" scheme="https://ruiming.github.io/tags/Front-end/"/>
     
   </entry>
   

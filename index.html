@@ -271,6 +271,151 @@
             
               
                 
+                <a class="post-title-link" href="/2016/10/14/关于前后端分离鉴权的思考/" itemprop="url">
+                  关于前后端分离鉴权的思考
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-14T19:29:05+08:00" content="2016-10-14">
+              2016-10-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/14/关于前后端分离鉴权的思考/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/14/关于前后端分离鉴权的思考/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/10/14/关于前后端分离鉴权的思考/" class="leancloud_visitors" data-flag-title="关于前后端分离鉴权的思考">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>前后端分离项目的 Token 存储问题由来已久，有的人存 Cookie 有的人存 LocalStorage 或 SessionStorage，最近刚把 RSS 订阅器项目的鉴权问题做好，感觉算是目前比较稳妥安全的方案了，分享一下经验。</p>
+<p>前端用的是 Angular，后端用的是 Koa，登录注册界面由 Koa 负责，由 Koa 根据用户是否登录来决定首页跳转。我不会一开始就讲我的做法，而是循序渐进的从传统的存储方式逐渐过渡到我的做法当中来。</p>
+<h2 id="如何安全的传输用户-token"><a href="#如何安全的传输用户-token" class="headerlink" title="如何安全的传输用户 token"></a>如何安全的传输用户 token</h2><p>这是最传统也是最简单的方式了，前端登录，后端根据用户信息生成一个 token，并保存这个 token 和对应的用户 id，接着把 token 传给用户，存入浏览器 cookie，之后浏览器请求带上这个 cookie，后端根据这个 cookie 来标识用户。</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/flow-cookie-session.jpg" alt="flow-cookie-session" title="flow-cookie-session">
+<p>但这样做问题就很多，如果我们的页面出现了 XSS 漏洞，由于 cookie 可以被 JavaScript 读取，XSS 漏洞会导致用户 token 泄露，而作为后端识别用户的标识，cookie 的泄露意味着用户信息不再安全。</p>
+<p>尽管我们通过转义输出内容，使用 CDN 等可以尽量避免 XSS 注入，但谁也不能保证在大型的项目中不会出现这个问题。另外，后端每次都需要根据 token 查出用户 id，这就增加了数据库的查询和存储开销。</p>
+<p>在设置 cookie 的时候，其实你还可以设置 httpOnly 以及 secure 项。设置 httpOnly 后 cookie 将不能被 JS 读取，浏览器会自动的把它加在请求的 header 当中，设置 secure 的话，cookie 就只允许通过 HTTPS 传输。</p>
+<p>secure 选项可以过滤掉一些使用 HTTP 协议的 XSS 注入，但并不能完全阻止。</p>
+<p>httpOnly 选项使得 JS 不能读取到 cookie，那么 XSS 注入的问题也基本不用担心了。但设置 httpOnly 就带来了另一个问题，就是很容易的被 XSRF，即跨站请求伪造。当你浏览器开着这个页面的时候，另一个页面可以很容易的跨站请求这个页面的内容。因为 cookie 默认被发了出去。</p>
+<img src="/2016/10/14/关于前后端分离鉴权的思考/CSRF.jpg" alt="CSRF" title="CSRF">
+<p>看起来我们不能兼顾。确实，光依靠这一个 token 我们没办法兼顾这两点。既然一个不够，那就两个。于是有了 XSRF-TOKEN，它和作为用户令牌的 token 类似，也是服务器生成的一个散列值。我们把 token 通过 httpOnly 发回去，把 XSRF-TOKEN 直接发回去。我们可以无视 httpOnly 的 cookie 因为我们没法操纵它，但对于这个 XSRF-TOKEN，我们就可以在我们网站的每个请求中都加入到 header 里面去。而服务端就需要检查这个 header 的 XSRF-TOKEN 是否真实有效。</p>
+<p>由于 XSRF-TOKEN 以非 httpOnly 的形式存储在 cookie 中，正常情况下只有我们自己的网站可以获取到该 XSRF-TOKEN。这样 XSRF 攻击就变得不太可能了。另外由于用户 token 是通过 httpOnly 形式存储，JS 不可获取，这样也保证了用户 token 的安全。XSS 注入最多只能获取到 XSRF-TOKEN。</p>
+<p>但还是有一种可能，XSS 注入取得 XSRF-TOKEN 后在当前页面发送请求出去。本文并不打算讨论 XSRF 和 XSS，明白这两个真正危害的地方就可以知道，这种 XSS 注入取得 XSRF-TOKEN 后发送请求其实并没有带来什么危害。不过呢，还是要看具体情况吧，如果我们的网站有一个投票 XXX 的接口，这个接口的链接被用在 XSS 注入中，那么当所有人打开这个页面的时候，都会自动的朝 XXX 投了一票。</p>
+<p>不同于 XSRF， XSRF 可以从其他网站执行该段脚本，而这里只能注入到我们的网站中来执行。因为我们的 JS 也是这样子做的，取出 XSRF-TOKEN 放入请求头部然后发送请求出去，所以这就无法避免了。事实上，由于我们的前端代码都是公开的，无论 JS 层面绕多少个弯，XSS 注入还是可以照着做过来。但好在这种方式其实造成的影响相当有限，并不会比我们常说的 XSS 注入和 XSRF 攻击的危害大，要知道 XSS 注入危害的 cookie 的泄露，但其实这里并没有 cookie 的泄露。</p>
+<p>我们再讨论另一个问题，前面也说了，服务器要经常去查询这个 token 对应的是哪一个用户。其实可不可以不要服务器去查询呢？如果我们生成 token 遵循一定的规律，比如我们使用对称加密算法来加密用户 id 形成 token，那么服务端以后其实只要解密该 token 就可以知道用户的 id 是什么了。不过呢，我只是举个例子而已，要是真这么做，只要你的对称加密算法泄露了，所有用户信息都不再安全了。恩，那用非对称加密算法来做呢，由公钥加密生成 token，私钥来解密 token，这样做就安全多了。其实现在有个规范就是这样做的，就是我们接下来要介绍的 JWT。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/10/14/关于前后端分离鉴权的思考/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/10/07/编译原理与PEG-js/" itemprop="url">
                   编译原理与PEG.js
                 </a>
@@ -739,157 +884,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/09/11/提升网站加载速度的 N 个方法/" itemprop="url">
-                  提升网站加载速度的 N 个方法
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-11T13:53:33+08:00" content="2016-09-11">
-              2016-09-11
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/还不知道分什么类好/" itemprop="url" rel="index">
-                    <span itemprop="name">还不知道分什么类好</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/09/11/提升网站加载速度的 N 个方法/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/提升网站加载速度的 N 个方法/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/09/11/提升网站加载速度的 N 个方法/" class="leancloud_visitors" data-flag-title="提升网站加载速度的 N 个方法">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Web 这几年的一个变化之一估计就是各种优化小技巧不断涌出…自己也琢磨和尝试了不少优化，毕竟自己项目的网页首屏加载也是一度接近 2M 的。以下针对 HTTP1 和 HTTP1.1，在 HTTP2 中，很多最佳实践都适得其反了。</p>
-<h2 id="减少文件传输数量"><a href="#减少文件传输数量" class="headerlink" title="减少文件传输数量"></a>减少文件传输数量</h2><p>现在前端代码发布上线的时候一般都会进行压缩，混淆，合并等操作，他们起到了减少文件体积和数量以及混淆代码降低可读性的作用。</p>
-<p>浏览器针对同一域名的并发请求数目是有限制的，而在 HTTP1 和 HTTP1.1 中每传输一个资源就得建立一条连接。因此当网站的请求资源数量过多时，会导致后面资源请求的阻塞，也会导致频繁的连接建立和关闭带来的开销。一般浏览器的并发请求数量在4-8之间。因此我们针对同一域名的资源不宜过多，否则就会导致后面资源的阻塞。</p>
-<p>针对该问题，我们可以采用合并文件，将资源分到不同域名，缓加载资源，提前加载资源，缓存等手段。具体如下：</p>
-<ol>
-<li>合并文件以减少并发请求数量<br> 合并文件也不能简单粗暴的合并为一个，对于长时间不会改变的文件我们要单独合并出来，这个文件是可以进行长期缓存的，而一些变动较为频繁的我们就不应该和上面的这些文件合并在一起，并且他们也不应该设置过激的缓存策略。</li>
-<li>将次要文件延迟加载，比如 Google Analysis<br> 一些无关痛痒的文件可以放到页面最尾部，这是最佳实践，这里特别想提一下 async 和 defer，他们并没有对文件的请求产生影响，只是影响了执行的过程，所以我们不应该使用 async 或者 defer 方法来优化。 <img src="/2016/09/11/提升网站加载速度的%20N%20个方法/async-defer.jpg" alt="async-defer" title="async-defer">
- 使用 async，会立即开始并行加载，加载完成后会进行执行并阻塞主渲染进程。<br> 使用 defer，会立即开始并行加载，但会延迟到最后才执行。</li>
-<li>分散资源到不同域名<br> 比如图片有专门的域名(img.xxx.com)来存储。一些资源可以考虑第三方 CDN 比如 Bootcss 的 CDN，因为这类 CDN 使用较广，有可能用户浏览器已经有过缓存，这就避免了再次请求和加载，同时也减轻了服务器压力。</li>
-<li>使用雪碧图(css sprites)来合并小图片<br> 这个优化技术其实挺常见，将图片合并为一个后使用 background-image 和 background-position 等来控制显示雪碧图的哪一部分就好了，据说还可以自动生成雪碧图自动定位。</li>
-<li>利用 200 缓存<br> 这是一个比较极端的缓存方式，200 缓存时浏览器不发出网络请求，直接调用本地缓存，这需要强制浏览器使用本地缓存。我们可以使用 Expires 标志。即给出日期时间，超出该时间后则认为是过时，浏览器才会重新发起请求。这个具体细节我还不太了解。过后补充。</li>
-<li>使用懒加载(lazy load)<br> 很多网站特别是有大量图片的网站都会使用该技术。当用户下滑页面时，才开始加载下面的图片。一来减少了页面加载的请求数和加载时间，二来也减少用户流量。不过可能有人会说这样体验不太好，好在业内有人把这个技术做到了堪称极致的地步，就是预先加载一个高度压缩的原图，然后淡出原图。大家应该有体验到类似的技术，就不多说了。</li>
-<li><p>使用预加载技术(prefetch)<br> 这个技术知道的人可能不多，MDN 上面是这样解释的：</p>
-<blockquote>
-<p>页面资源预加载(Link prefetch)是浏览器提供的一个技巧，目的是让浏览器在空闲时间下载或预读取一些文档资源，用户在将来将会访问这些资源。一个Web页面可以对浏览器设置一系列的预加载指示，当浏览器加载完当前页面后，它会在后台静悄悄的加载指定的文档，并把它们存储在缓存里。当用户访问到这些预加载的文档后，浏览器能快速的从缓存里提取给用户。</p>
-</blockquote>
-<p> 不过资源预加载其实使用的并不多，可能是因为技术本身不成熟，浏览器支持不够等原因。目前没有发现有哪个网站使用了这个技术。感兴趣的自己去了解下，这里不多阐述这个技术。</p>
-</li>
-<li>集中加载资源<br> 额，这个名字是我自己起的，姑且我认为也是一种优化手段，主要针对的时 SPA。比如 Angular 搭建的 SPA。Angular 提供了 templateCache 这个模块。这个在前面的博客中已经介绍过，简单说就是一个数组，我们把模板全部都预先放入这个数组中。Angular 在请求页面的时候会先检查 templateCache 是否已经缓存了，如果有则直接调用这个缓存的模板，否则发出网络请求获取该模板，同时会放入 templateCache 中缓存。有人可能会问那不是增加了首屏加载的体积大小了吗？的确，但比起用户每点击一个新的页面就发起一个请求而言，这种方式无疑会更适合不是吗？并且如果你的文件确实太大了，那你应该考虑下你是否充分利用了指令功能。</li>
-</ol>
-<h2 id="减少文件大小"><a href="#减少文件大小" class="headerlink" title="减少文件大小"></a>减少文件大小</h2><p>除了减少文件数量，减少文件大小也同样重要，不过比起合并文件这样简单的减少文件数量的操作，减少文件大小就没来的那么简单了。常用的方法如下：<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/09/11/提升网站加载速度的 N 个方法/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -935,7 +929,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-count">22</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -943,7 +937,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -952,7 +946,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
