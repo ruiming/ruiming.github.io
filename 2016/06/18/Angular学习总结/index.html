@@ -315,7 +315,7 @@ Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只�
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
                 <a href="/2016/06/18/Angular学习总结/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/18/Angular学习总结/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/18/Angular学习总结/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -448,25 +448,6 @@ Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只�
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/06/18/Angular学习总结/"
-     data-title="Angular 学习总结"
-     data-content=""
-     data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
     </div>
   </div>
 
@@ -478,8 +459,11 @@ Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只�
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/06/18/Angular学习总结/"
-           data-title="Angular 学习总结" data-url="https://ruiming.github.io/2016/06/18/Angular学习总结/">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
       </div>
     
   </div>
@@ -741,32 +725,30 @@ Angular作用域​    也许你知道 ng-if 和 ng-show 的区别是一个只�
 
   
 
-  
-    
-  
 
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"ruiming"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
 
   
-    
+
+    <script type="text/javascript">
+      var disqus_shortname = 'ruiming';
+      var disqus_identifier = '2016/06/18/Angular学习总结/';
+      var disqus_title = "Angular 学习总结";
+      var disqus_url = 'https://ruiming.github.io/2016/06/18/Angular学习总结/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
       
-      <script src="//cdn.bootcss.com/UAParser.js/0.7.9/ua-parser.min.js"></script>
-      <script src="/js/src/hook-duoshuo.js"></script>
-    
+        run_disqus_script('embed.js');
+      
+    </script>
   
-
-
 
 
 
