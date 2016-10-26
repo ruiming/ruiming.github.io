@@ -126,9 +126,9 @@
       <category term="安全" scheme="https://ruiming.github.io/categories/%E5%AE%89%E5%85%A8/"/>
     
     
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
     
       <category term="JWT" scheme="https://ruiming.github.io/tags/JWT/"/>
     
@@ -588,9 +588,9 @@
       <category term="Angular" scheme="https://ruiming.github.io/categories/Angular/"/>
     
     
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
     
   </entry>
   
@@ -792,9 +792,9 @@
       <category term="Angular" scheme="https://ruiming.github.io/categories/Angular/"/>
     
     
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
     
   </entry>
   
@@ -1334,9 +1334,9 @@
       <category term="Angular" scheme="https://ruiming.github.io/categories/Angular/"/>
     
     
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
     
   </entry>
   
@@ -1345,7 +1345,7 @@
     <link href="https://ruiming.github.io/2016/07/22/JavaScript%E9%97%AD%E5%8C%85%EF%BC%8C%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE/"/>
     <id>https://ruiming.github.io/2016/07/22/JavaScript闭包，继承与原型链/</id>
     <published>2016-07-22T07:03:23.000Z</published>
-    <updated>2016-08-04T09:04:04.000Z</updated>
+    <updated>2016-10-26T14:54:36.818Z</updated>
     
     <content type="html"><![CDATA[<p> JavaScript 闭包和原型链学习心得，如果有不对的地方望指出。</p>
 <h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>什么是闭包，有很多说法，我的理解是一个函数可以记住和使用外部变量，保存这个变量的引用在自己的一个环境之中。<br>例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeAdder</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">y</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x + y;</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> add5 = makeAdder(<span class="number">5</span>);</div><div class="line"><span class="keyword">var</span> add10 = makeAdder(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(add5(<span class="number">2</span>));  <span class="comment">// 7</span></div><div class="line"><span class="built_in">console</span>.log(add10(<span class="number">2</span>)); <span class="comment">// 12</span></div></pre></td></tr></table></figure></p>
@@ -1353,7 +1353,10 @@
 <p>这个例子中外部只能通过 value 方法获取 privateCounter 的值，只能通过 increment 和 decrement 方法来改变 privateCounter 的值，无法直接获取到 priavateCounter 和调用 changeBy 函数。这种模式叫 module模式，因为大部分模块都是这样写的，包括 Underscore 也是这样。上篇中就说道了 Underscore 使用了立即执行函数，其用途其一是为了不污染外部变量，因为 JavaScript 是函数作用域，其次它利用了闭包的特性又可以保持函数内部闭包的可调用和被闭包所引用变量在闭包环境中的存在，同时函数内部可以定义一些私有变量和私有方法。我们无需担心这些变量和函数在外部函数执行完毕结束后的失效。<br>当你看到函数里面又 return 函数时，同时该函数又使用了外部变量，则该函数就是一个闭包。<br>关于闭包还有一个很容易犯错的地方，比如你想实现第一秒输出1,第二秒输出2,以此类推。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(i);</div><div class="line">    &#125;, i*<span class="number">1000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>但是实际运行结果是第一秒输出6,第二秒输出6…<br>闭包是记住了外部变量的引用，每次循环都建立了一个 timer 函数，但 console 并还没有被执行，当循环结束后确实是建立了5个计时器或者说5个闭包，但当开始执行 console 的时候，由于这些闭包所引用的 i 此时结果为6，所以会输出5次 6。<br>更能说明问题些，我们稍作修改下：<br><a id="more"></a><br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(i);</div><div class="line">        i++;</div><div class="line">    &#125;, i*<span class="number">1000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>结果是第一秒输出1，第二秒输出2…<br>我们也可以这么做<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</div><div class="line">    <span class="keyword">let</span> j = i;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(j);</div><div class="line">    &#125;, j*<span class="number">1000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>结果和上面一样，第一秒输出1，第二秒输出2…<br>这是为什么呢？第二个例子说明了闭包使用的是外部变量的引用，他们都使用了同一个引用，所以最终输出取决与此时这个引用的值。第三个例子，每次循环都会新建一个变量 j，分别被每个闭包所引用，这些引用互不干扰，我们可以在 console.log(j) 后面加上 j++，结果是不会有变化的。</p>
+<p>或者这样做</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span> ; i++) &#123;</div><div class="line">    setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timer</span>(<span class="params"></span>) </span>&#123; </div><div class="line">    	<span class="built_in">console</span>.log(i); </div><div class="line">    &#125;, i*<span class="number">1000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果和上面一样，第一秒输出1，第二秒输出2…</p>
+<p>这是为什么呢？第二个例子说明了闭包内使用的是外部变量的引用，他们都使用了同一个引用，所以最终输出取决与此时这个引用的值。第三个例子，每次循环都会新建一个变量 j，分别被每个闭包所引用，这些引用互不干扰，我们可以在 console.log(j) 后面加上 j++，结果是不会有变化的。</p>
 <h2 id="继承与原型链"><a href="#继承与原型链" class="headerlink" title="继承与原型链"></a>继承与原型链</h2><blockquote>
 <p>在 javaScript 中，每个对象都有一个指向它的原型（prototype）对象的内部链接。这个原型对象又有自己的原型，直到某个对象的原型为 null 为止（也就是不再有原型指向），组成这条链的最后一环。这种一级一级的链结构就称为原型链（prototype chain）。</p>
 </blockquote>
