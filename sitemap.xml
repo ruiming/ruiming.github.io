@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ruiming.github.io/about/index.html</loc>
+    
+    <lastmod>2016-10-28T06:21:17.323Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://ruiming.github.io/tags/index.html</loc>
+    
+    <lastmod>2016-10-28T06:19:35.366Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://ruiming.github.io/categories/index.html</loc>
+    
+    <lastmod>2016-10-28T06:19:21.196Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://ruiming.github.io/2016/07/22/JavaScript%E9%97%AD%E5%8C%85%EF%BC%8C%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE/</loc>
     
     <lastmod>2016-10-26T14:54:36.818Z</lastmod>
@@ -19,13 +40,6 @@
     <loc>https://ruiming.github.io/2016/10/07/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E4%B8%8EPEG-js/</loc>
     
     <lastmod>2016-10-09T09:17:44.766Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://ruiming.github.io/about/index.html</loc>
-    
-    <lastmod>2016-10-07T09:19:46.507Z</lastmod>
     
   </url>
   
@@ -159,20 +173,6 @@
     <loc>https://ruiming.github.io/2016/07/29/Underscore%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0(%E4%BA%8C)/</loc>
     
     <lastmod>2016-08-04T08:32:42.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://ruiming.github.io/categories/index.html</loc>
-    
-    <lastmod>2016-06-25T03:44:32.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://ruiming.github.io/tags/index.html</loc>
-    
-    <lastmod>2016-06-25T03:44:07.000Z</lastmod>
     
   </url>
   
