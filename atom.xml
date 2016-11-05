@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-11-05T15:25:54.845Z</updated>
+  <updated>2016-11-05T15:32:14.015Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://ruiming.github.io/2016/11/05/%E6%8B%A5%E6%8A%B1%20vue%20%E5%92%8C%20vuex/"/>
     <id>https://ruiming.github.io/2016/11/05/拥抱 vue 和 vuex/</id>
     <published>2016-11-05T15:18:43.000Z</published>
-    <updated>2016-11-05T15:25:54.845Z</updated>
+    <updated>2016-11-05T15:32:14.015Z</updated>
     
     <content type="html"><![CDATA[<p>最近一段时间写了两个玩意, 一个是基于 PEG.js 的 XML Parser, 前面有一条博客说了 PEG.js 这东西, 事后自己也模仿着写出了这个 XML 解析器, 感觉并不难, 写着玩玩而已.</p>
 <p>另外, 最近花时间特别多的另一件事就是写了一个 RSS 订阅器. 一开始写这个订阅器, 心想上一个项目代码不忍直视, 感觉自己需要写一些能拿出手的代码, 加上学校课程刚好要求做一些东西, 以及自己最近迷上了使用 RSS 订阅器这个东西(这么多理由=.=), 于是就自己动工开搞.</p>
@@ -40,7 +40,7 @@
 <h3 id="Angular-的适用场景"><a href="#Angular-的适用场景" class="headerlink" title="Angular 的适用场景"></a>Angular 的适用场景</h3><p>首先, 结论是 Angular 最适合用来做 CRUD 类型的针对桌面浏览器端的单页面应用(SPA)</p>
 <h4 id="CRUD"><a href="#CRUD" class="headerlink" title="CRUD"></a>CRUD</h4><p>CRUD 即 Create, Read, Update, Delete. CRUD 类型, 即应用涉及的数据查询更改较为频繁的应用. 得益于双向绑定机制, 我们不需要做任何处理就可以实现 View 和 ViewModel 的同步, 我们只要在 View 层使用 <code>ngModel</code> 绑定变量, 就可以在控制器里直接使用它而无需担心它的值是否是我们需要的最新的值. 在 CRUD 应用中我们使用 Angular 这一类 MVVM 框架开发就会非常舒畅. 如果你不能感受到, 那么你可以试试用 React 去写一个表单的管理, 你需要监听每个 input 上面的 onChange 事件, 然后通过 setState 来修改, 并最终在该组件中更新修改. 相比起来, <code>ngModel</code> 简单得不能再简单了. 另外, 我们可以直接在 HTML 中使用诸如 <code>ng-show</code>, <code>ng-repeat</code> 等一类指令, 简单粗暴. 数据的变化和显示都变得非常简单.</p>
 <h4 id="桌面浏览器端"><a href="#桌面浏览器端" class="headerlink" title="桌面浏览器端"></a>桌面浏览器端</h4><p>之所以要特别提着一点, 是因为 Angular 体积不小. 这个 RSS 订阅器我桌面浏览器端用 Angular1 开发, 移动端用 Vue2 开发, 都做了打包压缩操作, 开启了 Gzip, 最后情况是 Angular 需要加载的 JS 以及各种辅助类库加起来在 250KB 左右. </p>
-
+<img src="/2016/11/05/拥抱%20vue%20和%20vuex/Angular.png" alt="Angular.png" title="Angular.png">
 <p>而 Vue 只要 100KB 左右(图中的 build.js 文件合并了CSS文件), 不到 Angular 一半的大小.</p>
 <img src="/2016/11/05/拥抱%20vue%20和%20vuex/vue.png" alt="vue.png" title="vue.png">
 <p>当然, Angular 体积大是有原因的, 它本身就是一套大而全的框架, 拿体积和 Vue 说事是不太合适的. Vue 非常轻, 专注于 View 这一层, 而 Angular 自带了路由, 内置了 HTTP 的处理模块, 内置了 promise, 还集成了一个简化版的 jq… 如果你刚好 Angular 这些东西你都要用到, 那么 Angular 也是一个不错的选择了, 但如果你只是用到它的一部分或一点点功能并且你追求文件大小, 那么你可能要考虑一下.</p>
