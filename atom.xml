@@ -272,11 +272,11 @@
     
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
+      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
+    
       <category term="Vue" scheme="https://ruiming.github.io/tags/Vue/"/>
     
       <category term="Vuex" scheme="https://ruiming.github.io/tags/Vuex/"/>
-    
-      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
     
   </entry>
   
@@ -395,9 +395,9 @@
     
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
-      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
-    
       <category term="JWT" scheme="https://ruiming.github.io/tags/JWT/"/>
+    
+      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
     
   </entry>
   
