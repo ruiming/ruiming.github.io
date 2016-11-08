@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ruiming.github.io/about/index.html</loc>
+    
+    <lastmod>2016-11-08T01:54:18.538Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://ruiming.github.io/2016/11/05/%E6%8B%A5%E6%8A%B1%20vue%20%E5%92%8C%20vuex/</loc>
     
     <lastmod>2016-11-05T15:32:14.015Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>https://ruiming.github.io/2016/10/07/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E4%B8%8EPEG-js/</loc>
     
     <lastmod>2016-10-28T08:10:58.733Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://ruiming.github.io/about/index.html</loc>
-    
-    <lastmod>2016-10-28T06:21:17.323Z</lastmod>
     
   </url>
   
