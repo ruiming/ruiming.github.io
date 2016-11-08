@@ -25,7 +25,7 @@
     <content type="html"><![CDATA[<p>在一些多人参与的项目开发中, 每个人代码习惯不同, 对于缩进, 有人习惯 TAB, 有人习惯两个空格, 有人习惯四个空格. 对于分号, 有人不加, 有人习惯加, 而习惯加分号的人又会经常漏加分号. 试想一个项目代码如果由各种群魔乱舞的风格组成, 这必然会带来一定的视觉障碍(强迫症的人看了受不了=.=), 并且显得代码质量低下.</p>
 <p>即使是个人, 偶尔也会写出一些不太规范的代码, 比如变量声明了未使用, 比如使用了 <code>==</code> 等等, 更不要说各种代码格式如操作符左右空格, <code>if ... else</code> 的格式, 末行换行等等. 特别是像有强迫症的我, 有时候写的过程可能会不小心遗漏或写错, 但发现的时候又会去改过来. 如果能在书写过程中检查出不规范的地方提示岂不是最好?</p>
 <p>ESLint 是一个插件化的 JavaScript 代码检查工具, 可以用于检查常见的 JavaScript 代码错误, 规范 JavaScript 代码的书写, 可以有效控制代码的质量. </p>
-
+<img src="/2016/11/08/使用-ESLint-规范你的代码/eslint.jpg" alt="eslint.jpg" title="eslint.jpg">
 <h2 id="ESLint-规则"><a href="#ESLint-规则" class="headerlink" title="ESLint 规则"></a>ESLint 规则</h2><p>ESLint 使用非常简单, 安装好 ESLint 后, 可以自定义一套规则文件或者使用开源的代码风格规范, 像 Google, Airbnb 都有开源的 JavaScript 代码书写规范. 可以直接使用它们的, 也可以自己配置.</p>
 <p>具体的用法可以参考官方文档, 其实蛮简单的.</p>
 <p><a href="http://eslint.cn/docs/rules/" target="_blank" rel="external">这里</a>列出了 ESLint 的各种规则, 可以参考下这里的说明.</p>
@@ -71,7 +71,7 @@
       &lt;p&gt;在一些多人参与的项目开发中, 每个人代码习惯不同, 对于缩进, 有人习惯 TAB, 有人习惯两个空格, 有人习惯四个空格. 对于分号, 有人不加, 有人习惯加, 而习惯加分号的人又会经常漏加分号. 试想一个项目代码如果由各种群魔乱舞的风格组成, 这必然会带来一定的视觉障碍(强迫症的人看了受不了=.=), 并且显得代码质量低下.&lt;/p&gt;
 &lt;p&gt;即使是个人, 偶尔也会写出一些不太规范的代码, 比如变量声明了未使用, 比如使用了 &lt;code&gt;==&lt;/code&gt; 等等, 更不要说各种代码格式如操作符左右空格, &lt;code&gt;if ... else&lt;/code&gt; 的格式, 末行换行等等. 特别是像有强迫症的我, 有时候写的过程可能会不小心遗漏或写错, 但发现的时候又会去改过来. 如果能在书写过程中检查出不规范的地方提示岂不是最好?&lt;/p&gt;
 &lt;p&gt;ESLint 是一个插件化的 JavaScript 代码检查工具, 可以用于检查常见的 JavaScript 代码错误, 规范 JavaScript 代码的书写, 可以有效控制代码的质量. &lt;/p&gt;
-
+&lt;img src=&quot;/2016/11/08/使用-ESLint-规范你的代码/eslint.jpg&quot; alt=&quot;eslint.jpg&quot; title=&quot;eslint.jpg&quot;&gt;
 &lt;h2 id=&quot;ESLint-规则&quot;&gt;&lt;a href=&quot;#ESLint-规则&quot; class=&quot;headerlink&quot; title=&quot;ESLint 规则&quot;&gt;&lt;/a&gt;ESLint 规则&lt;/h2&gt;&lt;p&gt;ESLint 使用非常简单, 安装好 ESLint 后, 可以自定义一套规则文件或者使用开源的代码风格规范, 像 Google, Airbnb 都有开源的 JavaScript 代码书写规范. 可以直接使用它们的, 也可以自己配置.&lt;/p&gt;
 &lt;p&gt;具体的用法可以参考官方文档, 其实蛮简单的.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;http://eslint.cn/docs/rules/&quot;&gt;这里&lt;/a&gt;列出了 ESLint 的各种规则, 可以参考下这里的说明.&lt;/p&gt;
@@ -227,11 +227,11 @@
     
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
+      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
+    
       <category term="Vue" scheme="https://ruiming.github.io/tags/Vue/"/>
     
       <category term="Vuex" scheme="https://ruiming.github.io/tags/Vuex/"/>
-    
-      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
     
   </entry>
   
@@ -350,9 +350,9 @@
     
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
-      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
-    
       <category term="JWT" scheme="https://ruiming.github.io/tags/JWT/"/>
+    
+      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
     
   </entry>
   
