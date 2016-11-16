@@ -1537,3 +1537,9 @@ em.search-keyword {
   font-weight: bold;
   font-style: normal;
   color: #01579f; }
+
+.caption {
+  text-align: center;
+  display: block;
+  font-size: 12px;
+  color: #666; }
