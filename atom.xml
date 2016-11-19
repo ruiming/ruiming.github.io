@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-11-17T05:29:01.716Z</updated>
+  <updated>2016-11-19T12:56:12.913Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://ruiming.github.io/2016/11/17/%E8%81%8A%E8%81%8A-Webpack-%E4%BD%BF%E7%94%A8/"/>
     <id>https://ruiming.github.io/2016/11/17/聊聊-Webpack-使用/</id>
     <published>2016-11-17T05:24:47.000Z</published>
-    <updated>2016-11-17T05:29:01.716Z</updated>
+    <updated>2016-11-19T12:56:12.913Z</updated>
     
     <content type="html"><![CDATA[<p>老早的时候就听说了 Webpack 这个工具, 当时大概的印象就是类似 Gulp 这样的东西, 并且看起来好像挺复杂的. 直到学习 React 的时候才开始接触 Webpack, 才知道 Webpack 更多的是做模块化的工作. 不过当时也是乱配置一通能用就行=.=.</p>
 <p>现在 Vue 标配也是用 Webpack 了. Webpack 其实并没有想象中的那么复杂, 其实最核心的还是 loader 那一块. 这次就主要聊一聊 Webpack. 我用的是 Webpack 最新版本 2.1.0-beta.27.</p>
@@ -69,7 +69,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">plugins.push(</div><div class="line">        <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="keyword">this</span>.plugin(<span class="string">'done'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">statsData</span>) </span>&#123;</div><div class="line">                <span class="keyword">var</span> stats = statsData.toJson()</div><div class="line">                <span class="keyword">if</span> (!stats.errors.length) &#123;</div><div class="line">                    <span class="keyword">var</span> html = fs.readFileSync(<span class="string">'./public/index.html'</span>, <span class="string">'utf8'</span>)</div><div class="line">                    <span class="keyword">var</span> htmlOutput = html.replace(</div><div class="line">                        <span class="regexp">/static\/(.+?)"&gt;/g</span>,</div><div class="line">                        <span class="function"><span class="keyword">function</span> (<span class="params">word</span>) </span>&#123;</div><div class="line">                            <span class="keyword">let</span> filename = word.split(<span class="string">'/'</span>)[<span class="number">1</span>].split(<span class="string">'.'</span>)[<span class="number">0</span>]</div><div class="line">                            <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; stats.assetsByChunkName.main.length; i++) &#123;</div><div class="line">                                <span class="keyword">if</span> (stats.assetsByChunkName.main[i].indexOf(filename) !== <span class="number">-1</span>) &#123;</div><div class="line">                                    <span class="keyword">return</span> <span class="string">'static/'</span> + stats.assetsByChunkName.main[i] + <span class="string">'"&gt;'</span></div><div class="line">                                &#125;</div><div class="line">                            &#125;</div><div class="line">                        &#125;)</div><div class="line">                    fs.writeFileSync(</div><div class="line">                        <span class="string">'./public/index.html'</span>,</div><div class="line">                        htmlOutput)</div><div class="line">                &#125;</div><div class="line">            &#125;)</div><div class="line">        &#125;</div><div class="line">)</div></pre></td></tr></table></figure>
 <p>这里的正则和路径都是根据自己项目的情况做出来的.</p>
 <p>大致的意思就是监听插件的 <code>done</code> 事件, 然后传入 <code>statsData</code> 到这个插件的回调函数里, 如果没有出错, 那么获取得到 webpack 生成的文件名即上面说的文件名如 <code>style.dd51.css</code>, 即 <code>stats.assetsByChunkName.main</code> 这个数组. 这个数组保存着 webpack 生成的文件名, 接着我们获取 <code>index.html</code> 并用正则获取所有的 <code>script</code> 和 <code>style</code> , 我这里的处理措施是得到文件名如 <code>style</code> , 然后在 <code>stats.assetsByChunkName</code> 中查找包含这个串的输出文件名, 将这个文件名替换原来的即可.</p>
-<p>到这一步不得不感慨 Webpack 的强大, 上面我说的有点乱, 可以在<a href="https://github.com/ruiming/rss/blob/master/webpack.config.js" target="_blank" rel="external">这里</a>查看我的详细 webpack 配置. 这里没有细说每个配置的每个选项, 这些选项有些我自己也还搞不太明白, 最近还要再好好看下里面一些选项的细微区别.</p>
+<p>到这一步不得不感慨 Webpack 的强大, 上面我说的有点乱, 可以在<a href="https://github.com/ruiming/rss/blob/881a34c206b4bc7797c649a0226e7516686ec1c5/webpack.config.js" target="_blank" rel="external">这里</a>(最新的配置文件已经发生了改变)查看我的详细 webpack 配置. 这里没有细说每个配置的每个选项, 这些选项有些我自己也还搞不太明白, 最近还要再好好看下里面一些选项的细微区别.</p>
 <p>总结下, 上面的 Webpack 帮我们做了这些事情:</p>
 <ul>
 <li><p>模块化</p>
@@ -107,9 +107,9 @@
     
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
-      <category term="Vue" scheme="https://ruiming.github.io/tags/Vue/"/>
-    
       <category term="Webpack" scheme="https://ruiming.github.io/tags/Webpack/"/>
+    
+      <category term="Vue" scheme="https://ruiming.github.io/tags/Vue/"/>
     
   </entry>
   
