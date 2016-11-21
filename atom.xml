@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-11-21T11:46:48.758Z</updated>
+  <updated>2016-11-21T11:47:45.450Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -16,16 +16,35 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
+    <title>存活一个月的个人博客</title>
     <link href="https://ruiming.github.io/2016/11/21/%E5%AD%98%E6%B4%BB%E4%B8%80%E4%B8%AA%E6%9C%88%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
     <id>https://ruiming.github.io/2016/11/21/存活一个月的个人博客/</id>
-    <published>2016-11-21T11:46:48.758Z</published>
-    <updated>2016-11-21T11:46:48.758Z</updated>
+    <published>2016-11-21T11:38:21.000Z</published>
+    <updated>2016-11-21T11:47:45.450Z</updated>
+    
+    <content type="html"><![CDATA[<p>今天打算备案之前的订阅器网站的域名, 捣鼓之余发现好久以前搞的万网虚拟主机还没过期=.=, 虽然里面的东西因为某次事件清空了, 不过意外发现自己备份了几次数据库. 加之当时用的是 wordpress, 于是赶紧恢复数据库并装上 wordpress. </p>
+<p>看完了全部文章, 好水, 原来我以前这么会水0.0</p>
+<p>当时不会写网站, 都是用 Typecho 啊或者 WordPress 的, 两个换来换去的, 主题也换来换去的0.0</p>
+<p>发了个牢骚</p>
+<img src="/2016/11/21/存活一个月的个人博客/2015.5.1.png" alt="2015.5.1" title="2015.5.1">
+<p>觉得文章太少了就吹吹水</p>
+<a id="more"></a>]]></content>
     
     <summary type="html">
     
+      &lt;p&gt;今天打算备案之前的订阅器网站的域名, 捣鼓之余发现好久以前搞的万网虚拟主机还没过期=.=, 虽然里面的东西因为某次事件清空了, 不过意外发现自己备份了几次数据库. 加之当时用的是 wordpress, 于是赶紧恢复数据库并装上 wordpress. &lt;/p&gt;
+&lt;p&gt;看完了全部文章, 好水, 原来我以前这么会水0.0&lt;/p&gt;
+&lt;p&gt;当时不会写网站, 都是用 Typecho 啊或者 WordPress 的, 两个换来换去的, 主题也换来换去的0.0&lt;/p&gt;
+&lt;p&gt;发了个牢骚&lt;/p&gt;
+&lt;img src=&quot;/2016/11/21/存活一个月的个人博客/2015.5.1.png&quot; alt=&quot;2015.5.1&quot; title=&quot;2015.5.1&quot;&gt;
+&lt;p&gt;觉得文章太少了就吹吹水&lt;/p&gt;
+    
     </summary>
     
+      <category term="杂记" scheme="https://ruiming.github.io/categories/%E6%9D%82%E8%AE%B0/"/>
+    
+    
+      <category term="杂记" scheme="https://ruiming.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -239,9 +258,9 @@
     
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
-      <category term="Webpack" scheme="https://ruiming.github.io/tags/Webpack/"/>
-    
       <category term="Vue" scheme="https://ruiming.github.io/tags/Vue/"/>
+    
+      <category term="Webpack" scheme="https://ruiming.github.io/tags/Webpack/"/>
     
   </entry>
   
