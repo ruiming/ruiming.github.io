@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-11-21T08:58:42.538Z</updated>
+  <updated>2016-11-21T09:24:01.201Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://ruiming.github.io/2016/11/21/%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8-JS-%E7%9A%84-sort-%E6%96%B9%E6%B3%95/"/>
     <id>https://ruiming.github.io/2016/11/21/正确使用-JS-的-sort-方法/</id>
     <published>2016-11-21T08:52:15.000Z</published>
-    <updated>2016-11-21T08:58:42.538Z</updated>
+    <updated>2016-11-21T09:24:01.201Z</updated>
     
     <content type="html"><![CDATA[<p>sort() 方法对数组的元素做原地的排序, 并返回这个数组. 默认按照字符串的 Unicode 编码排序. sort 排序可能是不稳定的. 但其实 sort 方法可能并没有你想象的那么简单, 不信的话你耐心往下看看.</p>
 <h3 id="默认排序"><a href="#默认排序" class="headerlink" title="默认排序"></a>默认排序</h3><p>sort 方法支持传入一个比较函数, 如果不传入则默认按照其字符串的 Unicode 编码排序, 因此默认情况下会出现以下情况.</p>
@@ -80,7 +80,7 @@
 <p>其实大部分人都错在了 Chrome 下的 compareFn 要求返回值有三种情况, 正, 负和0. 而不少人则是返回 true 或 false. 看看下面这段<a href="https://github.com/v8/v8/blob/master/src/js/array.js#L784" target="_blank" rel="external">代码</a>, 这里是快速排序才需要进入的.</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> c02 = comparefn(v0, v2);</div><div class="line"><span class="keyword">if</span> (c02 &gt;= <span class="number">0</span>) &#123;</div><div class="line">  <span class="comment">// v2 &lt;= v0 &lt;= v1.</span></div><div class="line">  <span class="keyword">var</span> tmp = v0;</div><div class="line">  v0 = v2;</div><div class="line">  v2 = v1;</div><div class="line">  v1 = tmp;</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="comment">// v0 &lt;= v1 &amp;&amp; v0 &lt; v2</span></div><div class="line">  <span class="keyword">var</span> c12 = comparefn(v1, v2);</div><div class="line">  <span class="keyword">if</span> (c12 &gt; <span class="number">0</span>) &#123;</div><div class="line">    <span class="comment">// v0 &lt;= v2 &lt; v1</span></div><div class="line">    <span class="keyword">var</span> tmp = v1;</div><div class="line">    v1 = v2;</div><div class="line">    v2 = tmp;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>在 JavaScript 中, false &gt;=0 和 true &gt;=0 都是成立的. 既然如此, 那么 c02 这里就永远取第一条了. sort 方法返回值分为三种, 大于0, 小于0, 等于0. 不要再返回 true 或返回 false 了. 之所以你返回 true 或 false 也可以运行起来那只是因为 JavaScript 隐性的类型转换以及运气好, 没碰到快排而已=.=</p>
-<p>比如以下代码在 Chrome 中的执行结果, 由于 Node 也是使用 V8, 所以 Node 也会有同样的问题(其实确切讲这不是问题, 这是你自己代码的问题0.0)</p>
+<p>比如以下代码在 Chrome 中的执行结果, 由于 Node 也是使用 V8, 所以 Node 也会有同样的问题</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = [<span class="number">15</span>, <span class="number">51</span>, <span class="number">24</span>, <span class="number">95</span>, <span class="number">26</span>, <span class="number">88</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">18</span>, <span class="number">11</span>]</div><div class="line">a.sort((pre, curr) =&gt; pre &gt; curr)</div><div class="line"><span class="comment">// [6, 11, 14, 15, 18, 24, 26, 51, 88, 95]</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> a = [<span class="number">15</span>, <span class="number">51</span>, <span class="number">24</span>, <span class="number">95</span>, <span class="number">26</span>, <span class="number">88</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">18</span>, <span class="number">11</span>, <span class="number">17</span>]</div><div class="line">a.sort((pre, curr) =&gt; pre &gt; curr)</div><div class="line"><span class="comment">// [88, 15, 11, 14, 6, 17, 18, 24, 26, 51, 95]</span></div></pre></td></tr></table></figure>
 <p>现在就可以解释了, 在 Chrome 中, 小于等于 10 的时候是插入排序, 排序正常, 但大于 10 的时候, 是快速排序, 如果函数返回值只有 true 或 false 那么就不正常了. 由于 Firefox 使用归并排序, 所以 Firefox 没有这个问题.</p>
 <p>sort 方法还有常见的一个误用就是用于随机排序.</p>
@@ -632,13 +632,13 @@
       <category term="安全" scheme="https://ruiming.github.io/categories/%E5%AE%89%E5%85%A8/"/>
     
     
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
-      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
     
       <category term="JWT" scheme="https://ruiming.github.io/tags/JWT/"/>
+    
+      <category term="Koa" scheme="https://ruiming.github.io/tags/Koa/"/>
     
   </entry>
   
@@ -982,9 +982,9 @@
       <category term="Angular" scheme="https://ruiming.github.io/categories/Angular/"/>
     
     
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
     
   </entry>
   
@@ -1186,9 +1186,9 @@
       <category term="Angular" scheme="https://ruiming.github.io/categories/Angular/"/>
     
     
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
     
   </entry>
   
