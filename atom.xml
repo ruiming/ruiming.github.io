@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-11-29T16:31:41.566Z</updated>
+  <updated>2016-11-29T16:35:32.757Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,12 +20,13 @@
     <link href="https://ruiming.github.io/2016/11/30/%E6%B5%85%E8%B0%88-co-%E5%BA%93/"/>
     <id>https://ruiming.github.io/2016/11/30/浅谈-co-库/</id>
     <published>2016-11-29T16:28:08.000Z</published>
-    <updated>2016-11-29T16:31:41.566Z</updated>
+    <updated>2016-11-29T16:35:32.757Z</updated>
     
     <content type="html"><![CDATA[<p>最近在写一个静态博客框架. 但不同于 hexo 之类的, 框架本身提供了博客书写和管理功能. 后端同样使用了 Koa2 来做, </p>
 <p>归功于 Arch, 我已经在使用 Node 7.2 了, 不过好像默认还是不能支持 <code>async</code> 和 <code>await</code> , 经查发现是要输入参数开启的=.=. 不过当时第一时间并没有想说去加参数解决, 而是使用了 <code>co</code> 这个库… 虽然也可以用 <code>babel</code> , 但是通过 <code>babel</code> 运行代码很难调试. </p>
 <img src="/2016/11/30/浅谈-co-库/node.png" alt="node.png" title="node.png">
 <p><code>co</code> 用起来其实和 <code>async</code> 差不多, 甚至一些地方更简洁, 比如他可以 yield 一个 Promise 数组. 而 <code>async</code> 则只能 <code>await</code> 一个 Promise.all. 其实归根就是 <code>co</code> 进行了一个隐性的转换. 换言之 <code>async</code> 其实只是 generator 的一个语法糖. 如果用 <code>co</code> 这个库你会对这一点更加深有体会.</p>
+<a id="more"></a>
 <p><code>co</code> 的代码其实刚接触异步的时候我就去看了下, 当然当时肯定看不懂. 不过现在回过来看感觉很明了. 其实 <code>co</code> 的实现思路也很简单. <code>co</code> 接收一个 generator, 然后他就可以自动的运行这个 generator 而不需要手动的 <code>yield</code> . </p>
 <p><code>co</code> 的实现简要过程:</p>
 <ol>
@@ -53,7 +54,9 @@
     <summary type="html">
     
       &lt;p&gt;最近在写一个静态博客框架. 但不同于 hexo 之类的, 框架本身提供了博客书写和管理功能. 后端同样使用了 Koa2 来做, &lt;/p&gt;
-&lt;p&gt;归功于 Arch, 我已经在使用 Node 7.2 了, 不过好像默认还是不能支持 &lt;code&gt;async&lt;/code&gt; 和 &lt;c
+&lt;p&gt;归功于 Arch, 我已经在使用 Node 7.2 了, 不过好像默认还是不能支持 &lt;code&gt;async&lt;/code&gt; 和 &lt;code&gt;await&lt;/code&gt; , 经查发现是要输入参数开启的=.=. 不过当时第一时间并没有想说去加参数解决, 而是使用了 &lt;code&gt;co&lt;/code&gt; 这个库… 虽然也可以用 &lt;code&gt;babel&lt;/code&gt; , 但是通过 &lt;code&gt;babel&lt;/code&gt; 运行代码很难调试. &lt;/p&gt;
+&lt;img src=&quot;/2016/11/30/浅谈-co-库/node.png&quot; alt=&quot;node.png&quot; title=&quot;node.png&quot;&gt;
+&lt;p&gt;&lt;code&gt;co&lt;/code&gt; 用起来其实和 &lt;code&gt;async&lt;/code&gt; 差不多, 甚至一些地方更简洁, 比如他可以 yield 一个 Promise 数组. 而 &lt;code&gt;async&lt;/code&gt; 则只能 &lt;code&gt;await&lt;/code&gt; 一个 Promise.all. 其实归根就是 &lt;code&gt;co&lt;/code&gt; 进行了一个隐性的转换. 换言之 &lt;code&gt;async&lt;/code&gt; 其实只是 generator 的一个语法糖. 如果用 &lt;code&gt;co&lt;/code&gt; 这个库你会对这一点更加深有体会.&lt;/p&gt;
     
     </summary>
     
