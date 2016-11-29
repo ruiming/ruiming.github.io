@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-11-19T12:56:12.913Z</updated>
+  <updated>2016-11-21T09:24:01.000Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -14,6 +14,124 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>正确使用 JS 的 sort 方法</title>
+    <link href="https://ruiming.github.io/2016/11/21/%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8-JS-%E7%9A%84-sort-%E6%96%B9%E6%B3%95/"/>
+    <id>https://ruiming.github.io/2016/11/21/正确使用-JS-的-sort-方法/</id>
+    <published>2016-11-21T08:52:15.000Z</published>
+    <updated>2016-11-21T09:24:01.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>sort() 方法对数组的元素做原地的排序, 并返回这个数组. 默认按照字符串的 Unicode 编码排序. sort 排序可能是不稳定的. 但其实 sort 方法可能并没有你想象的那么简单, 不信的话你耐心往下看看.</p>
+<h3 id="默认排序"><a href="#默认排序" class="headerlink" title="默认排序"></a>默认排序</h3><p>sort 方法支持传入一个比较函数, 如果不传入则默认按照其字符串的 Unicode 编码排序, 因此默认情况下会出现以下情况.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[<span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">42</span>].sort()</div><div class="line"><span class="comment">// [1, 11, 4, 42, 5]</span></div></pre></td></tr></table></figure>
+<p>解决方法就是:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[<span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">42</span>].sort((pre, curr) =&gt; pre - curr)</div><div class="line"><span class="comment">// [1, 4, 5, 11, 42]</span></div></pre></td></tr></table></figure>
+<p>pre - curr 的值有三种情况</p>
+<ul>
+<li>小于 0 时, curr 排在 pre 后面</li>
+<li>大于 0 时, curr 排在 pre 前面</li>
+<li>等于 0 时, curr 和 pre 的位置不变</li>
+</ul>
+<p>另外, 我们也可以对字符串进行排序:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[<span class="string">'d'</span>, <span class="string">'c'</span>, <span class="string">'b'</span>, <span class="string">'a'</span>].sort()</div><div class="line"><span class="comment">// [a, b, c, d]</span></div></pre></td></tr></table></figure>
+<h3 id="可能-是不稳定"><a href="#可能-是不稳定" class="headerlink" title="可能?是不稳定?"></a>可能?是不稳定?</h3><p>因为 ECMAScript 只是制定了 sort 这个方法, 但并没有给出具体的实现方式以及是否需要稳定的要求, sort 的实现就和其他大多数的方法一样由浏览器自行制定. 不同的浏览器或者同个浏览器不同版本上 sort 方法可能是稳定的, 也可能是不稳定的.</p>
+<p>这里结合 V8 源码分析下这个 sort 方法的内部调优过程.</p>
+<p>在 V8 中, 会通过以下函数方法进入 <code>innerArraySort</code> 中</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">ArraySort</span>(<span class="params">comparefn</span>) </span>&#123;</div><div class="line">  CHECK_OBJECT_COERCIBLE(<span class="keyword">this</span>, <span class="string">"Array.prototype.sort"</span>);</div><div class="line"></div><div class="line">  <span class="keyword">var</span> array = TO_OBJECT(<span class="keyword">this</span>);</div><div class="line">  <span class="keyword">var</span> length = TO_LENGTH(array.length);</div><div class="line">  <span class="keyword">return</span> InnerArraySort(array, length, comparefn);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>源码有点长, 可以自己看下 <a href="https://github.com/v8/v8/blob/master/src/js/array.js#L710" target="_blank" rel="external">这里</a></p>
+<p>注释已经点明了:</p>
+<a id="more"></a>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">InnerArraySort</span>(<span class="params">array, length, comparefn</span>) </span>&#123;</div><div class="line">  <span class="comment">// In-place QuickSort algorithm.</span></div><div class="line">  <span class="comment">// For short (length &lt;= 22) arrays, insertion sort is used for efficiency.</span></div><div class="line"></div><div class="line">  <span class="keyword">if</span> (!IS_CALLABLE(comparefn)) &#123;</div><div class="line">    comparefn = <span class="function"><span class="keyword">function</span> (<span class="params">x, y</span>) </span>&#123;</div><div class="line">      <span class="keyword">if</span> (x === y) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">      <span class="keyword">if</span> (%_IsSmi(x) &amp;&amp; %_IsSmi(y)) &#123;</div><div class="line">        <span class="keyword">return</span> %SmiLexicographicCompare(x, y);</div><div class="line">      &#125;</div><div class="line">      x = TO_STRING(x);</div><div class="line">      y = TO_STRING(y);</div><div class="line">      <span class="keyword">if</span> (x == y) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">      <span class="keyword">else</span> <span class="keyword">return</span> x &lt; y ? <span class="number">-1</span> : <span class="number">1</span>;</div><div class="line">    &#125;;</div><div class="line">  &#125;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第一行注释表明这是一个原地排序, 第二行注释说明当数组长度小于 22 时(其实应该是 10 ?), 使用插入排序.</p>
+<p>再看上面给出的条件语句, 则是判断有没有传入 <code>comparefn</code> , 如果未传入, 则这里会去获取每两个数的字符串的 Unicode 码进行比较, 按照其字符串的 Unicode 编码实现排序.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> QuickSort = <span class="function"><span class="keyword">function</span> <span class="title">QuickSort</span>(<span class="params">a, from, to</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> third_index = <span class="number">0</span>;</div><div class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</div><div class="line">    <span class="comment">// Insertion sort is faster for short arrays.</span></div><div class="line">    <span class="keyword">if</span> (to - <span class="keyword">from</span> &lt;= <span class="number">10</span>) &#123;</div><div class="line">      InsertionSort(a, <span class="keyword">from</span>, to);</div><div class="line">      <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (to - <span class="keyword">from</span> &gt; <span class="number">1000</span>) &#123;</div><div class="line">      third_index = GetThirdIndex(a, <span class="keyword">from</span>, to);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      third_index = <span class="keyword">from</span> + ((to - <span class="keyword">from</span>) &gt;&gt; <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>当数组长度小于等于 10 时, 直接使用插入排序, 该算法算法复杂度为 O(n2) , 明显是不稳定的</p>
+</li>
+<li><p>当数组长度大于 10 小于等于 1000 时, 获取 <code>third_index</code> 即中位数. 这里的方法有点屌</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">third_index = <span class="keyword">from</span> + ((to - <span class="keyword">from</span>) &gt;&gt; <span class="number">1</span>);</div></pre></td></tr></table></figure>
+<p>其实就是 <code>from + ( to - from ) / 2</code> , 以后别用 <code>/2</code> 了, 用 <code>&gt;&gt;1</code> 逼格才高</p>
+</li>
+<li><p>当数组长度大于 1000 时, 通过 <code>GetThirdIndex</code> 方法获取 <code>third_index</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> GetThirdIndex = <span class="function"><span class="keyword">function</span>(<span class="params">a, from, to</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> t_array = <span class="keyword">new</span> InternalArray();</div><div class="line">  <span class="comment">// Use both 'from' and 'to' to determine the pivot candidates.</span></div><div class="line">  <span class="keyword">var</span> increment = <span class="number">200</span> + ((to - <span class="keyword">from</span>) &amp; <span class="number">15</span>);</div><div class="line">  <span class="keyword">var</span> j = <span class="number">0</span>;</div><div class="line">  <span class="keyword">from</span> += <span class="number">1</span>;</div><div class="line">  to -= <span class="number">1</span>;</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="keyword">from</span>; i &lt; to; i += increment) &#123;</div><div class="line">    t_array[j] = [i, a[i]];</div><div class="line">    j++;</div><div class="line">  &#125;</div><div class="line">  t_array.sort(<span class="function"><span class="keyword">function</span>(<span class="params">a, b</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> comparefn(a[<span class="number">1</span>], b[<span class="number">1</span>]);</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">var</span> third_index = t_array[t_array.length &gt;&gt; <span class="number">1</span>][<span class="number">0</span>];</div><div class="line">  <span class="keyword">return</span> third_index;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个方法就要好好琢磨琢磨了.</p>
+<p>关于 <code>var increment = 200 + ((to - from) &amp; 15)</code> , 这里拿 <code>to</code> 与 <code>from</code> 之差与 15 (2^4 -1) 相与, 为什么是这样写, 我也不太明白 ╮(╯▽╰)╭ , 但这个很明显就是得到一个划分范围.</p>
+<p>然后进行划分, <code>t_array</code> 是一个二维数组, 第一维是下标, 第二维是下标对应的数组 <code>a</code> 的值. 这里根据划分值 <code>increment</code> 得到 <code>t_array</code> 这个数组, 其实这个数组就是 <code>a</code> 的划分, 记录了每个划分的第一个数的下标值和数值. 接着这个 <code>t_array</code> 根据第二维即数值来对划分做排序, 然后取中间的划分的下标值</p>
+<p>接着的部分到 <code>partition</code> 前的代码, 其实就是做下图的处理</p>
+ <img src="/2016/11/21/正确使用-JS-的-sort-方法/split.png" alt="split.png" title="split.png">
+<p>以上其实是一个快速排序的优化算法 – 三数取中( median-of-three )</p>
+<blockquote>
+<p>正如已知的，快速排序的阿克琉斯之踵在于，最差数组组合情况下会算法退化。</p>
+<p>快速排序的算法核心在于选择一个基准 <code>(pivot)</code>，将经过比较交换的数组按基准分解为两个数区进行后续递归。试想如果对一个已经有序的数组，每次选择基准元素时总是选择第一个或者最后一个元素，那么每次都会有一个数区是空的，递归的层数将达到 <code>n</code>，最后导致算法的时间复杂度退化为 <code>O(n²)</code>。因此 <code>pivot</code> 的选择非常重要。</p>
+<p>v8采用的是 <code>三数取中(median-of-three)</code> 的优化：除了头尾两个元素再额外选择一个元素参与基准元素的竞争。</p>
+<p>第三个元素的选取策略大致为：</p>
+<ol>
+<li>当数组长度小于等于1000时，选择折半位置的元素作为目标元素。</li>
+<li>当数组长度超过1000时，每隔200-215个<em>(非固定，跟着数组长度而变化)</em>左右选择一个元素来先确定一批候选元素。接着在这批候选元素中进行一次排序，将所得的中位值作为目标元素</li>
+</ol>
+<p>最后取三个元素的中位值作为 <code>pivot</code>。</p>
+</blockquote>
+</li>
+</ul>
+<p>其实 Chrome 的快速排序也是饱受争议, 因为在此之前 JavaScript 的 sort 实现都是稳定的, Firefox 中使用的是归并排序, 归并排序是稳定的. 但至今 Chrome 还是坚持不稳定的快速排序算法 O__O “…</p>
+<p>后面就是快速排序的算法了. 快速排序大概的步骤就是遍历数组, 将基准值插入到正确的位置中去, 然后以该位置左右划分, 以此递归进行下去.</p>
+<h3 id="常见误用"><a href="#常见误用" class="headerlink" title="常见误用"></a>常见误用</h3><p>虽然 Chrome 和 Firefox 的 sort 方法实现不同, 但其实并没有什么影响. 但仍然有不少人会发现在 Chrome 的排序结果是错的, Firefox 则是正常的. 我没有去看 Firefox 的实现, 但是我大概知道为什么他们会出错．</p>
+<p>其实大部分人都错在了 Chrome 下的 compareFn 要求返回值有三种情况, 正, 负和0. 而不少人则是返回 true 或 false. 看看下面这段<a href="https://github.com/v8/v8/blob/master/src/js/array.js#L784" target="_blank" rel="external">代码</a>, 这里是快速排序才需要进入的.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> c02 = comparefn(v0, v2);</div><div class="line"><span class="keyword">if</span> (c02 &gt;= <span class="number">0</span>) &#123;</div><div class="line">  <span class="comment">// v2 &lt;= v0 &lt;= v1.</span></div><div class="line">  <span class="keyword">var</span> tmp = v0;</div><div class="line">  v0 = v2;</div><div class="line">  v2 = v1;</div><div class="line">  v1 = tmp;</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="comment">// v0 &lt;= v1 &amp;&amp; v0 &lt; v2</span></div><div class="line">  <span class="keyword">var</span> c12 = comparefn(v1, v2);</div><div class="line">  <span class="keyword">if</span> (c12 &gt; <span class="number">0</span>) &#123;</div><div class="line">    <span class="comment">// v0 &lt;= v2 &lt; v1</span></div><div class="line">    <span class="keyword">var</span> tmp = v1;</div><div class="line">    v1 = v2;</div><div class="line">    v2 = tmp;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 JavaScript 中, false &gt;=0 和 true &gt;=0 都是成立的. 既然如此, 那么 c02 这里就永远取第一条了. sort 方法返回值分为三种, 大于0, 小于0, 等于0. 不要再返回 true 或返回 false 了. 之所以你返回 true 或 false 也可以运行起来那只是因为 JavaScript 隐性的类型转换以及运气好, 没碰到快排而已=.=</p>
+<p>比如以下代码在 Chrome 中的执行结果, 由于 Node 也是使用 V8, 所以 Node 也会有同样的问题</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = [<span class="number">15</span>, <span class="number">51</span>, <span class="number">24</span>, <span class="number">95</span>, <span class="number">26</span>, <span class="number">88</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">18</span>, <span class="number">11</span>]</div><div class="line">a.sort((pre, curr) =&gt; pre &gt; curr)</div><div class="line"><span class="comment">// [6, 11, 14, 15, 18, 24, 26, 51, 88, 95]</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> a = [<span class="number">15</span>, <span class="number">51</span>, <span class="number">24</span>, <span class="number">95</span>, <span class="number">26</span>, <span class="number">88</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">18</span>, <span class="number">11</span>, <span class="number">17</span>]</div><div class="line">a.sort((pre, curr) =&gt; pre &gt; curr)</div><div class="line"><span class="comment">// [88, 15, 11, 14, 6, 17, 18, 24, 26, 51, 95]</span></div></pre></td></tr></table></figure>
+<p>现在就可以解释了, 在 Chrome 中, 小于等于 10 的时候是插入排序, 排序正常, 但大于 10 的时候, 是快速排序, 如果函数返回值只有 true 或 false 那么就不正常了. 由于 Firefox 使用归并排序, 所以 Firefox 没有这个问题.</p>
+<p>sort 方法还有常见的一个误用就是用于随机排序.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[...].sort(() =&gt; <span class="built_in">Math</span>.round(<span class="built_in">Math</span>.random())<span class="number">-0.5</span>)</div></pre></td></tr></table></figure>
+<p>这并不能做到完全随机, 首先各个浏览器的 sort 方法实现就不同, 并且也不能证明其能进行随机的排序.</p>
+<p>真的要进行完全随机的排序的话, 还是得使用洗牌算法, 它是一种等概率随机的 In-place 排列算法. 具体的实现可以自己去网上搜下~</p>
+<hr>
+<p>参考资料:</p>
+<ul>
+<li><a href="http://web.jobbole.com/87127/" target="_blank" rel="external">聊聊前端排序的那些事</a></li>
+<li><a href="https://github.com/v8/v8/blob/master/src/js/array.js#L710" target="_blank" rel="external">array.js</a></li>
+<li><a href="http://stackoverflow.com/questions/3026281/array-sort-sorting-stability-in-different-browsers" target="_blank" rel="external">Array.sort Sorting Stability in Different Browsers</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;sort() 方法对数组的元素做原地的排序, 并返回这个数组. 默认按照字符串的 Unicode 编码排序. sort 排序可能是不稳定的. 但其实 sort 方法可能并没有你想象的那么简单, 不信的话你耐心往下看看.&lt;/p&gt;
+&lt;h3 id=&quot;默认排序&quot;&gt;&lt;a href=&quot;#默认排序&quot; class=&quot;headerlink&quot; title=&quot;默认排序&quot;&gt;&lt;/a&gt;默认排序&lt;/h3&gt;&lt;p&gt;sort 方法支持传入一个比较函数, 如果不传入则默认按照其字符串的 Unicode 编码排序, 因此默认情况下会出现以下情况.&lt;/p&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;[&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;11&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;].sort()&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// [1, 11, 4, 42, 5]&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;解决方法就是:&lt;/p&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;[&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;11&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;].sort((pre, curr) =&amp;gt; pre - curr)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// [1, 4, 5, 11, 42]&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;pre - curr 的值有三种情况&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;小于 0 时, curr 排在 pre 后面&lt;/li&gt;
+&lt;li&gt;大于 0 时, curr 排在 pre 前面&lt;/li&gt;
+&lt;li&gt;等于 0 时, curr 和 pre 的位置不变&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外, 我们也可以对字符串进行排序:&lt;/p&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;[&lt;span class=&quot;string&quot;&gt;&#39;d&#39;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&#39;c&#39;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&#39;b&#39;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&#39;a&#39;&lt;/span&gt;].sort()&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// [a, b, c, d]&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;可能-是不稳定&quot;&gt;&lt;a href=&quot;#可能-是不稳定&quot; class=&quot;headerlink&quot; title=&quot;可能?是不稳定?&quot;&gt;&lt;/a&gt;可能?是不稳定?&lt;/h3&gt;&lt;p&gt;因为 ECMAScript 只是制定了 sort 这个方法, 但并没有给出具体的实现方式以及是否需要稳定的要求, sort 的实现就和其他大多数的方法一样由浏览器自行制定. 不同的浏览器或者同个浏览器不同版本上 sort 方法可能是稳定的, 也可能是不稳定的.&lt;/p&gt;
+&lt;p&gt;这里结合 V8 源码分析下这个 sort 方法的内部调优过程.&lt;/p&gt;
+&lt;p&gt;在 V8 中, 会通过以下函数方法进入 &lt;code&gt;innerArraySort&lt;/code&gt; 中&lt;/p&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;ArraySort&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;comparefn&lt;/span&gt;) &lt;/span&gt;&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  CHECK_OBJECT_COERCIBLE(&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;Array.prototype.sort&quot;&lt;/span&gt;);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; array = TO_OBJECT(&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; length = TO_LENGTH(array.length);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; InnerArraySort(array, length, comparefn);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;源码有点长, 可以自己看下 &lt;a href=&quot;https://github.com/v8/v8/blob/master/src/js/array.js#L710&quot;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;注释已经点明了:&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://ruiming.github.io/categories/JavaScript/"/>
+    
+    
+      <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
+    
+      <category term="Node" scheme="https://ruiming.github.io/tags/Node/"/>
+    
+      <category term="V8" scheme="https://ruiming.github.io/tags/V8/"/>
+    
+      <category term="Sort" scheme="https://ruiming.github.io/tags/Sort/"/>
+    
+  </entry>
   
   <entry>
     <title>聊聊 Webpack 使用</title>
@@ -1519,100 +1637,6 @@
       <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
       <category term="Underscore" scheme="https://ruiming.github.io/tags/Underscore/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一次项目重构</title>
-    <link href="https://ruiming.github.io/2016/07/26/%E4%B8%80%E6%AC%A1%E9%A1%B9%E7%9B%AE%E9%87%8D%E6%9E%84/"/>
-    <id>https://ruiming.github.io/2016/07/26/一次项目重构/</id>
-    <published>2016-07-26T11:57:36.000Z</published>
-    <updated>2016-08-04T09:29:06.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>上学期由于期末停工的项目又要继续开展了，然而停了一个多月的时间，我已经看不下去他的代码了，简直惨不忍睹，花了我将近40个小时的时间去做了重构。虽然重构说明有进步了，但是一改就要改几十个页面啊…累觉不爱..说一说这次将近40小时的重构吧。<br><img src="/2016/07/26/一次项目重构/git-diff.jpg" alt="git-diff" title="git-diff"></p>
-<h2 id="Angular-重构"><a href="#Angular-重构" class="headerlink" title="Angular 重构"></a>Angular 重构</h2><p>项目是基于 Angular 的 SPA，项目参考<a href="https://github.com/johnpapa/angular-styleguide/blob/master/a1/i18n/zh-CN.md" target="_blank" rel="external">Angular规范</a>进行重构，主要是以下几点：</p>
-<ul>
-<li>把控制器的业务逻辑(主要是 HTTP 请求)分离到 Factory</li>
-<li>Controller 和 Directive 以及 Factory 全部用立即函数包装</li>
-<li>Controller 和 Directive 以及 Factory 内部书写格式</li>
-<li>使用 controllerAs 代替 $scope </li>
-<li>全部 JavaScript 文件使用 use strict 严格模式</li>
-<li>利用单体做部分数据的缓存</li>
-<li>提取大部分可复用模块到 directive</li>
-<li>全部 ng-repeat 加上 track by</li>
-<li>过大的试图使用 ng-include 进行分离</li>
-<li>去掉全部辅助变量，用 angular-promise-buttons 来达到按钮状态变化</li>
-<li>去掉全部页面切换动画</li>
-<li>手动进行依赖注入</li>
-<li>使用 ES6 语法，用 babel 转为 ES5</li>
-<li>使用 eslint 来做代码格式检查</li>
-</ul>
-<p>之前我几乎没有使用 Factory 这一层，全部业务逻辑都在 Controller 里面做，随着项目越来越大(有26个页面)，页面之间函数重复的情况很多，而且控制器太厚，可读性差，给维护带来了巨大的困难。在这次重构之中，我把全部的 HTTP 请求全部放在 Factory 实现，从而做到了以下几点：</p>
-<ul>
-<li>函数复用，多个控制器用一个 Factory，避免同个函数多次书写</li>
-<li>HTTP 请求返回 promise，结合 angular-promise-buttons 做到了按钮状态的自动变化以及过渡效果，去掉了先前实现同样目的的全部辅助变量</li>
-<li>对部分相对不变的数据，在第一次缓存后直接在该 Factory 进行缓存，第二次获取的时候直接返回内存中的数据，加快了部分页面的二次加载速度，对跨页面你的同个请求同样有效</li>
-<li>容易做单元测试和更改逻辑，因为全部 HTTP 请求都放在 Factory 实现，对后期修改以及代码测试都带来了很大的方便</li>
-</ul>
-<a id="more"></a>
-<p>举个例子，这是我项目中的部分代码，现在是能拿出手了，以前的代码我都不能再吐槽了</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** IndexCtrl.js */</span></div><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;                   <span class="comment">// 立即执行函数，避免作用域污染</span></div><div class="line"><span class="meta">    'use strict'</span>;               <span class="comment">// 严格模式，使代码更规范</span></div><div class="line">                                <span class="comment">// 空一行</span></div><div class="line">    angular                     <span class="comment">// Angular控制器定义，控制器函数使用命名行数</span></div><div class="line">        .module(<span class="string">'index'</span>)</div><div class="line">        .controller(<span class="string">'IndexCtrl'</span>, IndexCtrl);</div><div class="line"></div><div class="line">    IndexCtrl.$inject = [<span class="string">'bookservice'</span>, <span class="string">'booklistservice'</span>, <span class="string">'slideservice'</span>];     <span class="comment">// 手动依赖注入</span></div><div class="line">                                                                                <span class="comment">// 再空一行</span></div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">IndexCtrl</span>(<span class="params">bookservice, booklistservice, slideservice</span>) </span>&#123;            <span class="comment">// 控制器函数</span></div><div class="line">        <span class="keyword">var</span> vm = <span class="keyword">this</span>;                                                          <span class="comment">// 不使用$scope</span></div><div class="line">        vm.myInterval = <span class="number">5000</span>;</div><div class="line"></div><div class="line">        vm.getHotBooklists = getHotBooklists;                                   <span class="comment">// 置顶绑定成员，函数声明隐藏实现细节</span></div><div class="line">        </div><div class="line">        getPopularBooks();                                                      <span class="comment">// 即时只使用一次，也推荐封装成函数</span></div><div class="line">        getSlides();</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">getPopularBooks</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> bookservice.getPopularBooks().then(response =&gt; &#123;</div><div class="line">                vm.books = response;</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">getHotBooklists</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> booklistservice.getHotBooklists().then(response =&gt; &#123;</div><div class="line">                vm.booklists = response;</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">getSlides</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> slideservice.getSlides().then(response =&gt; &#123;</div><div class="line">                vm.slides = response;</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
-<p>然后是 Factory 文件<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** SlideService.js */</span></div><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line"><span class="meta">    'use strict'</span>;</div><div class="line"></div><div class="line">    angular</div><div class="line">        .module(<span class="string">'index'</span>)</div><div class="line">        .factory(<span class="string">'slideservice'</span>, slideservice);</div><div class="line"></div><div class="line">    slideservice.$inject = [<span class="string">'$http'</span>, <span class="string">'$q'</span>];</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">slideservice</span>(<span class="params">$http, $q</span>) </span>&#123;</div><div class="line">        <span class="keyword">let</span> slides = <span class="literal">null</span>;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> &#123;</div><div class="line">            getSlides: getSlides</div><div class="line">        &#125;;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">getSlides</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="keyword">if</span>(slides === <span class="literal">null</span>) &#123;</div><div class="line">                <span class="keyword">return</span> $http.get(host + <span class="string">'/slides'</span>)</div><div class="line">                    .then(response =&gt; &#123;</div><div class="line">                        slides = response.data;         <span class="comment">// 第一次获取后存入内存</span></div><div class="line">                        <span class="keyword">return</span> slides;</div><div class="line">                    &#125;);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">let</span> deferred = $q.defer();</div><div class="line">                deferred.resolve(slides);</div><div class="line">                <span class="keyword">return</span> deferred.promise;                <span class="comment">// 将数据封装入promise返回，保证透明性</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure></p>
-<p>directive 就不给示例了，上面主要参考了这个<a href="https://github.com/johnpapa/angular-styleguide/blob/master/a1/i18n/zh-CN.md" target="_blank" rel="external">Angular规范</a>。这样写真的比我之前写的好了几百倍，controller 和 factory 和 directive 都按这个规范来，代码会很好维护。</p>
-<p>这次重构让我知道我以前写的根本不叫 Angular，写的是一坨翔，MLGB 害我改了四天。</p>
-<h2 id="HTML-重构"><a href="#HTML-重构" class="headerlink" title="HTML 重构"></a>HTML 重构</h2><p>其实说白了也是 Angular 重构，在上面的 Angular 重构已经提到了一些了，但是上面主要是说 controller 和 factory，这里说下 directive 和视图。</p>
-<h3 id="部分页面复用"><a href="#部分页面复用" class="headerlink" title="部分页面复用"></a>部分页面复用</h3><p>在 Angular 中，HTML 部分复用有两种方案，一种是使用 ng-include，还有一种是使用 directive，其实区别很简单，ng-include 只是很简单的 HTML 复用，而 directive 你可以传递参数，directive 可以有自己的控制器，可以操纵 DOM，其实就是 HTML 和 JavaScript 文件的区别。不过这只是 directive 在页面复用这一块的作用，其实 directive 强大的很。</p>
-<h3 id="使用-ng-repeat-都带上-track-by"><a href="#使用-ng-repeat-都带上-track-by" class="headerlink" title="使用 ng-repeat 都带上 track by"></a>使用 ng-repeat 都带上 track by</h3><p>对于 ng-repeat 使用 track by 可以提升性能，对于任何 ng-repeat 都加上 track by 是一个好习惯。比如<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">ng-repeat</span>=<span class="string">"book in vm.books track by book.isbn"</span>&gt;</span>&#123;&#123;book.title&#125;&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div></pre></td></tr></table></figure></p>
-<p>也可以直接使用 track by $index。</p>
-<h3 id="使用-controllerAs"><a href="#使用-controllerAs" class="headerlink" title="使用 controllerAs"></a>使用 controllerAs</h3><p>直接在路由使用 controllerAs<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">.state(<span class="string">'index'</span>, &#123;</div><div class="line">    url: <span class="string">'/'</span>,</div><div class="line">    views: &#123;</div><div class="line">        <span class="string">'main'</span>: &#123;</div><div class="line">            templateUrl: <span class="string">'index/index_tpl.html'</span>,</div><div class="line">            controller: <span class="string">'IndexCtrl'</span>,</div><div class="line">            controllerAs: <span class="string">'vm'</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>然后在视图中就像上面的例子，在访问控制器的变量和方法的时候都要带上 vm，虽然这样会稍微麻烦了一点，但是可以避免很多坑，而且这种写法更接近 JavaScript 原生的写法。</p>
-<h2 id="CSS-重构"><a href="#CSS-重构" class="headerlink" title="CSS 重构"></a>CSS 重构</h2><p>恩，CSS 重构才是真正的大坑，先说下我之前是怎么写 CSS 代码的</p>
-<ul>
-<li>使用了 Sass 预处理器</li>
-<li>多层嵌套</li>
-<li>命名混乱</li>
-<li>过多复用</li>
-<li>全部挤在一个文件</li>
-</ul>
-<p>恩，挤在一个文件里面是最要命的，而且很任性的进行嵌套，导致多了或者少了一层都可能出问题，而且是2000多行的代码…所以我其实并没有做什么重构，我把它从一个文件分成了很多个文件，每个视图一个专属 scss 文件，对于复用的部分页面，用 directive 替代，并给该 directive 专属的 scss 文件。<br>怎么做到专属呢，就是每个视图和每个 scss 都包装在一个类名里面，这样就保证了 scss 代码互不干扰。<br>所以，其实我做的只是便于后期书写而已，总不能继续在这个文件书写下去，大坑啊。。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;上学期由于期末停工的项目又要继续开展了，然而停了一个多月的时间，我已经看不下去他的代码了，简直惨不忍睹，花了我将近40个小时的时间去做了重构。虽然重构说明有进步了，但是一改就要改几十个页面啊…累觉不爱..说一说这次将近40小时的重构吧。&lt;br&gt;&lt;img src=&quot;/2016/07/26/一次项目重构/git-diff.jpg&quot; alt=&quot;git-diff&quot; title=&quot;git-diff&quot;&gt;&lt;/p&gt;
-&lt;h2 id=&quot;Angular-重构&quot;&gt;&lt;a href=&quot;#Angular-重构&quot; class=&quot;headerlink&quot; title=&quot;Angular 重构&quot;&gt;&lt;/a&gt;Angular 重构&lt;/h2&gt;&lt;p&gt;项目是基于 Angular 的 SPA，项目参考&lt;a href=&quot;https://github.com/johnpapa/angular-styleguide/blob/master/a1/i18n/zh-CN.md&quot;&gt;Angular规范&lt;/a&gt;进行重构，主要是以下几点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;把控制器的业务逻辑(主要是 HTTP 请求)分离到 Factory&lt;/li&gt;
-&lt;li&gt;Controller 和 Directive 以及 Factory 全部用立即函数包装&lt;/li&gt;
-&lt;li&gt;Controller 和 Directive 以及 Factory 内部书写格式&lt;/li&gt;
-&lt;li&gt;使用 controllerAs 代替 $scope &lt;/li&gt;
-&lt;li&gt;全部 JavaScript 文件使用 use strict 严格模式&lt;/li&gt;
-&lt;li&gt;利用单体做部分数据的缓存&lt;/li&gt;
-&lt;li&gt;提取大部分可复用模块到 directive&lt;/li&gt;
-&lt;li&gt;全部 ng-repeat 加上 track by&lt;/li&gt;
-&lt;li&gt;过大的试图使用 ng-include 进行分离&lt;/li&gt;
-&lt;li&gt;去掉全部辅助变量，用 angular-promise-buttons 来达到按钮状态变化&lt;/li&gt;
-&lt;li&gt;去掉全部页面切换动画&lt;/li&gt;
-&lt;li&gt;手动进行依赖注入&lt;/li&gt;
-&lt;li&gt;使用 ES6 语法，用 babel 转为 ES5&lt;/li&gt;
-&lt;li&gt;使用 eslint 来做代码格式检查&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;之前我几乎没有使用 Factory 这一层，全部业务逻辑都在 Controller 里面做，随着项目越来越大(有26个页面)，页面之间函数重复的情况很多，而且控制器太厚，可读性差，给维护带来了巨大的困难。在这次重构之中，我把全部的 HTTP 请求全部放在 Factory 实现，从而做到了以下几点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;函数复用，多个控制器用一个 Factory，避免同个函数多次书写&lt;/li&gt;
-&lt;li&gt;HTTP 请求返回 promise，结合 angular-promise-buttons 做到了按钮状态的自动变化以及过渡效果，去掉了先前实现同样目的的全部辅助变量&lt;/li&gt;
-&lt;li&gt;对部分相对不变的数据，在第一次缓存后直接在该 Factory 进行缓存，第二次获取的时候直接返回内存中的数据，加快了部分页面的二次加载速度，对跨页面你的同个请求同样有效&lt;/li&gt;
-&lt;li&gt;容易做单元测试和更改逻辑，因为全部 HTTP 请求都放在 Factory 实现，对后期修改以及代码测试都带来了很大的方便&lt;/li&gt;
-&lt;/ul&gt;
-    
-    </summary>
-    
-      <category term="Angular" scheme="https://ruiming.github.io/categories/Angular/"/>
-    
-    
-      <category term="Angular" scheme="https://ruiming.github.io/tags/Angular/"/>
-    
-      <category term="JavaScript" scheme="https://ruiming.github.io/tags/JavaScript/"/>
     
   </entry>
   
