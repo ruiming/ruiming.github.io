@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ruiming.github.io/2016/12/28/2016-%E6%80%BB%E7%BB%93/</loc>
+    
+    <lastmod>2016-12-28T08:02:53.249Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://ruiming.github.io/2016/06/24/%E4%BB%8E%E8%BE%93%E5%85%A5URL%E5%88%B0%E9%A1%B5%E9%9D%A2%E5%B1%95%E7%A4%BA/</loc>
     
-    <lastmod>2016-11-30T10:56:43.436Z</lastmod>
+    <lastmod>2016-11-30T10:56:43.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/11/30/%E6%B5%85%E8%B0%88-co-%E5%BA%93/</loc>
     
-    <lastmod>2016-11-30T06:14:05.602Z</lastmod>
+    <lastmod>2016-11-30T06:14:05.000Z</lastmod>
     
   </url>
   
@@ -25,84 +32,84 @@
   <url>
     <loc>https://ruiming.github.io/2016/11/17/%E8%81%8A%E8%81%8A-Webpack-%E4%BD%BF%E7%94%A8/</loc>
     
-    <lastmod>2016-11-19T12:56:12.913Z</lastmod>
+    <lastmod>2016-11-19T12:56:12.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/11/15/%E4%BD%BF%E7%94%A8-Koa2-%E5%BC%80%E5%8F%91%E5%B0%8F%E7%BB%93/</loc>
     
-    <lastmod>2016-11-17T05:31:04.013Z</lastmod>
+    <lastmod>2016-11-17T05:30:58.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/09/24/Angular1%E4%B9%8B%E6%8A%98%E8%85%BE%E8%AE%B0/</loc>
     
-    <lastmod>2016-11-16T16:08:02.906Z</lastmod>
+    <lastmod>2016-11-16T16:08:02.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/09/29/Angular%20%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93%20(%E4%B8%80)/</loc>
     
-    <lastmod>2016-11-16T16:07:04.473Z</lastmod>
+    <lastmod>2016-11-16T16:07:04.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/10/07/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E4%B8%8EPEG-js/</loc>
     
-    <lastmod>2016-11-16T16:06:12.706Z</lastmod>
+    <lastmod>2016-11-16T16:06:12.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/10/14/%E5%85%B3%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%89%B4%E6%9D%83%E7%9A%84%E6%80%9D%E8%80%83/</loc>
     
-    <lastmod>2016-11-16T16:04:47.039Z</lastmod>
+    <lastmod>2016-11-16T16:04:47.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/11/08/%E4%BD%BF%E7%94%A8-ESLint-%E8%A7%84%E8%8C%83%E4%BD%A0%E7%9A%84%E4%BB%A3%E7%A0%81/</loc>
     
-    <lastmod>2016-11-09T04:22:05.219Z</lastmod>
+    <lastmod>2016-11-09T04:22:05.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/about/index.html</loc>
     
-    <lastmod>2016-11-08T01:54:18.538Z</lastmod>
+    <lastmod>2016-11-08T01:54:18.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/11/05/%E6%8B%A5%E6%8A%B1%20vue%20%E5%92%8C%20vuex/</loc>
     
-    <lastmod>2016-11-05T15:32:14.015Z</lastmod>
+    <lastmod>2016-11-05T15:32:14.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/07/22/JavaScript%E9%97%AD%E5%8C%85%EF%BC%8C%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE/</loc>
     
-    <lastmod>2016-10-26T14:54:36.818Z</lastmod>
+    <lastmod>2016-10-26T14:54:36.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/09/11/%E6%8F%90%E5%8D%87%E7%BD%91%E7%AB%99%E5%8A%A0%E8%BD%BD%E9%80%9F%E5%BA%A6%E7%9A%84%20N%20%E4%B8%AA%E6%96%B9%E6%B3%95/</loc>
     
-    <lastmod>2016-09-29T05:07:37.555Z</lastmod>
+    <lastmod>2016-09-29T05:07:37.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ruiming.github.io/2016/09/04/%E6%B5%85%E8%B0%88%20Angular%20%E8%84%8F%E6%A3%80%E6%9F%A5/</loc>
     
-    <lastmod>2016-09-09T11:11:58.374Z</lastmod>
+    <lastmod>2016-09-09T11:11:58.000Z</lastmod>
     
   </url>
   
