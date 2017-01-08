@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ruiming.github.io/"/>
-  <updated>2016-12-28T08:02:53.249Z</updated>
+  <updated>2017-01-08T12:40:36.064Z</updated>
   <id>https://ruiming.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://ruiming.github.io/2016/12/28/2016-%E6%80%BB%E7%BB%93/"/>
     <id>https://ruiming.github.io/2016/12/28/2016-总结/</id>
     <published>2016-12-28T07:56:44.000Z</published>
-    <updated>2016-12-28T08:02:53.249Z</updated>
+    <updated>2017-01-08T12:40:36.064Z</updated>
     
     <content type="html"><![CDATA[<p>2016 年, 要用一个词来形容我的话, 那可能是”技术宅”. 终日沉迷代码不能自拔, 不过正因如此, 技术上成长特别快. 马上要 2017 年, 稍微总结下自己即将过去的 2016 年吧~</p>
 <h2 id="技术篇"><a href="#技术篇" class="headerlink" title="技术篇"></a>技术篇</h2><p>2016 年, 学习使用了非常多的东西, 包括但不限于:</p>
@@ -49,8 +49,8 @@
 <h2 id="工具篇"><a href="#工具篇" class="headerlink" title="工具篇"></a>工具篇</h2><p>2016 年也搞了很多其他新的东西. 从 5 月开始就使用 ArchLinux 至今, 用了半年 XFCE 现在用 GNOME. 4月也捣鼓了下黑苹果. 另外也学习了下 VIM 的使用, 用 VIM 写了一阵子项目, 不过感觉 VIM 还是不太适合写前端. 在编辑器/IDE方面, 从最开始的 Sublime 到 PHPStorm/PyStorm/WebStorm 到现在的 VSCode. 几乎不再使用 M$ OFFICE, 转而使用 Google Docs. 梯子从香港绕到美国又到日本最后又回来香港折腾了一大遍. 手机从安卓阵营调到了苹果阵营, 再也不关心那些安卓破事.</p>
 <h2 id="实习篇"><a href="#实习篇" class="headerlink" title="实习篇"></a>实习篇</h2><p>2016 年 11 月的时候参加了一个 Node 地下铁沙龙. 后来有个人主动加我, 发现他是华工今年毕业的师兄, 现在是一家初创公司的技术总监. 聊得挺好并且刚好我想找下学期的实习, 实习顺利的通过了并且拿到了日薪 300 元的待遇. 这应该是今年一整年我得到的最大的肯定了.</p>
 <h2 id="生活篇"><a href="#生活篇" class="headerlink" title="生活篇"></a>生活篇</h2><p>2016 年上半年, 有不少时间花在创行上面, 但下半年退队了之后, 就一直宅宿舍写代码了, 沉迷代码不能自拔. 上个月一个人去红砖厂走了走放松了下, 最近又去做一件很早之前就想做的事情 – 矫牙, 苦逼的我要拔四颗牙… 现在已经戴上牙套了. 医生说要两年左右. 55555… 好像也没什么好说的, 2016 年都变成技术宅了, 生活方面希望明年这时候可以写的很丰富0.0</p>
-<h2 id="进行时"><a href="#进行时" class="headerlink" title="进行时"></a>进行时</h2><p>2016 年即将结束, 看似我学习了很多东西, 但是学的越多不会的越多. 前段时间正在看 Angular2, Angular2 这一套绑定了 RxJS 和 TypeScript. 本来学了 Vue2 不想搞 NG2 的, 但后来发现 TS 以及 RxJS 这两套东西真心不错, 于是决定上手 Angular2. 毕竟有 Angular1 的老本 Angular2 入门也会相对容易些吧. 另外, 最近也在实现一个 OJ, 使用了 Docker 技术, 目前已经搞定外部 C++ 代码在 Docker 内的执行. 还有就是, 最近在写科技文献阅读的作业, 了解了深度学习的一些分类算法, 感觉也挺有意思的, 也许下年我会在深度学习上面花不少时间也说不定? </p>
-<h2 id="未来时"><a href="#未来时" class="headerlink" title="未来时"></a>未来时</h2><p>2017 年, 计划时间主要花在实习上面, 业余刷一下 LeetCode 以及学一下 Angular2. 有时间的话再看看深度学习的一些分类算法. 然后多花点时间去吃喝玩乐(实习有钱了嘛). 还有贯彻整个上半年的准备暑期 Google 的实习. 17 年上半年的计划大概就是这样. 下半年的话, 到时候再看吧, 现在还说不准哈哈. </p>
+<h2 id="进行时"><a href="#进行时" class="headerlink" title="进行时"></a>进行时</h2><p>2016 年即将结束, 看似我学习了很多东西, 但是学的越多不会的越多. 前段时间正在看 Angular2, Angular2 这一套绑定了 RxJS 和 TypeScript. 本来学了 Vue2 不想搞 NG2 的, 但后来发现 TS 以及 RxJS 这两套东西真心不错, 于是决定上手 Angular2. 毕竟有 Angular1 的老本 Angular2 入门也会相对容易些吧. 另外, 最近也在实现一个 OJ, 使用了 Docker 技术, 目前已经搞定外部 C++ 代码在 Docker 内的执行. </p>
+<h2 id="未来时"><a href="#未来时" class="headerlink" title="未来时"></a>未来时</h2><p>2017 年, 计划时间主要花在实习上面, 业余刷一下 LeetCode 以及了解掌握更多的 Web 相关的知识. 然后多花点时间去吃喝玩乐(实习有钱了嘛). 还有贯彻整个上半年的准备暑期 Google 的实习. 17 年上半年的计划大概就是这样. 下半年的话, 到时候再看吧, 现在还说不准哈哈. </p>
 ]]></content>
     
     <summary type="html">
